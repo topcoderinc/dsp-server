@@ -11,7 +11,7 @@
  */
 
 module.exports = {
-  PORT: process.env.port || 3000,
+  PORT: process.env.PORT || 3000,
   db: {
     url: process.env.MONGOLAB_URI,
     poolSize: 10,
