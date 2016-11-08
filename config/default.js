@@ -6,8 +6,8 @@
 /**
  * The default configuration file.
  *
- * @author      TCSCODER
- * @version     1.0
+ * @author      kbowerma
+ * @version     1.1
  */
 
 module.exports = {
