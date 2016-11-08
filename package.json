@@ -1,0 +1,50 @@
+{
+  "name": "drone-series-api",
+  "version": "1.0.0",
+  "description": "DRONE SERIES - API's to update, create and remove drones",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "watch": "nodemon app.js",
+    "lint": "eslint *.js **/*.js || true",
+    "lint:fix": "eslint *.js **/*.js --fix || true",
+    "testdata": "node generate-test-data.js"
+  },
+  "author": "TCSCODER",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "bcryptjs": "^2.3.0",
+    "bluebird": "^3.4.1",
+    "body-parser": "^1.15.2",
+    "co": "^4.6.0",
+    "common-errors": "^1.0.0",
+    "config": "^1.21.0",
+    "cors": "^2.8.1",
+    "express": "^4.14.0",
+    "express-jwt": "^5.1.0",
+    "get-parameter-names": "^0.3.0",
+    "http-status": "^0.2.3",
+    "joi": "^9.0.4",
+    "jsonwebtoken": "^7.1.9",
+    "kafka-node": "^1.0.3",
+    "lodash": "^4.15.0",
+    "moment": "^2.15.2",
+    "mongoose": "^4.6.1",
+    "mongoose-auto-increment": "^5.0.1",
+    "mongoose-timestamp": "^0.6.0",
+    "socket.io": "^1.5.1",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^5.0.2",
+    "eslint": "^3.3.1",
+    "eslint-plugin-import": "^1.13.0"
+  },
+  "engines": {
+    "node": "6.9.1"
+  }
+}
