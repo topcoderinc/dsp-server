@@ -31,9 +31,51 @@ const UserSchema = require('./User').UserSchema;
 
 const User = db.model('User', UserSchema);
 
+// Category model
+const CategorySchema = require('./Category').CategorySchema;
+
+const Category = db.model('Category', CategorySchema);
+
+// Provider model
+const ProviderSchema = require('./Provider').ProviderSchema;
+
+const Provider = db.model('Provider', ProviderSchema);
+
+// Package model
+const PackageSchema = require('./Package').PackageSchema;
+
+const Package = db.model('Package', PackageSchema);
+
+// Review model
+const ReviewSchema = require('./Review').ReviewSchema;
+
+const Review = db.model('Review', ReviewSchema);
+
+// PackageRequest model
+const PackageRequestSchema = require('./PackageRequest').PackageRequestSchema;
+
+const PackageRequest = db.model('PackageRequest', PackageRequestSchema);
+
+// SavedPackage model
+const SavedPackageSchema = require('./SavedPackage').SavedPackageSchema;
+
+const SavedPackage = db.model('SavedPackage', SavedPackageSchema);
+
+// SavedPackage model
+const NotificationSchema = require('./Notification').NotificationSchema;
+
+const Notification = db.model('Notification', NotificationSchema);
+
 module.exports = {
   Drone,
   DronePosition,
   Mission,
   User,
+  Category,
+  Provider,
+  Package,
+  Review,
+  PackageRequest,
+  SavedPackage,
+  Notification,
 };

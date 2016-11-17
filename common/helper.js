@@ -21,6 +21,7 @@ module.exports = {
   sanitizeArray,
   hashString,
   validateHash,
+  sanitizeSchema,
 };
 
 /**
@@ -92,3 +93,25 @@ function* hashString(text, rounds) {
   return yield bcrypt.hashAsync(text, rounds);
 }
 
+/**
+ * Helper method to sanitize mongoose model schema
+ * @param  {Object} schema mongoose model schema
+ */
+function sanitizeSchema(schema) {
+  if (!schema.options.toObject) {
+    schema.options.toObject = {};
+  }
+
+    /**
+     * Transform the given document to be sent to client
+     *
+     * @param  {Object}   doc         the document to transform
+     * @param  {Object}   ret         the already converted object
+     * @param  {Object}   options     the transform options
+     */
+  schema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
+    const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt');
+    sanitized.id = doc._id;
+    return sanitized;
+  };
+}

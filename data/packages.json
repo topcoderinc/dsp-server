@@ -1,0 +1,383 @@
+[
+  {
+    "name": "package 1",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },  {
+    "name": "package 2",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          125,
+          57
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          38,
+          90
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": false,
+    "promoted": true
+  },  {
+    "name": "package 3",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          56,
+          70
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -103,
+          67
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },  {
+    "name": "package 4",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          46,
+          68
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -103,
+          73
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },  {
+    "name": "package 5",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          72,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -4,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },  {
+    "name": "package 6",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          72,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },  {
+    "name": "package 7",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -103,
+          73
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false
+  },{
+    "name": "package 8",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": false,
+    "promoted": true
+  },{
+    "name": "package 9",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          56,
+          70
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": false,
+    "promoted": true
+  },{
+    "name": "package 10",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": false,
+    "promoted": true
+  }
+]

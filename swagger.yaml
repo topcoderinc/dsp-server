@@ -1,0 +1,1298 @@
+swagger: '2.0'
+
+info:
+  version: "0.0.1"
+  title: Drone REST API
+
+basePath: /api/v1
+schemes:
+  - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /login:
+    post:
+      description: Authenticate the user with email and password
+      produces:
+        - application/json
+      tags:
+       - auth
+      parameters:
+        - in: body
+          name: body
+          description: request data
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            required:
+              - email
+              - password
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/LoginRes"
+        "400":
+          description: Missing email or password | invalid email
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "401":
+          description: Invalid  password
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: User is not registered
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /login/social:
+    post:
+      description: Authenticate the user via social network (if not registered, it should auto-register)
+      produces:
+        - application/json
+      tags:
+       - auth
+      parameters:
+        - in: body
+          name: body
+          description: request data
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              name:
+                type: string
+            required:
+              - email
+              - name
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/LoginRes"
+        "400":
+          description: Missing type or accessToken | not supported type | invalid access token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /register:
+    post:
+      description: register new user
+      produces:
+        - application/json
+      tags:
+       - auth
+      parameters:
+        - in: body
+          name: body
+          description: register information
+          required: true
+          schema:
+            type: object
+            properties:
+              email: 
+                type: string
+              password:
+                type: string
+              firstName:
+                type: string
+              lastName:
+                type: string
+              phone:
+                type: string
+            required:
+              - email
+              - password
+              - firstName
+              - lastName
+              - phone
+      responses:
+        "201":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/LoginRes"
+        "400":
+          description: invalid request | email already registered
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /forgot-password:
+    post:
+      description: Send forgot password email
+      produces:
+        - application/json
+      tags:
+       - auth
+      parameters:
+        - in: body
+          name: body
+          description: request values
+          required: true
+          schema:
+            type: object
+            properties:
+              email: 
+                type: string
+            required:
+              - email
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          description: invalid email
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: user not registered
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /reset-password:
+    post:
+      description: Reset password with code received from the email
+      tags:
+       - auth
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: request values
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              code: 
+                type: string
+              password: 
+                type: string
+            required:
+              - email
+              - code
+              - password
+      responses:
+        "404":
+          description: user not found
+        "204":
+          description: successful operation
+        "400":
+          description: invalid password or code
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /packages:
+    get:
+      description: Search packages
+      tags:
+       - package
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+        -
+          name: type
+          in: query
+          description: the type of packages to show `popular`, `promoted`
+          required: true
+          type: string
+        -
+          name: longitude
+          in: query
+          description: the longitude of the user
+          required: true
+          type: number
+        -
+          name: latitude
+          in: query
+          description: the latitude of the user
+          required: true
+          type: number
+        -
+          name: maxDistance
+          in: query
+          description: the max distance to search (in meters) from longitude, latitude
+          required: true
+          type: number
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  $ref: "#/definitions/Package"
+                  
+         
+  /providers:
+    get:
+      description: Search provders
+      tags:
+       - provider
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+        -
+          name: sortBy
+          in: query
+          description: the sort field. Allowed `popularity`, `date`, `price`. Default order is ascending. Prefix with `-` for descending order e.g. `-price`.
+          required: false
+          type: string
+        -
+          name: longitude
+          in: query
+          description: the longitude of the user
+          required: true
+          type: number
+        -
+          name: latitude
+          in: query
+          description: the latitude of the user
+          required: true
+          type: number
+        -
+          name: minPrice
+          in: query
+          description: the min price of package
+          required: false
+          type: number
+        -
+          name: maxPrice
+          in: query
+          description: the max price of package
+          required: false
+          type: number
+        -
+          name: maxDistance
+          in: query
+          description: the max distance to search (in meters) from longitude, latitude
+          required: true
+          type: number
+        -
+          name: categoryId
+          in: query
+          description: the category id to filter
+          required: false
+          type: string
+        -
+          name: keyword
+          in: query
+          description: the keyword to search (matches many fields)
+          required: false
+          type: string
+        -
+          name: simpleKeyword
+          in: query
+          description: the simple keyword to search
+          required: false
+          type: string
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    location:
+                      type: array
+                      items:
+                        $ref: "#/definitions/Address"
+                    name:
+                      type: string
+                    imageUrl:
+                      type: string
+                    thumbnailUrl:
+                      type: string
+                    status:
+                      type: string
+                    minPrice:
+                      type: number
+                    maxPrice:
+                      type: number
+                    rating:
+                      $ref: "#/definitions/Rating"
+                    packages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+     
+  /providers/{id}:
+    get:
+      description: Get provder details
+      parameters:
+        -
+          name: id
+          in: path
+          description: the provider id
+          required: true
+          type: string
+      tags:
+       - provider
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              location:
+                type: array
+                items:
+                  $ref: "#/definitions/Address"
+              name:
+                type: string
+              imageUrl:
+                type: string
+              thumbnailUrl:
+                type: string
+              status:
+                type: string
+              rating:
+                $ref: "#/definitions/Rating"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: provider not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"             
+            
+  /providers/{id}/missions:
+    get:
+      description: Get completed missions from provider
+      parameters:
+        -
+          name: id
+          in: path
+          description: the provider id
+          required: true
+          type: string
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+      tags:
+       - mission
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    packageName:
+                      type: string
+                    completedAt:
+                      type: string
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: provider not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"      
+                  
+  /providers/{id}/reviews:
+    get:
+      description: Get reviews for provider
+      parameters:
+        -
+          name: id
+          in: path
+          description: the provider id
+          required: true
+          type: string
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+      tags:
+       - review
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    rating:
+                      type: number
+                    createdAt:
+                      type: string
+                    publicFeedback:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        lastName:
+                          type: string
+                        firstName:
+                          type: string
+                        gravatarUrl:
+                          type: string
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: provider not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"   
+            
+  /providers/{id}/packages:
+    get:
+      description: Get all packages from provider
+      parameters:
+        -
+          name: id
+          in: path
+          description: the provider id
+          required: true
+          type: string
+      tags:
+       - package
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                imageUrl:
+                  type: string
+                thumbnailUrl:
+                  type: string
+                catalogName:
+                  type: string
+                price:
+                  type: number
+                bestseller:
+                  type: boolean
+                promoted:
+                  type: boolean
+                discount:
+                  type: boolean
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: provider not found
+          schema:
+            $ref: "#/definitions/ErrorMsg" 
+      
+  /packages/{id}:
+    get:
+      description: Get package details
+      parameters:
+        -
+          name: id
+          in: path
+          description: the package id
+          required: true
+          type: string
+      tags:
+       - package
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                longDescription:
+                  type: string
+                shortDescription:
+                  type: string
+                imageUrl:
+                  type: string
+                thumbnailUrl:
+                  type: string
+                catalogName:
+                  type: string
+                price:
+                  type: number
+                bestseller:
+                  type: boolean
+                promoted:
+                  type: boolean
+                discount:
+                  type: boolean
+                isSaved:
+                  type: boolean
+                provider:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+            
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: package not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"  
+   
+  /packages/{id}/related:
+    get:
+      description: Get related packages (packages user might like)
+      parameters:
+        -
+          name: id
+          in: path
+          description: the package id
+          required: true
+          type: string
+      tags:
+       - package
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                imageUrl:
+                  type: string
+                thumbnailUrl:
+                  type: string
+                price:
+                  type: number
+                bestseller:
+                  type: boolean
+                promoted:
+                  type: boolean
+                discount:
+                  type: boolean
+                provider:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+            
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: package not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+            
+  /saved-packages:
+    get:
+      description: Get all saved packages for current user
+      security:
+        - Bearer: []
+      tags:
+       - package
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                imageUrl:
+                  type: string
+                thumbnailUrl:
+                  type: string
+                price:
+                  type: number
+                bestseller:
+                  type: boolean
+                promoted:
+                  type: boolean
+                discount:
+                  type: boolean
+                provider:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+   
+  /saved-packages/{id}:
+    post:
+      description: Save package
+      security:
+        - Bearer: []
+      tags:
+       - package
+      parameters:
+        -
+          name: id
+          in: path
+          description: the package id
+          required: true
+          type: string
+          
+      responses:
+        204:
+          description: successful operation
+        400:
+          description: invalid parameters | already saved
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: package not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"    
+    delete:
+      description: Delete saved package
+      security:
+        - Bearer: []
+      parameters:
+        -
+          name: id
+          in: path
+          description: the package id
+          required: true
+          type: string
+          
+      responses:
+        204:
+          description: successful operation
+        400:
+          description: invalid parameters | package is not saved
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: package not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"           
+
+  /missions:
+    get:
+      description: Search missions
+      tags:
+       - mission
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  $ref: "#/definitions/MissionPublic"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+          
+  /missions/{id}:
+    get:
+      description: Get missions details
+      security:
+        - Bearer: []
+      tags:
+       - mission
+      parameters:
+        -
+          name: id
+          in: path
+          description: the mission id
+          required: true
+          type: string
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              status:
+                type: string
+              pilot:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+              startingPoint:
+                $ref: "#/definitions/Address"
+              destinationPoint:
+                $ref: "#/definitions/Address"
+              startedAt:
+                type: string
+              completedAt:
+                type: string
+              telemetry:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  long:
+                    type: number
+                  speed:
+                    type: number
+                  distance:
+                    type: number
+              eta:
+                type: number
+              frontCameraUrl:
+                type: string
+              backCameraUrl:
+                type: string
+              gallery:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    thumbnailUrl:
+                      type: string
+                    videoUrl:
+                      type: string
+                    imageUrl:
+                      type: string
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: no permissions to access this mission
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: mission not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+    
+  /categories:
+    get:
+      description: Get all categories
+      tags:
+       - category
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Category"
+           
+  /notifications:
+    get:
+      description: Get user notifications
+      security:
+        - Bearer: []
+      tags:
+       - notification
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Notification"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /notifications/{id}/read:
+    post:
+      description: Mark notification as read
+      security:
+        - Bearer: []
+      tags:
+       - notification
+      parameters:
+        -
+          name: id
+          in: path
+          description: the notification id
+          required: true
+          type: string
+          
+      responses:
+        204:
+          description: successful operation
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: notification belongs to other user
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: notification not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+    
+    
+  /packages/{id}/request:
+    post:
+      description: Request a pacakge
+      security:
+        - Bearer: []
+      tags:
+       - request
+       - package
+      parameters:
+        -
+          name: id
+          in: path
+          description: the package id
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: request data
+          required: true
+          schema:
+            type: object
+            properties:
+              recipientName:
+                type: string
+              phoneNumber:
+                type: string
+              destinationPoint:
+                $ref: "#/definitions/Address"
+              launchDate:
+                type: string
+              additionalInfo:
+                type: string
+            required:
+              - recipientName
+              - phoneNumber
+              - destinationPoint
+          
+      responses:
+        201:
+          description: successful operation
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: package not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+       
+  /requests:
+    get:
+      description: Get package requests of current user
+      security:
+        - Bearer: []
+      tags:
+       - request
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+        -
+          name: status
+          in: query
+          description: the mission status
+          required: false
+          type: integer
+          
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    status:
+                      type: string
+                    launchDate:
+                      type: string
+                    mission:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                    provider:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                    package:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  
+  
+  /mission/{id}/review:
+    post:
+      description: Submit review for a mission
+      security:
+        - Bearer: []
+      tags:
+       - review
+      parameters:
+        -
+          name: id
+          in: path
+          description: the mission id
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: request data
+          required: true
+          schema:
+            type: object
+            properties:
+              publicFeedback:
+                type: string
+              privateFeedback:
+                type: string
+              rating:
+                type: number
+            required:
+              - rating
+          
+      responses:
+        201:
+          description: successful operation
+        400:
+          description: invalid parameters | mission not completed | duplicate review
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: no permission to access this missing
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: mission not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+            
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+  Category:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+
+  Rating:
+    type: object
+    properties:
+      count:
+        type: number
+      sum:
+        type: number
+      avg:
+        type: number
+
+  Package:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      longDescription:
+        type: string
+      shortDescription:
+        type: string
+      imageUrl:
+        type: string
+      thumbnailUrl:
+        type: string
+      sponsored:
+        type: boolean
+      promoted:
+        type: boolean
+      discount:
+        type: number
+
+  Notification:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+      user:
+        type: string
+      values:
+        type: object
+      createdAt:
+        type: string
+        format: date
+      read:
+        type: boolean
+      readAt:
+        type: string
+        format: date
+
+
+  Address:
+    type: object
+    properties:
+      coordinates:
+        type: array
+        items:
+          type: number
+      line1:
+        type: string
+      line2:
+        type: string
+      city:
+        type: string
+      postalCode:
+        type: string
+      primary:
+        type: boolean
+
+  MissionPublic:
+    type: object
+    properties:
+      id:
+        type: string
+      package:
+        $ref: "#/definitions/Package"
+        
+  ErrorMsg:
+    type: object
+    properties:
+      error:
+        type: string
+      status:
+        type: number
+        
+  LoginRes:
+    type: object
+    properties:
+      accessToken:
+        type: string
+      user:
+        $ref: "#/definitions/User"

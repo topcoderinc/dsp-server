@@ -13,6 +13,7 @@
 const logger = require('./logger');
 const errors = require('common-errors');
 const httpStatus = require('http-status');
+const _ = require('lodash');
 
 const DEFAULT_MESSAGE = 'Internal server error';
 
@@ -24,19 +25,19 @@ const DEFAULT_MESSAGE = 'Internal server error';
  * @param  {Object}     res       the express response instance
  * @param  {Function}   next      the next middleware in the chain
  */
-function middleware(err, req, res, next) {                        // eslint-disable-line no-unused-vars
+function middleware(err, req, res, next) { // eslint-disable-line no-unused-vars
   logger.logFullError(err, req.method, req.url);
   if (err.isJoi) {
     res.status(httpStatus.BAD_REQUEST).json({
-      error: 'invalid request',
-      message: err.details,
+      error: _.map(err.details, d => d.message).join() || 'invalid request',
+      status: httpStatus.BAD_REQUEST,
     });
   } else {
     const httpError = new errors.HttpStatusError(err);
     if (err.statusCode >= httpStatus.INTERNAL_SERVER_ERROR) {
       httpError.message = DEFAULT_MESSAGE;
     }
-    res.status(httpError.statusCode).json({ message: httpError.message || DEFAULT_MESSAGE });
+    res.status(httpError.statusCode).json({ error: httpError.message || DEFAULT_MESSAGE, status: httpError.statusCode });
   }
 }
 
