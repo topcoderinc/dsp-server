@@ -25,6 +25,12 @@ module.exports = {
       method: 'register',
     },
   },
+  '/api/v1/users/social': {
+    post: {
+      controller: 'UserController',
+      method: 'registerSocialUser',
+    },
+  },
   '/api/v1/drones': {
     post: {
       controller: 'DroneController',

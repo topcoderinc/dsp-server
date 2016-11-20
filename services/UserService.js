@@ -26,6 +26,7 @@ const config = require('config');
 module.exports = {
   login,
   register,
+  registerSocialUser,
 };
 
 /**
@@ -49,6 +50,14 @@ register.schema = {
   }).required(),
 };
 
+// the joi schema for register user via social login
+registerSocialUser.schema = {
+  entity: joi.object().keys({
+    name: joi.string().required(),
+    email: joi.string().email().required(),
+  }).required(),
+};
+
 /**
  * Register a user
  *
@@ -62,6 +71,31 @@ function* register(entity) {
 
   const user = yield User.create(entity);
   return user.toObject();
+}
+
+/**
+ * Register a user via social login
+ *
+ * @param {Object}  entity        the post entity from the client
+ */
+function* registerSocialUser(entity) {
+  // make sure the email is unique
+  const existingUser = yield User.findOne({ email: entity.email });
+
+  var user;
+  if(existingUser) {
+      user = existingUser;
+  }  else {
+      user = yield User.create(entity);
+  }
+
+  const userObj = user.toObject();
+  const token = generateToken(userObj);
+
+  return {
+      accessToken: token,
+      user: userObj,
+  };
 }
 
 // the joi schema for login

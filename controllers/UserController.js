@@ -17,6 +17,7 @@ const UserService = require('../services/UserService');
 module.exports = {
   login,
   register,
+  registerSocialUser,
 };
 
 /**
@@ -37,4 +38,14 @@ function* login(req, res) {
  */
 function* register(req, res) {
   res.json(yield UserService.register(req.body));
+}
+
+/**
+ * Register a user via social login in the system
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* registerSocialUser(req, res) {
+  res.json(yield UserService.registerSocialUser(req.body));
 }
