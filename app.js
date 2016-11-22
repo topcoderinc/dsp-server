@@ -58,7 +58,7 @@ _.each(require('./routes'), (verbs, url) => {
       actions = actions.concat(def.middleware);
     }
     actions.push(method);
-    apiRouter[verb](url, helper.autoWrapExpress(actions));
+    apiRouter[verb](`/api/v${config.API_VERSION}${url}`, helper.autoWrapExpress(actions));
   });
 });
 

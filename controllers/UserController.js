@@ -18,6 +18,8 @@ module.exports = {
   login,
   register,
   registerSocialUser,
+  forgotPassword,
+  resetPassword,
 };
 
 /**
@@ -48,4 +50,24 @@ function* register(req, res) {
  */
 function* registerSocialUser(req, res) {
   res.json(yield UserService.registerSocialUser(req.body));
+}
+
+/**
+ * Send an resetPasswordCode to user's email if s/he's forgot password
+ * @param req the request
+ * @param res the response
+ */
+function* forgotPassword(req, res) {
+  yield UserService.forgotPassword(req.body);
+  res.status(204).end();
+}
+
+/**
+ * Reset user's password
+ * @param req the request
+ * @param res the response
+ */
+function* resetPassword(req, res) {
+  yield UserService.resetPassword(req.body);
+  res.status(204).end();
 }
