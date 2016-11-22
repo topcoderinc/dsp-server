@@ -38,6 +38,7 @@
     "mongoose-timestamp": "^0.6.0",
     "nodemailer": "^2.6.4",
     "socket.io": "^1.5.1",
+    "swagger-ui-express": "^1.0.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {

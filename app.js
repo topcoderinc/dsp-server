@@ -24,6 +24,9 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 app.set('port', config.PORT);
 
 app.use(bodyParser.json());
@@ -64,6 +67,7 @@ _.each(require('./routes'), (verbs, url) => {
 
 app.use('/', apiRouter);
 app.use(errorMiddleware());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 http.listen(app.get('port'), () => {
   winston.info(`Express server listening on port ${app.get('port')}`);
