@@ -1,0 +1,259 @@
+[
+  {
+    "name": "provider 1",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 100,
+    "maxPrice": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "keywords": [
+      "Mapping",
+      "Promoted",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  },
+  {
+    "name": "provider 2",
+    "location": [
+      {
+        "coordinates": [
+          125,
+          57
+        ],
+        "line1": "Address 1",
+        "city": "City 3",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          38,
+          90
+        ],
+        "line1": "Address 1",
+        "city": "City 4",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 800,
+    "maxPrice": 1500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 100,
+      "sum": 380,
+      "avg": 3.8
+    },
+    "keywords": [
+      "Photo",
+      "Video",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  },
+  {
+    "name": "provider 3",
+    "location": [
+      {
+        "coordinates": [
+          56,
+          70
+        ],
+        "line1": "Address 1",
+        "city": "City 5",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -103,
+          67
+        ],
+        "line1": "Address 2",
+        "city": "City 6",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 200,
+    "maxPrice": 800,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 80,
+      "sum": 320,
+      "avg": 4
+    },
+    "keywords": [
+      "Mapping",
+      "Monitoring"
+    ],
+    "simpleKeywords": [
+      "s-key2"
+    ]
+  },
+  {
+    "name": "provider 4",
+    "location": [
+      {
+        "coordinates": [
+          46,
+          68
+        ],
+        "line1": "Address 1",
+        "city": "City 7",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -103,
+          73
+        ],
+        "line1": "Address 1",
+        "city": "City 8",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 500,
+    "maxPrice": 1500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "keywords": [
+      "Mapping",
+      "Promoted",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key3"
+    ]
+  },
+  {
+    "name": "provider 5",
+    "location": [
+      {
+        "coordinates": [
+          72,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -4,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 100,
+    "maxPrice": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "keywords": [
+      "Mapping",
+      "Promoted",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  },
+  {
+    "name": "provider 6",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 100,
+    "maxPrice": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "keywords": [
+      "Mapping",
+      "Promoted",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key3"
+    ]
+  }
+]

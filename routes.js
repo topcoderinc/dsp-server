@@ -13,25 +13,105 @@
 const auth = require('./common/Auth.js');
 
 module.exports = {
-  '/api/v1/users/auth': {
+  '/login': {
     post: {
       controller: 'UserController',
       method: 'login',
     },
   },
-  '/api/v1/users': {
+  '/register': {
     post: {
       controller: 'UserController',
       method: 'register',
     },
   },
-  '/api/v1/users/social': {
+  '/login/social': {
     post: {
       controller: 'UserController',
       method: 'registerSocialUser',
     },
   },
-  '/api/v1/drones': {
+  '/forgot-password': {
+    post: {
+      controller: 'UserController',
+      method: 'forgotPassword',
+    },
+  },
+  '/reset-password': {
+    post: {
+      controller: 'UserController',
+      method: 'resetPassword',
+    },
+  },
+  '/categories': {
+    get: {
+      controller: 'CategoryController',
+      method: 'getAll',
+    },
+  },
+  '/providers': {
+    get: {
+      controller: 'ProviderController',
+      method: 'search',
+    },
+  },
+  '/providers/:id': {
+    get: {
+      controller: 'ProviderController',
+      method: 'getSingle',
+    },
+  },
+  '/providers/:id/packages': {
+    get: {
+      controller: 'ProviderController',
+      method: 'getPackages',
+    },
+  },
+  '/providers/:id/missions': {
+    get: {
+      controller: 'ProviderController',
+      method: 'getMissions',
+    },
+  },
+  '/providers/:id/reviews': {
+    get: {
+      controller: 'ProviderController',
+      method: 'getReviews',
+    },
+  },
+  '/packages': {
+    get: {
+      controller: 'PackageController',
+      method: 'search',
+    },
+  },
+  '/packages/:id': {
+    get: {
+      controller: 'PackageController',
+      method: 'getSingle',
+    },
+  },
+  '/packages/:id/related': {
+    get: {
+      controller: 'PackageController',
+      method: 'getRelated',
+    },
+  },
+  '/packages/:id/request': {
+    post: {
+      controller: 'PackageRequestController',
+      middleware: [auth()],
+      method: 'create',
+    },
+  },
+  '/requests': {
+    get: {
+      controller: 'PackageRequestController',
+      middleware: [auth()],
+      method: 'get',
+    },
+  },
+  '/drones': {
     post: {
       controller: 'DroneController',
       method: 'create',
@@ -41,46 +121,63 @@ module.exports = {
       method: 'getAll',
     },
   },
-  '/api/v1/drones/:id': {
+  '/drones/:id': {
     put: {
       controller: 'DroneController',
       method: 'update',
     },
   },
-  '/api/v1/missions': {
+  '/missions': {
     get: {
       controller: 'MissionController',
-      middleware: [auth()],
-      method: 'getAll',
-    },
-    post: {
-      controller: 'MissionController',
-      middleware: [auth()],
-      method: 'create',
+      method: 'search',
     },
   },
-  '/api/v1/missions/:id': {
+  '/missions/:id': {
     get: {
       controller: 'MissionController',
       middleware: [auth()],
       method: 'getSingle',
     },
-    put: {
-      controller: 'MissionController',
+  },
+  '/missions/:id/review': {
+    post: {
+      controller: 'ReviewController',
       middleware: [auth()],
-      method: 'update',
-    },
-    delete: {
-      controller: 'MissionController',
-      middleware: [auth()],
-      method: 'deleteMission',
+      method: 'create',
     },
   },
-  '/api/v1/missions/:id/download': {
+  '/saved-packages': {
     get: {
-      controller: 'MissionController',
+      controller: 'SavedPackageController',
       middleware: [auth()],
-      method: 'download',
+      method: 'get',
+    },
+  },
+  '/saved-packages/:id': {
+    post: {
+      controller: 'SavedPackageController',
+      middleware: [auth()],
+      method: 'create',
+    },
+    delete: {
+      controller: 'SavedPackageController',
+      middleware: [auth()],
+      method: 'remove',
+    },
+  },
+  '/notifications': {
+    get: {
+      controller: 'NotificationController',
+      middleware: [auth()],
+      method: 'get',
+    },
+  },
+  '/notifications/:id/read': {
+    post: {
+      controller: 'NotificationController',
+      middleware: [auth()],
+      method: 'read',
     },
   },
 };

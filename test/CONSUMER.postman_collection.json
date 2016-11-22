@@ -1,0 +1,796 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CONSUMER",
+		"_postman_id": "be31bd66-e44b-f680-b30a-4ed7c897e0da",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"description": "",
+			"item": [
+				{
+					"name": "normal login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"TOKEN\", jsonData.accessToken);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{URL}}/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\",\"password\":\"1234\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "socail login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"TOKEN\", jsonData.accessToken);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{URL}}/login/social",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"topcoder@gmail.com\",\"name\":\"123456\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"url": "{{URL}}/register",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"abc@gmail.com\",\"password\":\"123456\",\"firstName\":\"John\", \"lastName\":\"Rick\",\"phone\":\"6084022\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "forget password",
+					"request": {
+						"url": "{{URL}}/forgot-password",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "reset password",
+					"request": {
+						"url": "{{URL}}/reset-password",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\", \"code\":\"c42b\", \"password\":\"123456\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mission",
+			"description": "",
+			"item": [
+				{
+					"name": "search mission",
+					"request": {
+						"url": "{{URL}}/missions?limit=9999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "mission detail",
+					"request": {
+						"url": "{{URL}}/missions/582d932c80c876161cfe0364",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an mission returned in mission search part."
+					},
+					"response": []
+				},
+				{
+					"name": "create review",
+					"request": {
+						"url": "{{URL}}/missions/582d932c80c876161cfe0364/review",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"publicFeedback\":\"a public feedback created\",\"privateFeedback\":\"a private feedback created\",\"rating\":3.5}"
+						},
+						"description": "the parameter id should be replaced by the id of an mission returned in mission search part."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notification",
+			"description": "",
+			"item": [
+				{
+					"name": "get notifications",
+					"request": {
+						"url": "{{URL}}/notifications",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "read notification",
+					"request": {
+						"url": "{{URL}}/notifications/582d932d80c876161cfe0486/read",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "package",
+			"description": "",
+			"item": [
+				{
+					"name": "search package - promoted",
+					"request": {
+						"url": "{{URL}}/packages?type=promoted&limit=9999999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search package - popular",
+					"request": {
+						"url": "{{URL}}/packages?type=popular&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search package - small distance",
+					"request": {
+						"url": "{{URL}}/packages?type=popular&limit=99999&longitude=38&latitude=90&maxDistance=999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "package detail",
+					"request": {
+						"url": "{{URL}}/packages/582d932c80c876161cfe0343",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an package returned in package search part."
+					},
+					"response": []
+				},
+				{
+					"name": "related packages",
+					"request": {
+						"url": "{{URL}}/packages/582d932c80c876161cfe0343/related",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an package returned in package search part."
+					},
+					"response": []
+				},
+				{
+					"name": "create a new package request",
+					"request": {
+						"url": "{{URL}}/packages/582d932c80c876161cfe0343/request",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"recipientName\":\"a name\",\"phoneNumber\":\"111111\", \"destinationPoint\":{\"coordinates\":[60,37],\"line1\":\"lie 1\", \"city\":\"no city\", \"postalCode\":\"56789\"}}"
+						},
+						"description": "the parameter id should be replaced by the id of an package returned in package search part."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "provider",
+			"description": "",
+			"item": [
+				{
+					"name": "search provider - all with a large maxDistance and limit",
+					"request": {
+						"url": "{{URL}}/providers?limit=9999999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - pagination",
+					"request": {
+						"url": "{{URL}}/providers?offset=3&limit=2&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - sort popularity",
+					"request": {
+						"url": "{{URL}}/providers?sortBy=-popularity&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - minPrice all results",
+					"request": {
+						"url": "{{URL}}/providers?minPrice=0&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - minPrice no results",
+					"request": {
+						"url": "{{URL}}/providers?minPrice=99999&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - maxPrice all results",
+					"request": {
+						"url": "{{URL}}/providers?maxPrice=99999&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - maxPrice no results",
+					"request": {
+						"url": "{{URL}}/providers?maxPrice=0&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - keyword",
+					"request": {
+						"url": "{{URL}}/providers?keyword=Promoted&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search provider - simpleKeyword",
+					"request": {
+						"url": "{{URL}}/providers?simpleKeyword=s-key3&limit=9999&longitude=38&latitude=90&maxDistance=99999999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "provider detail",
+					"request": {
+						"url": "{{URL}}/providers/582d932c80c876161cfe0337",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an provider returned in provider search part."
+					},
+					"response": []
+				},
+				{
+					"name": "provider's packages",
+					"request": {
+						"url": "{{URL}}/providers/582d932c80c876161cfe0337/packages",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an provider returned in provider search part."
+					},
+					"response": []
+				},
+				{
+					"name": "provider's missions",
+					"request": {
+						"url": "{{URL}}/providers/582d932c80c876161cfe0337/missions?limit=3&offset=0",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an provider returned in provider search part."
+					},
+					"response": []
+				},
+				{
+					"name": "provider's reviews",
+					"request": {
+						"url": "{{URL}}/providers/582d932c80c876161cfe0337/reviews?limit=5&offset=2",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": "the parameter id should be replaced by the id of an provider returned in provider search part."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "saved-package",
+			"description": "",
+			"item": [
+				{
+					"name": "create save-package",
+					"request": {
+						"url": "{{URL}}/saved-packages/582d932c80c876161cfe0343",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get saved packages",
+					"request": {
+						"url": "{{URL}}/saved-packages",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete save-package",
+					"request": {
+						"url": "{{URL}}/saved-packages/582d932c80c876161cfe0343",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "get all categories",
+			"request": {
+				"url": "{{URL}}/categories",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"2427546644@qq.com\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get user's requests",
+			"request": {
+				"url": "{{URL}}/requests?limit=5&status=in-progress&offset=0",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"2427546644@qq.com\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
