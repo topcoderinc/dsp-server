@@ -1177,7 +1177,71 @@ paths:
           description: mission not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-            
+
+  /drones:
+    get:
+      description: Get all drones
+      tags:
+        - drone
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Drone"
+  
+    post:
+      description: Create a drone
+      tags:
+        - drone
+      parameters:
+        - in: body
+          name: body
+          description: the drone request data
+          schema:
+            $ref: "#/definitions/Drone"
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  
+  /drones/{id}:
+    put:
+      description: Update a drone's location
+      tags:
+        - drone
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the drone location data
+          schema:
+            $ref: "#/definitions/DroneUpdateReq"
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
 definitions:
   User:
     type: object
@@ -1296,3 +1360,34 @@ definitions:
         type: string
       user:
         $ref: "#/definitions/User"
+        
+  Drone:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+        description: drone status, allow idle-ready, idle-busy, in-motion
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+      - name
+      - status
+      - lat
+      - lng
+      
+  DroneUpdateReq:
+    type: object
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+      - lat
+      - lng

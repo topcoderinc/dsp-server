@@ -25,6 +25,91 @@
         }
       }
     },
+    "/drones" : {
+      "get" : {
+        "tags" : [ "drone" ],
+        "description" : "Get all drones",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Drone"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "drone" ],
+        "description" : "Create a drone",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "the drone request data",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Drone"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Drone"
+            }
+          },
+          "400" : {
+            "description" : "invalid parameters",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorMsg"
+            }
+          }
+        }
+      }
+    },
+    "/drones/{id}" : {
+      "put" : {
+        "tags" : [ "drone" ],
+        "description" : "Update a drone's location",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "the drone location data",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/DroneUpdateReq"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Drone"
+            }
+          },
+          "400" : {
+            "description" : "invalid parameters",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorMsg"
+            }
+          },
+          "404" : {
+            "description" : "drone not found",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorMsg"
+            }
+          }
+        }
+      }
+    },
     "/forgot-password" : {
       "post" : {
         "tags" : [ "auth" ],
@@ -1145,6 +1230,40 @@
         },
         "user" : {
           "$ref" : "#/definitions/User"
+        }
+      }
+    },
+    "Drone" : {
+      "type" : "object",
+      "required" : [ "lat", "lng", "name", "status" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "description" : "drone status, allow idle-ready, idle-busy, in-motion"
+        },
+        "lat" : {
+          "type" : "number"
+        },
+        "lng" : {
+          "type" : "number"
+        }
+      }
+    },
+    "DroneUpdateReq" : {
+      "type" : "object",
+      "required" : [ "lat", "lng" ],
+      "properties" : {
+        "lat" : {
+          "type" : "number"
+        },
+        "lng" : {
+          "type" : "number"
         }
       }
     },
