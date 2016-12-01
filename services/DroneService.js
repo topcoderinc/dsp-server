@@ -34,6 +34,7 @@ create.schema = {
   entity: joi.object().keys({
     lat: joi.number().required(),
     lng: joi.number().required(),
+    deviceId: joi.string().required(),
     status: joi.string().allow(['idle-ready', 'idle-busy', 'in-motion']).required(),
     name: joi.string().required(),
   }).required(),
@@ -101,4 +102,3 @@ function* getAll() {
   const docs = yield Drone.find({ });
   return helper.sanitizeArray(docs);
 }
-
