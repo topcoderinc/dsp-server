@@ -55,11 +55,16 @@ function* create(entity) {
 }
 
 // the joi schema for update
+/* NOTE: any field can but updated (lat,ln,status,deviceId) so I removed the require()
+for security we will take out the hardwareId that can only be created never update */
+
 update.schema = {
   id: joi.string().required(),
   entity: joi.object().keys({
-    lat: joi.number().required(),
-    lng: joi.number().required(),
+    lat: joi.number(),
+    lng: joi.number(),
+    deviceId: joi.string(),
+    status: joi.string().allow(['idle-ready', 'idle-busy', 'in-motion']),
   }).required(),
 };
 

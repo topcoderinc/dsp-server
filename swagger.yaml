@@ -1,7 +1,7 @@
 swagger: '2.0'
 
 info:
-  version: "0.2.1201"
+  version: "0.2.1201b"
   title: Drone REST API
 
 basePath: /api/v1
@@ -1391,6 +1391,8 @@ definitions:
         type: number
       lng:
         type: number
+      deviceId:
+        type: string
     required:
       - lat
       - lng
