@@ -1,7 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "version" : "0.0.1",
+    "version" : "0.2.1201",
     "title" : "Drone REST API"
   },
   "basePath" : "/api/v1",
@@ -1242,6 +1242,10 @@
         },
         "name" : {
           "type" : "string"
+        },
+        "deviceId" : {
+          "type" : "string",
+          "description" : "the hardware id of the device that is updating the gps"
         },
         "status" : {
           "type" : "string",
