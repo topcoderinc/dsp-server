@@ -1,7 +1,7 @@
 swagger: '2.0'
 
 info:
-  version: "0.0.1"
+  version: "0.2.1201b"
   title: Drone REST API
 
 basePath: /api/v1
@@ -99,7 +99,7 @@ paths:
           schema:
             type: object
             properties:
-              email: 
+              email:
                 type: string
               password:
                 type: string
@@ -139,7 +139,7 @@ paths:
           schema:
             type: object
             properties:
-              email: 
+              email:
                 type: string
             required:
               - email
@@ -172,9 +172,9 @@ paths:
             properties:
               email:
                 type: string
-              code: 
+              code:
                 type: string
-              password: 
+              password:
                 type: string
             required:
               - email
@@ -232,7 +232,7 @@ paths:
           description: the max distance to search (in meters) from longitude, latitude
           required: true
           type: number
-          
+
       responses:
         200:
           description: successful operation
@@ -245,8 +245,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/Package"
-                  
-         
+
+
   /providers:
     get:
       description: Search provders
@@ -319,7 +319,7 @@ paths:
           description: the simple keyword to search
           required: false
           type: string
-          
+
       responses:
         200:
           description: successful operation
@@ -366,7 +366,7 @@ paths:
           description: invalid parameters
           schema:
             $ref: "#/definitions/ErrorMsg"
-     
+
   /providers/{id}:
     get:
       description: Get provder details
@@ -379,7 +379,7 @@ paths:
           type: string
       tags:
        - provider
-          
+
       responses:
         200:
           description: successful operation
@@ -409,8 +409,8 @@ paths:
         404:
           description: provider not found
           schema:
-            $ref: "#/definitions/ErrorMsg"             
-            
+            $ref: "#/definitions/ErrorMsg"
+
   /providers/{id}/missions:
     get:
       description: Get completed missions from provider
@@ -435,7 +435,7 @@ paths:
           type: integer
       tags:
        - mission
-          
+
       responses:
         200:
           description: successful operation
@@ -462,8 +462,8 @@ paths:
         404:
           description: provider not found
           schema:
-            $ref: "#/definitions/ErrorMsg"      
-                  
+            $ref: "#/definitions/ErrorMsg"
+
   /providers/{id}/reviews:
     get:
       description: Get reviews for provider
@@ -488,7 +488,7 @@ paths:
           type: integer
       tags:
        - review
-          
+
       responses:
         200:
           description: successful operation
@@ -528,8 +528,8 @@ paths:
         404:
           description: provider not found
           schema:
-            $ref: "#/definitions/ErrorMsg"   
-            
+            $ref: "#/definitions/ErrorMsg"
+
   /providers/{id}/packages:
     get:
       description: Get all packages from provider
@@ -542,7 +542,7 @@ paths:
           type: string
       tags:
        - package
-          
+
       responses:
         200:
           description: successful operation
@@ -576,8 +576,8 @@ paths:
         404:
           description: provider not found
           schema:
-            $ref: "#/definitions/ErrorMsg" 
-      
+            $ref: "#/definitions/ErrorMsg"
+
   /packages/{id}:
     get:
       description: Get package details
@@ -590,7 +590,7 @@ paths:
           type: string
       tags:
        - package
-          
+
       responses:
         200:
           description: successful operation
@@ -630,7 +630,7 @@ paths:
                       type: string
                     name:
                       type: string
-            
+
         400:
           description: invalid parameters
           schema:
@@ -638,8 +638,8 @@ paths:
         404:
           description: package not found
           schema:
-            $ref: "#/definitions/ErrorMsg"  
-   
+            $ref: "#/definitions/ErrorMsg"
+
   /packages/{id}/related:
     get:
       description: Get related packages (packages user might like)
@@ -652,7 +652,7 @@ paths:
           type: string
       tags:
        - package
-          
+
       responses:
         200:
           description: successful operation
@@ -684,7 +684,7 @@ paths:
                       type: string
                     name:
                       type: string
-            
+
         400:
           description: invalid parameters
           schema:
@@ -693,7 +693,7 @@ paths:
           description: package not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-            
+
   /saved-packages:
     get:
       description: Get all saved packages for current user
@@ -701,7 +701,7 @@ paths:
         - Bearer: []
       tags:
        - package
-          
+
       responses:
         200:
           description: successful operation
@@ -737,7 +737,7 @@ paths:
           description: missing bearer token
           schema:
             $ref: "#/definitions/ErrorMsg"
-   
+
   /saved-packages/{id}:
     post:
       description: Save package
@@ -752,7 +752,7 @@ paths:
           description: the package id
           required: true
           type: string
-          
+
       responses:
         204:
           description: successful operation
@@ -763,7 +763,7 @@ paths:
         404:
           description: package not found
           schema:
-            $ref: "#/definitions/ErrorMsg"    
+            $ref: "#/definitions/ErrorMsg"
     delete:
       description: Delete saved package
       security:
@@ -775,7 +775,7 @@ paths:
           description: the package id
           required: true
           type: string
-          
+
       responses:
         204:
           description: successful operation
@@ -790,7 +790,7 @@ paths:
         404:
           description: package not found
           schema:
-            $ref: "#/definitions/ErrorMsg"           
+            $ref: "#/definitions/ErrorMsg"
 
   /missions:
     get:
@@ -810,7 +810,7 @@ paths:
           description: the search limit
           required: true
           type: integer
-          
+
       responses:
         200:
           description: successful operation
@@ -827,7 +827,7 @@ paths:
           description: invalid parameters
           schema:
             $ref: "#/definitions/ErrorMsg"
-          
+
   /missions/{id}:
     get:
       description: Get missions details
@@ -842,7 +842,7 @@ paths:
           description: the mission id
           required: true
           type: string
-          
+
       responses:
         200:
           description: successful operation
@@ -912,13 +912,13 @@ paths:
           description: mission not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-    
+
   /categories:
     get:
       description: Get all categories
       tags:
        - category
-          
+
       responses:
         200:
           description: successful operation
@@ -926,7 +926,7 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Category"
-           
+
   /notifications:
     get:
       description: Get user notifications
@@ -947,7 +947,7 @@ paths:
           description: the search limit
           required: true
           type: integer
-          
+
       responses:
         200:
           description: successful operation
@@ -978,7 +978,7 @@ paths:
           description: the notification id
           required: true
           type: string
-          
+
       responses:
         204:
           description: successful operation
@@ -998,8 +998,8 @@ paths:
           description: notification not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-    
-    
+
+
   /packages/{id}/request:
     post:
       description: Request a pacakge
@@ -1036,7 +1036,7 @@ paths:
               - recipientName
               - phoneNumber
               - destinationPoint
-          
+
       responses:
         201:
           description: successful operation
@@ -1052,7 +1052,7 @@ paths:
           description: package not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-       
+
   /requests:
     get:
       description: Get package requests of current user
@@ -1079,7 +1079,7 @@ paths:
           description: the mission status
           required: false
           type: integer
-          
+
       responses:
         200:
           description: successful operation
@@ -1126,8 +1126,8 @@ paths:
           description: missing bearer token
           schema:
             $ref: "#/definitions/ErrorMsg"
-  
-  
+
+
   /mission/{id}/review:
     post:
       description: Submit review for a mission
@@ -1157,7 +1157,7 @@ paths:
                 type: number
             required:
               - rating
-          
+
       responses:
         201:
           description: successful operation
@@ -1177,7 +1177,71 @@ paths:
           description: mission not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-            
+
+  /drones:
+    get:
+      description: Get all drones
+      tags:
+        - drone
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Drone"
+
+    post:
+      description: Create a drone
+      tags:
+        - drone
+      parameters:
+        - in: body
+          name: body
+          description: the drone request data
+          schema:
+            $ref: "#/definitions/Drone"
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /drones/{id}:
+    put:
+      description: Update a drone's location
+      tags:
+        - drone
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the drone location data
+          schema:
+            $ref: "#/definitions/DroneUpdateReq"
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
 definitions:
   User:
     type: object
@@ -1280,7 +1344,7 @@ definitions:
         type: string
       package:
         $ref: "#/definitions/Package"
-        
+
   ErrorMsg:
     type: object
     properties:
@@ -1288,7 +1352,7 @@ definitions:
         type: string
       status:
         type: number
-        
+
   LoginRes:
     type: object
     properties:
@@ -1296,3 +1360,39 @@ definitions:
         type: string
       user:
         $ref: "#/definitions/User"
+
+  Drone:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      deviceId:
+        type: string
+        description: the hardware id of the device that is updating the gps
+      status:
+        type: string
+        description: drone status, allow idle-ready, idle-busy, in-motion
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+      - name
+      - status
+      - lat
+      - lng
+
+  DroneUpdateReq:
+    type: object
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+      deviceId:
+        type: string
+    required:
+      - lat
+      - lng
