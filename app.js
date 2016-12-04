@@ -24,13 +24,11 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 
 app.set('port', config.PORT);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 const apiRouter = express.Router();
 
@@ -61,13 +59,14 @@ _.each(require('./routes'), (verbs, url) => {
       actions = actions.concat(def.middleware);
     }
     actions.push(method);
+    winston.info(`register ${verb} /api/v${config.API_VERSION}${url}`);
     apiRouter[verb](`/api/v${config.API_VERSION}${url}`, helper.autoWrapExpress(actions));
   });
 });
 
 app.use('/', apiRouter);
 app.use(errorMiddleware());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 http.listen(app.get('port'), () => {
   winston.info(`Express server listening on port ${app.get('port')}`);

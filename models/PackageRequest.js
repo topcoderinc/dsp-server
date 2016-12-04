@@ -13,36 +13,34 @@ const mongoose = require('../datasource').getMongoose();
 const _ = require('lodash');
 const timestamps = require('mongoose-timestamp');
 const enums = require('../enum');
+const Address = require('./Address').AddressSchema;
 
 const Schema = mongoose.Schema;
 
-const LocationSchema = new Schema({
-  coordinates: { type: [Number], required: true },
-  line1: { type: String, required: true },
-  line2: { type: String, required: false },
-  city: { type: String, required: true },
-  postalCode: { type: String, required: true },
-});
 
 const PackageRequestSchema = new mongoose.Schema({
-  package: { type: Schema.Types.ObjectId, required: true, ref: 'Package' },
-  provider: { type: Schema.Types.ObjectId, required: true, ref: 'Provider' },
-  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  mission: { type: Schema.Types.ObjectId, required: false, ref: 'Mission' },
+  package: {type: Schema.Types.ObjectId, required: true, ref: 'Package'},
+  provider: {type: Schema.Types.ObjectId, required: true, ref: 'Provider'},
+  user: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
+  mission: {type: Schema.Types.ObjectId, required: false, ref: 'Mission'},
 
-  status: { type: String, enum: _.values(enums.RequestStatus), required: true },
+
+  status: {type: String, enum: _.values(enums.RequestStatus), required: true},
   contactInfo: {
     type: {
-      recipientName: { type: String, required: true },
-      phoneNumber: { type: String, required: true },
+      recipientName: {type: String, required: true},
+      phoneNumber: {type: String, required: true},
     },
     required: true,
   },
-  destinationPoint: { type: LocationSchema, required: true },
 
-  launchDate: { type: Date, default: Date.now },
-
+  startingPoint: {type: Address, required: true},
+  destinationPoint: {type: Address, required: true},
+  launchDate: {type: Date},
   additionalInfo: String,
+  whatToBeDelivered: String,
+  weight: Number,
+  payout: Number,
 });
 
 PackageRequestSchema.plugin(timestamps);
