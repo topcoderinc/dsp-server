@@ -17,6 +17,8 @@ const MissionService = require('../services/MissionService');
 module.exports = {
   search,
   getSingle,
+  monthlyCountByDrone,
+  getAllByDrone,
 };
 
 /**
@@ -38,4 +40,13 @@ function* search(req, res) {
  */
 function* getSingle(req, res) {
   res.json(yield MissionService.getSingle(req.params.id, req.auth.sub));
+}
+
+
+function* monthlyCountByDrone(req, res) {
+  res.json(yield MissionService.monthlyCountByDrone(req.params.droneId, req.query));
+}
+
+function* getAllByDrone(req, res) {
+  res.json(yield MissionService.getAllByDrone(req.params.droneId, req.query));
 }

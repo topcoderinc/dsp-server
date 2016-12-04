@@ -13,6 +13,8 @@ const mongoose = require('../datasource').getMongoose();
 const _ = require('lodash');
 const timestamps = require('mongoose-timestamp');
 const enums = require('../enum');
+const Address = require('./Address').AddressSchema;
+const helper = require('../common/helper');
 
 const Schema = mongoose.Schema;
 const GallerySchema = new Schema({
@@ -21,42 +23,70 @@ const GallerySchema = new Schema({
   imageUrl: String,
 });
 
-const LocationSchema = new Schema({
-  coordinates: { type: [Number], required: true },
-  line1: { type: String, required: true },
-  line2: { type: String, required: false },
-  city: { type: String, required: true },
-  postalCode: { type: String, required: true },
-  primary: { type: Boolean, required: true },
-});
+if (!GallerySchema.options.toObject) {
+  GallerySchema.options.toObject = {};
+}
+
+
+GallerySchema.options.toObject.transform = function (doc, ret, options) {
+  const sanitized = _.omit(ret, '__v', '_id');
+  return sanitized;
+};
+
 
 const MissionSchema = new mongoose.Schema({
-  status: { type: String, enum: _.values(enums.MissionStatus), required: true },
-  drone: { type: Schema.Types.ObjectId, required: true, ref: 'Drone' },
-  provider: { type: Schema.Types.ObjectId, required: true, ref: 'Provider' },
-  package: { type: Schema.Types.ObjectId, required: true, ref: 'Package' },
-  pilot: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  startingPoint: {
-    type: LocationSchema,
-    required: true,
-  },
-  destinationPoint: {
-    type: LocationSchema,
-    required: true,
-  },
+  status: {type: String, enum: _.values(enums.MissionStatus), required: true},
+  drone: {type: Schema.Types.ObjectId, required: true, ref: 'Drone'},
+  provider: {type: Schema.Types.ObjectId, required: true, ref: 'Provider'},
+  package: {type: Schema.Types.ObjectId, required: true, ref: 'Package'},
+  pilot: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
+  startingPoint: {type: Address, required: true},
+  destinationPoint: {type: Address, required: true},
+
   startedAt: Date,
   completedAt: Date,
-    // the current drone real-time values
+  scheduledAt: Date,
+  // the current drone real-time values
   telemetry: {
     lat: Number,
     long: Number,
     speed: Number,
     distance: Number,
   },
+
+
   eta: Number,
   frontCameraUrl: String,
   backCameraUrl: String,
   gallery: [GallerySchema],
+
+
+  rating: {type: Number, default: 0}, // by consumer
+
+  specialRequirements: [String],
+  notes: String,
+
+  // from package
+  weight: Number,
+  whatToBeDelivered: String,
+
+
+  // by provider when the mission is waiting or in-progress status
+  estimation: {
+    launchTime: Date,
+    speed: Number,
+    distance: Number,
+    time: Number,
+  },
+
+  // by provider after the mission completed
+  result: {
+    distance: {type: Number, default: 0},
+    time: {type: Number, default: 0},
+    avgSpeed: Number,
+    maxSpeed: {type: Number, default: 0},
+    minSpeed: {type: Number, default: 0},
+  },
 });
 
 MissionSchema.plugin(timestamps);
