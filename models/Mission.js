@@ -31,18 +31,18 @@ const LocationSchema = new Schema({
 });
 
 const MissionSchema = new mongoose.Schema({
-  status: { type: String, enum: _.values(enums.MissionStatus), required: true },
-  drone: { type: Schema.Types.ObjectId, required: true, ref: 'Drone' },
-  provider: { type: Schema.Types.ObjectId, required: true, ref: 'Provider' },
-  package: { type: Schema.Types.ObjectId, required: true, ref: 'Package' },
-  pilot: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  status: { type: String, enum: _.values(enums.MissionStatus), required: false },
+  drone: { type: Schema.Types.ObjectId, required: false, ref: 'Drone' },
+  provider: { type: Schema.Types.ObjectId, required: false, ref: 'Provider' },
+  package: { type: Schema.Types.ObjectId, required: false, ref: 'Package' },
+  pilot: { type: Schema.Types.ObjectId, required: false, ref: 'User' },
   startingPoint: {
     type: LocationSchema,
-    required: true,
+    required: false,
   },
   destinationPoint: {
     type: LocationSchema,
-    required: true,
+    required: false,
   },
   startedAt: Date,
   completedAt: Date,
