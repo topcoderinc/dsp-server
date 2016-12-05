@@ -22,12 +22,12 @@ const GallerySchema = new Schema({
 });
 
 const LocationSchema = new Schema({
-  coordinates: { type: [Number], required: true },
-  line1: { type: String, required: true },
+  coordinates: { type: [Number], required: false },
+  line1: { type: String, required: false },
   line2: { type: String, required: false },
-  city: { type: String, required: true },
-  postalCode: { type: String, required: true },
-  primary: { type: Boolean, required: true },
+  city: { type: String, required: false },
+  postalCode: { type: String, required: false },
+  primary: { type: Boolean, required: false },
 });
 
 const MissionSchema = new mongoose.Schema({
@@ -36,6 +36,10 @@ const MissionSchema = new mongoose.Schema({
   provider: { type: Schema.Types.ObjectId, required: false, ref: 'Provider' },
   package: { type: Schema.Types.ObjectId, required: false, ref: 'Package' },
   pilot: { type: Schema.Types.ObjectId, required: false, ref: 'User' },
+  missionItems: { type: mongoose.Schema.Types.Mixed, required: true },   //UIMAPPED
+  missionName: { type: String, required: true },  //UIMAPPED
+  userId: { type: String, required: true },  //UIMAPPED
+  plannedHomePosition: { type: mongoose.Schema.Types.Mixed, required: true }, //UIMAPPED
   startingPoint: {
     type: LocationSchema,
     required: false,
