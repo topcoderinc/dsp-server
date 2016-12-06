@@ -132,6 +132,11 @@ module.exports = {
       controller: 'MissionController',
       method: 'search',
     },
+    post: {
+      controller: 'MissionController',
+      middleware: [auth()],
+      method: 'create',
+    },
   },
   '/missions/:id': {
     get: {
