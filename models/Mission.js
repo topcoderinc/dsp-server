@@ -35,13 +35,16 @@ GallerySchema.options.toObject.transform = function (doc, ret, options) {
 
 
 const MissionSchema = new mongoose.Schema({
+  missionName: { type: String, required: false },
+  plannedHomePosition: { type: mongoose.Schema.Types.Mixed, required: false },
+  missionItems: { type: mongoose.Schema.Types.Mixed, required: false },
   status: {type: String, enum: _.values(enums.MissionStatus), required: true},
-  drone: {type: Schema.Types.ObjectId, required: true, ref: 'Drone'},
-  provider: {type: Schema.Types.ObjectId, required: true, ref: 'Provider'},
-  package: {type: Schema.Types.ObjectId, required: true, ref: 'Package'},
-  pilot: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
-  startingPoint: {type: Address, required: true},
-  destinationPoint: {type: Address, required: true},
+  drone: {type: Schema.Types.ObjectId, required: false, ref: 'Drone'},
+  provider: {type: Schema.Types.ObjectId, required: false, ref: 'Provider'},
+  package: {type: Schema.Types.ObjectId, required: false, ref: 'Package'},
+  pilot: {type: Schema.Types.ObjectId, required: false, ref: 'User'},
+  startingPoint: {type: Address, required: false},
+  destinationPoint: {type: Address, required: false},
 
   startedAt: Date,
   completedAt: Date,
