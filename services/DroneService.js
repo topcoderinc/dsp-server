@@ -228,14 +228,14 @@ updateLocation.schema = {
     lat: joi.number().required(),
     lng: joi.number().required(),
   }).required()
-}
+};
+
 /**
  * update a drone location
  * @param id
  * @param entity
  */
-}
-function* updateLocation(id, entity) {
+function *updateLocation(id, entity) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
