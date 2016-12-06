@@ -85,8 +85,10 @@ function* search(entity) {
   const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit).populate('package');
   return {
     total,
-    items: _.map(docs, (d) => ({ id: d.id, package: d.package.toObject() })),
+  //  items: _.map(docs, (d) => ({ id: d.id, package: d.package.toObject() })),
+    items: _.map(docs, (d) => ({ id: d.id, missionName: d.missionName, package: "placeholder d.package.toObject()" })),
   };
+  // was items: _.map(docs, (d) => ({ id: d.id, package: d.package.toObject() })),
 }
 
 // the joi schema for update
