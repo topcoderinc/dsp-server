@@ -1,4 +1,5 @@
-me": "dsp-server",
+{
+  "name": "dsp-server",
   "scripts": {
   },
   "env": {
