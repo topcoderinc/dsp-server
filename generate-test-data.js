@@ -25,6 +25,7 @@ const Mission = models.Mission;
 const Review = models.Review;
 const PackageRequest = models.PackageRequest;
 const Notification = models.Notification;
+const DronePosition = models.DronePosition;
 
 const drones = require('./data/drones.json');
 const users = require('./data/users.json');
@@ -35,6 +36,7 @@ const missions = require('./data/missions.json');
 const reviews = require('./data/reviews.json');
 const requests = require('./data/packageRequests.json');
 const notifications = require('./data/notifications.json');
+const positions = require('./data/dronePositions.json');
 
 // players json data
 const co = require('co');
@@ -50,6 +52,7 @@ co(function* () {
   yield Review.remove({});
   yield PackageRequest.remove({});
   yield Notification.remove({});
+  yield DronePosition.remove({});
   logger.info(`creating ${drones.length} drones`);
   const droneDocs = yield Drone.create(drones);
     // encrypt password
@@ -108,6 +111,12 @@ co(function* () {
   });
   logger.info(`creating ${notifications.length} notifications`);
   yield Notification.create(notifications);
+
+  _.each(positions, (p) => {
+    p.droneId = droneDocs[0].id;
+  });
+  logger.info(`creating ${positions.length} dronePositions`);
+  yield DronePosition.create(positions);
 
   logger.info('data created successfully');
 }).then(() => {

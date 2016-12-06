@@ -27,6 +27,7 @@ module.exports = {
   create,
   update,
   getAll,
+  getSingle,
 };
 
 // the joi schema for create
@@ -79,7 +80,7 @@ update.schema = {
  * @param {Object}    entity          the parsed request body
  */
 function* update(id, entity) {
-  // update the position history
+    // update the position history
   const drone = yield Drone.findOne({ _id: id });
   if (!drone) {
     throw new errors.NotFoundError(`drone not found with specified id ${id}`);
@@ -104,6 +105,23 @@ function* update(id, entity) {
  * Get a list of all the drones
  */
 function* getAll() {
-  const docs = yield Drone.find({ });
+  const docs = yield Drone.find({});
   return helper.sanitizeArray(docs);
+}
+
+
+// the joi schema for getSingle
+getSingle.schema = {
+  id: joi.string().required(),
+};
+/**
+ * Get detail of a drone
+ */
+function* getSingle(id) {
+  helper.validateObjectId(id);
+  const doc = yield Drone.findOne({ _id: id });
+  if (!doc) {
+    throw new errors.NotFoundError(`drone not found with specified id ${id}`);
+  }
+  return doc.toObject();
 }

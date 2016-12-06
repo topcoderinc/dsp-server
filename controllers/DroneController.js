@@ -18,6 +18,7 @@ module.exports = {
   getAll,
   create,
   update,
+  getSingle,
 };
 
 /**
@@ -50,4 +51,14 @@ function* update(req, res) {
   const drone = yield DroneService.update(req.params.id, req.body);
   res.json();
   res.io.emit('dronepositionupdate', drone);
+}
+
+/**
+ * Get detail of a drone
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* getSingle(req, res) {
+  res.json(yield DroneService.getSingle(req.params.id));
 }

@@ -12,6 +12,9 @@
 const _ = require('lodash');
 const co = require('co');
 const bcrypt = require('bcryptjs');
+const errors = require('common-errors');
+const httpStatus = require('http-status');
+const ObjectId = require('../datasource').getMongoose().Types.ObjectId;
 
 global.Promise.promisifyAll(bcrypt);
 
@@ -22,6 +25,7 @@ module.exports = {
   hashString,
   validateHash,
   sanitizeSchema,
+  validateObjectId,
 };
 
 /**
@@ -114,4 +118,14 @@ function sanitizeSchema(schema) {
     sanitized.id = doc._id;
     return sanitized;
   };
+}
+
+/**
+ * Helper method to validate that string is id or not
+ * @param  {String} id the string to validate
+ */
+function validateObjectId(id) {
+  if (!ObjectId.isValid(id)) {
+    throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, `id ${id} is not valid`);
+  }
 }

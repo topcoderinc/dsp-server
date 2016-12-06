@@ -23,3 +23,4 @@ logger.buildService(require('./services/ReviewService'));
 logger.buildService(require('./services/PackageRequestService'));
 logger.buildService(require('./services/SavedPackageService'));
 logger.buildService(require('./services/NotificationService'));
+logger.buildService(require('./services/DronePositionService'));
