@@ -1,0 +1,32 @@
+{
+  "name": "dsp-server",
+  "scripts": {
+  },
+  "env": {
+    "AUTH0_CLIENT_ID": {
+      "required": true
+    },
+    "env": {
+      "required": true
+    },
+    "JWT_SECRET": {
+      "required": true
+    },
+    "MONGOLAB_URI": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "papertrail"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
