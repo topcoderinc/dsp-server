@@ -13,6 +13,8 @@ const _ = require('lodash');
 const co = require('co');
 const bcrypt = require('bcryptjs');
 const errors = require('common-errors');
+const httpStatus = require('http-status');
+const ObjectId = require('../datasource').getMongoose().Types.ObjectId;
 
 global.Promise.promisifyAll(bcrypt);
 
@@ -25,6 +27,7 @@ module.exports = {
   sanitizeSchema,
   getFlatternDistance,
   splitQueryToArray,
+  validateObjectId,
 };
 
 /**
@@ -156,7 +159,7 @@ function getFlatternDistance(coordinates1, coordinates2) {
     return d * PI / 180.0;
   }
 
-  const EARTH_RADIUS = 6378137.0; // 单位M
+  const EARTH_RADIUS = 6378137.0; // ??M
   const PI = Math.PI;
 
   const f = getRad((lat1 + lat2) / 2);
@@ -222,3 +225,13 @@ Date.prototype.format = function (format) {
   }
   return format;
 };
+
+/**
+ * Helper method to validate that string is id or not
+ * @param  {String} id the string to validate
+ */
+function validateObjectId(id) {
+  if (!ObjectId.isValid(id)) {
+    throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, `id ${id} is not valid`);
+  }
+}

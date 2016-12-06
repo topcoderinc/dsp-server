@@ -1923,6 +1923,28 @@ paths:
             $ref: "#/definitions/ErrorMsg"
 
   /provider/drones/{id}:
+    get:
+      description: Get detail of a drone
+      tags:
+        - drone
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
     put:
       description: Update a drone for the current logged in user. Provider role only.
       tags:
@@ -1980,43 +2002,6 @@ paths:
       responses:
         204:
           description: Successful operation
-        400:
-          description: Invalid parameters
-          schema:
-            $ref: "#/definitions/ErrorMsg"
-        401:
-          description: Anonymous is not allowed to access
-          schema:
-            $ref: "#/definitions/ErrorMsg"
-        403:
-          description: Non-provider is not allowed to access
-          schema:
-            $ref: "#/definitions/ErrorMsg"
-        404:
-          description: Not found. Current logged in provider does not have this drone
-          schema:
-            $ref: "#/definitions/ErrorMsg"
-        500:
-          description: Internal server error
-          schema:
-            $ref: "#/definitions/ErrorMsg"
-
-    get:
-      description: Get a drone for the current logged in user. Provider role only.
-      tags:
-        - drone
-      security:
-        - Bearer: []
-      parameters:
-        - in: path
-          name: id
-          type: string
-          required: true
-      responses:
-        200:
-          description: Successful operation
-          schema:
-            $ref: "#/definitions/Drone"
         400:
           description: Invalid parameters
           schema:
@@ -2366,6 +2351,62 @@ paths:
             $ref: "#/definitions/ErrorMsg"
         500:
           description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /dronePosition/{id}:
+    get:
+      description: Get a list of positions of a drone
+      tags:
+        - drone
+      parameters:
+        - in: path
+          description: id of drone
+          name: id
+          type: string
+          required: true
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    droneId:
+                      type: string
+                    lat:
+                      type: number
+                    lng:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
           schema:
             $ref: "#/definitions/ErrorMsg"
 

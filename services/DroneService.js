@@ -234,6 +234,7 @@ updateLocation.schema = {
  * @param id
  * @param entity
  */
+}
 function* updateLocation(id, entity) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {

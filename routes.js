@@ -112,6 +112,12 @@ module.exports = {
       method: 'get',
     },
   },
+  '/dronePosition/:id': {
+    get: {
+      controller: 'DronePositionController',
+      method: 'getPositions',
+    },
+  },
   '/missions': {
     get: {
       controller: 'MissionController',

@@ -26,6 +26,7 @@ const Review = models.Review;
 const PackageRequest = models.PackageRequest;
 const Notification = models.Notification;
 const Service = models.Service;
+const DronePosition = models.DronePosition;
 
 const drones = require('./data/drones.json');
 const users = require('./data/users.json');
@@ -37,6 +38,7 @@ const reviews = require('./data/reviews.json');
 const requests = require('./data/packageRequests.json');
 const notifications = require('./data/notifications.json');
 const providerUsers = require('./data/provider-users.json');
+const positions = require('./data/dronePositions.json');
 
 const MissionStatus = require('./enum').MissionStatus;
 const RequestStatus = require('./enum').RequestStatus;
@@ -62,10 +64,11 @@ co(function*() {
   yield Review.remove({});
   yield PackageRequest.remove({});
   yield Notification.remove({});
-
-
-  // encrypt password
-  yield _.map(users, (u) => function*() {
+  yield DronePosition.remove({});
+  logger.info(`creating ${drones.length} drones`);
+  const droneDocs = yield Drone.create(drones);
+    // encrypt password
+  yield _.map(users, (u) => function* () {
     if (u.password) {
       u.password = yield helper.hashString(u.password, config.SALT_WORK_FACTOR);
     }
@@ -201,6 +204,12 @@ co(function*() {
   });
   logger.info(`creating ${notifications.length} notifications`);
   yield Notification.create(notifications);
+
+  _.each(positions, (p) => {
+    p.droneId = droneDocs[0].id;
+  });
+  logger.info(`creating ${positions.length} dronePositions`);
+  yield DronePosition.create(positions);
 
   logger.info('data created successfully');
 }).then(() => {
