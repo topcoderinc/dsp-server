@@ -32,7 +32,7 @@ module.exports = {
  * @param {String}  packageId     the package id
  */
 function* isExsits(userId, packageId) {
-  const doc = yield SavedPackage.findOne({ user: userId, package: packageId });
+  const doc = yield SavedPackage.findOne({user: userId, package: packageId});
   return !!doc;
 }
 
@@ -49,7 +49,7 @@ create.schema = {
  *
  */
 function* create(userId, packageId) {
-  const pack = yield Package.findOne({ _id: packageId });
+  const pack = yield Package.findOne({_id: packageId});
   if (!pack) {
     throw new errors.NotFoundError(`package not found with specified id ${packageId}`);
   }
@@ -57,7 +57,7 @@ function* create(userId, packageId) {
   if (exists) {
     throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'package already saved');
   }
-  yield SavedPackage.create({ user: userId, package: packageId, provider: pack.provider });
+  yield SavedPackage.create({user: userId, package: packageId, provider: pack.provider});
 }
 
 // the joi schema for get
@@ -72,11 +72,11 @@ get.schema = {
  * @param {Object}    query       the query in url
  */
 function* get(id) {
-  const docs = yield SavedPackage.find({ user: id }).populate('package').populate('provider');
+  const docs = yield SavedPackage.find({user: id}).populate('package').populate('provider');
   return _.map(docs, (d) => {
     const sanitized = _.pick(d, 'id', 'package');
     sanitized.package = _.pick(d.package, 'id', 'name', 'imageUrl', 'thumbnailUrl',
-            'price', 'bestseller', 'promoted', 'discount');
+      'price', 'bestseller', 'promoted', 'discount');
     sanitized.package.provider = _.pick(d.provider, 'id', 'name');
     return sanitized;
   });
@@ -89,7 +89,7 @@ remove.schema = {
 };
 
 function* remove(userId, packageId) {
-  const pack = yield Package.findOne({ _id: packageId });
+  const pack = yield Package.findOne({_id: packageId});
   if (!pack) {
     throw new errors.NotFoundError(`package not found with specified id ${packageId}`);
   }
@@ -97,5 +97,5 @@ function* remove(userId, packageId) {
   if (!exists) {
     throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'package is not saved');
   }
-  yield SavedPackage.remove({ user: userId, package: packageId });
+  yield SavedPackage.remove({user: userId, package: packageId});
 }

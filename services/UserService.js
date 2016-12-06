@@ -22,6 +22,9 @@ const httpStatus = require('http-status');
 const config = require('config');
 const MailService = require('./MailService');
 const logger = require('../common/logger');
+const Role = require('../enum').Role;
+const ProviderService = require('./ProviderService');
+const _ = require('lodash');
 
 // Exports
 module.exports = {
@@ -38,7 +41,7 @@ module.exports = {
  * @param {Object}  entity        the username/email entity to check for uniqueness
  */
 function* validateUniqueUser(entity) {
-  const existingUser = yield User.findOne({ email: entity.email });
+  const existingUser = yield User.findOne({email: entity.email});
   if (existingUser) {
     throw new errors.ValidationError('email already exists in the system', httpStatus.BAD_REQUEST);
   }
@@ -52,6 +55,7 @@ register.schema = {
     email: joi.string().email().required(),
     password: joi.string().required(),
     phone: joi.string().required(),
+    role: joi.string().valid(_.values(Role)),
   }).required(),
 };
 
@@ -60,6 +64,7 @@ registerSocialUser.schema = {
   entity: joi.object().keys({
     name: joi.string().required(),
     email: joi.string().email().required(),
+    role: joi.string().valid(_.values(Role)),
   }).required(),
 };
 
@@ -69,16 +74,17 @@ registerSocialUser.schema = {
  * @param {Object}  entity        the post entity from the client
  */
 function* register(entity) {
-    // make sure the email is unique
+  // make sure the email is unique
   yield validateUniqueUser(entity);
-    // hash password, persist user and generate new jwt token for user
+  // hash password, persist user and generate new jwt token for user
   entity.password = yield helper.hashString(entity.password, config.SALT_WORK_FACTOR);
   entity.name = `${entity.firstName} ${entity.lastName}`;
 
+  entity.role = entity.role || Role.CONSUMER;
   const user = yield User.create(entity);
 
   const userObj = user.toObject();
-  const token = generateToken(userObj);
+  const token = yield generateToken(userObj);
 
   return {
     accessToken: token,
@@ -92,18 +98,19 @@ function* register(entity) {
  * @param {Object}  entity        the post entity from the client
  */
 function* registerSocialUser(entity) {
-    // make sure the email is unique
-  const existingUser = yield User.findOne({ email: entity.email });
+  // make sure the email is unique
+  const existingUser = yield User.findOne({email: entity.email});
 
   let user;
   if (existingUser) {
     user = existingUser;
   } else {
+    entity.role = entity.role || Role.CONSUMER;
     user = yield User.create(entity);
   }
 
   const userObj = user.toObject();
-  const token = generateToken(userObj);
+  const token = yield generateToken(userObj);
 
   return {
     accessToken: token,
@@ -123,10 +130,11 @@ login.schema = {
  * Generate a jwt token for specified user
  * @param  {Object}     userObj     the user for which to generate the token
  */
-function generateToken(userObj) {
-  return jwt.sign({
+function* generateToken(userObj) {
+  const jwtBody = {
     sub: userObj.id,
-  }, new Buffer(config.JWT_SECRET, 'base64'), {
+  };
+  return jwt.sign(jwtBody, new Buffer(config.JWT_SECRET, 'base64'), {
     expiresIn: config.TOKEN_EXPIRES,
     audience: config.AUTH0_CLIENT_ID,
   });
@@ -138,20 +146,20 @@ function generateToken(userObj) {
  * @param {Object}  entity        the post entity from the client
  */
 function* login(entity) {
-    // validate that email and password is valid, generate token
-  const user = yield User.findOne({ email: entity.email });
+  // validate that email and password is valid, generate token
+  const user = yield User.findOne({email: entity.email});
   if (!user) {
     throw new errors.NotFoundError('user not found with the specified email');
   }
   const valid = yield helper.validateHash(user.password, entity.password);
 
   if (valid === false) {
-        // password is not valid
+    // password is not valid
     throw new errors.HttpStatusError(401, 'password is invalid');
   }
 
   const userObj = user.toObject();
-  const token = generateToken(userObj);
+  const token = yield generateToken(userObj);
 
   return {
     accessToken: token,
@@ -176,11 +184,11 @@ function* forgotPassword(entity) {
   // print out code for debug purpose
   logger.debug(`reset password code is ${code}`);
   const text = 'You received this email because you send a reset password request to us, ' +
-        'if you never registered, please ignore. ' +
-        `The verify code is ${code}\n -- example.com`;
+    'if you never registered, please ignore. ' +
+    `The verify code is ${code}\n -- example.com`;
   const html = `<p>${text}</p>`;
 
-  const user = yield User.findOne({ email: entity.email });
+  const user = yield User.findOne({email: entity.email});
   if (!user) {
     throw new errors.NotFoundError('user not found with the specified email');
   }
@@ -207,13 +215,13 @@ resetPassword.schema = {
  * @param {Object}  entity        the post entity from the client
  */
 function* resetPassword(entity) {
-  const user = yield User.findOne({ email: entity.email });
+  const user = yield User.findOne({email: entity.email});
   if (!user) {
     throw new errors.NotFoundError('user not found with the specified email');
   }
   if (!user.resetPasswordCode ||
-        user.resetPasswordCode !== entity.code ||
-        user.resetPasswordExpiration.getTime() - new Date().getTime() < 0) {
+    user.resetPasswordCode !== entity.code ||
+    user.resetPasswordExpiration.getTime() - new Date().getTime() < 0) {
     throw new errors.HttpStatusError(400, 'invalid code');
   }
 
