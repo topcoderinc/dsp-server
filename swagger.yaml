@@ -4,6 +4,7 @@ info:
   version: "0.0.1"
   title: Drone REST API
 
+
 basePath: /api/v1
 schemes:
   - http
@@ -1076,6 +1077,13 @@ paths:
       description: Get all drones
       tags:
         - drone
+      parameters:
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
       responses:
         200:
           description: Successful operation
