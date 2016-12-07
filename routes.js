@@ -123,12 +123,34 @@ module.exports = {
       controller: 'MissionController',
       method: 'search',
     },
+    post:{
+      controller: 'MissionController',
+      middleware: [auth()],
+      method: 'create',
+    },
   },
   '/missions/:id': {
     get: {
       controller: 'MissionController',
       middleware: [auth()],
       method: 'getSingle',
+    },
+    put:{
+      controller: 'MissionController',
+      middleware: [auth()],
+      method: 'update',
+    },
+    delete:{
+      controller: 'MissionController',
+      middleware: [auth()],
+      method: 'remove',
+    },
+  },
+  '/missions/:id/download': {
+    get: {
+      controller: 'MissionController',
+      middleware: [auth()],
+      method: 'download',
     },
   },
   '/missions/:id/review': {

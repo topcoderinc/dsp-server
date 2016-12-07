@@ -22,6 +22,7 @@ module.exports = {
   monthlyCountByDrone,
   getAllByDrone,
   download,
+  remove,
 };
 
 /**
@@ -42,6 +43,16 @@ function* create(req, res) {
  */
 function* update(req, res) {
   res.json(yield MissionService.update(req.params.id, req.body));
+}
+
+/**
+ * Delete mission in the system
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* remove(req, res) {
+  res.json(yield MissionService.remove(req.params.id));
 }
 
 /**

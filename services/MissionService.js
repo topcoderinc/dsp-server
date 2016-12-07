@@ -28,13 +28,17 @@ module.exports = {
   telemetry,
   monthlyCountByDrone,
   getAllByDrone,
+  create,
+  update,
+  remove,
+  download,
 };
 
 // the joi schema for search
 search.schema = {
   entity: joi.object().keys({
     offset: joi.number().integer(),
-    limit: joi.number().integer().required(),
+    limit: joi.number().integer(),
   }).required(),
 };
 
@@ -45,10 +49,10 @@ search.schema = {
  */
 function* search(entity) {
   const total = yield Mission.find().count();
-  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit).populate('package');
+  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit||100).populate('package');
   return {
     total,
-    items: _.map(docs, (d) => ({id: d.id, package: d.package.toObject()})),
+    items: _.map(docs, (d) => (d.toObject())),
   };
 }
 
@@ -67,11 +71,69 @@ function* getSingle(id, userId) {
   if (!mission) {
     throw new errors.NotFoundError(`mission not found with specified id ${id}`);
   }
-
-  if (mission.pilot.toString() !== userId) {
-    throw new errors.HttpStatusError(403, 'no permission');
-  }
   return mission.toObject();
+}
+
+/**
+ * Get a mission identified by id
+ */
+function* create(entity) {
+  const created = yield Mission.create(entity);
+  return created.toObject();
+}
+
+/**
+ * Get a mission identified by id
+ */
+function* update(id,entity) {
+  const mission = yield Mission.findOne({_id: id});
+  if (!mission) {
+    throw new errors.NotFoundError(`Mission not found`);
+  }
+  _.extend(mission, entity);
+  yield mission.save();
+  return mission.toObject();
+}
+
+/**
+ * Delete a mission identified by id
+ */
+function* remove(id) {
+  const mission = yield Mission.findOne({_id: id});
+  if (!mission) {
+    throw new errors.NotFoundError(`Mission not found`);
+  }
+  yield mission.remove();
+}
+
+/**
+ * Prepare a mission file from the specified parameters, plannedHomePosition, missionItems
+ * @return {Object}       the mission file schema
+ */
+function prepareMissionFile(plannedHomePosition, missionItems) {
+  return {
+    MAV_AUTOPILOT: 4,
+    complexItems: [],
+    groundStation: 'QGroundControl',
+    items: missionItems,
+    plannedHomePosition,
+    version: '1.0',
+  };
+}
+
+/**
+ * Get a mission identified by id
+ */
+function* download(id) {
+  const mission = yield Mission.findOne({_id: id});
+  if (!mission) {
+    throw new errors.NotFoundError(`Mission not found`);
+  }
+  const missionFile = prepareMissionFile(mission.plannedHomePosition, mission.missionItems);
+  return {
+    missionFile,
+    name: mission.missionName,
+  };
 }
 
 
