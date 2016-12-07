@@ -1104,6 +1104,31 @@ paths:
       description: Get all drones
       tags:
         - drone
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+        -
+          in: query
+          name: statuses
+          description: the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
+          type: array
+          items:
+            type: string
+        -
+          in: query
+          name: sortBy
+          description: the sort column. Allowed values 'serialNumber', 'name', 'type', 'mileage', '-serialNumber', '-name', '-type', '-mileage'
+          type: string
       responses:
         200:
           description: Successful operation
