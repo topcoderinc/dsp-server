@@ -13,11 +13,20 @@
 
 const _ = require('lodash');
 const PackageRequestService = require('../services/PackageRequestService');
-
+const helper = require('../common/helper');
 // Exports
 module.exports = {
   create,
   get,
+  search,
+  accept,
+  reject,
+  assignDrone,
+  cancel,
+  complete,
+  getSingleByProvider,
+  missionEstimation,
+  missionTelemetry,
 };
 
 /**
@@ -27,7 +36,7 @@ module.exports = {
  * @param res the response
  */
 function* create(req, res) {
-  const entity = _.extend(req.body, { user: req.auth.sub, package: req.params.id });
+  const entity = _.extend(req.body, {user: req.auth.sub, package: req.params.id});
   res.status(201).json(yield PackageRequestService.create(entity));
 }
 
@@ -39,4 +48,75 @@ function* create(req, res) {
  */
 function* get(req, res) {
   res.json(yield PackageRequestService.get(req.auth.sub, req.query));
+}
+
+
+/**
+ *  get all packageRequests of current provider and lauchDate,statuses
+ * @param req
+ * @param res
+ */
+function* search(req, res) {
+  yield helper.splitQueryToArray(req.query, 'statuses');
+  res.json(yield PackageRequestService.search(req.auth.payload.providerId, req.query));
+}
+
+/**
+ * get a request detail by provider and request id
+ * @param req
+ * @param res
+ */
+function* getSingleByProvider(req, res) {
+  res.json(yield PackageRequestService.getSingleByProvider(req.auth.payload.providerId, req.params.id));
+}
+/**
+ * accept a request by provider and request id
+ * @param req
+ * @param res
+ */
+function* accept(req, res) {
+  res.json(yield PackageRequestService.accept(req.auth.payload.providerId, req.params.id));
+}
+
+/**
+ * reject a request by provider and request id
+ * @param req
+ * @param res
+ */
+function* reject(req, res) {
+  res.json(yield PackageRequestService.reject(req.auth.payload.providerId, req.params.id));
+}
+
+/**
+ * reject a request by provider and request id
+ * @param req
+ * @param res
+ */
+function* cancel(req, res) {
+  res.json(yield PackageRequestService.cancel(req.auth.payload.providerId, req.params.id));
+}
+
+/**
+ * Assign drone to a pending request of the current logged in user. Provider role only.
+ * @param req
+ * @param res
+ */
+function* assignDrone(req, res) {
+  res.json(yield PackageRequestService.assignDrone(req.auth.payload.providerId, req.params.id, req.body));
+}
+
+/**
+ * complete a request by provider and request id
+ * @param req
+ * @param res
+ */
+function* complete(req, res) {
+  res.json(yield PackageRequestService.complete(req.auth.payload.providerId, req.params.id));
+}
+
+function* missionEstimation(req, res) {
+  res.json(yield PackageRequestService.missionEstimation(req.auth.payload.providerId, req.params.id, req.body));
+}
+function* missionTelemetry(req, res) {
+  res.json(yield PackageRequestService.missionTelemetry(req.auth.payload.providerId, req.params.id, req.body));
 }

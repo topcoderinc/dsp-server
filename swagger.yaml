@@ -1,7 +1,7 @@
 swagger: '2.0'
 
 info:
-  version: "0.2.1201b"
+  version: "0.0.1"
   title: Drone REST API
 
 basePath: /api/v1
@@ -12,6 +12,11 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
+
+consumes:
+- application/json
+produces:
+- application/json
 
 paths:
   /login:
@@ -55,7 +60,7 @@ paths:
             $ref: "#/definitions/ErrorMsg"
   /login/social:
     post:
-      description: Authenticate the user via social network (if not registered, it should auto-register)
+      description: Authenticate the user via social network (if not registered, it should auto-register a consumer user)
       produces:
         - application/json
       tags:
@@ -109,6 +114,25 @@ paths:
                 type: string
               phone:
                 type: string
+              role:
+                type: string
+                description: user role
+                enum:
+                  - provider
+                  - consumer
+                  - admin
+              provider:
+                type: obejct
+                description: if `role` is provider, then this one is required
+                properties:
+                  name:
+                    type: string
+                  status:
+                    enum:
+                      - active
+                      - inactive
+                  location:
+                    $ref: "#/definitions/Address"
             required:
               - email
               - password
@@ -827,6 +851,34 @@ paths:
           description: invalid parameters
           schema:
             $ref: "#/definitions/ErrorMsg"
+    post:
+      description: Create mission
+      tags:
+       - mission
+      parameters:
+        -
+          name: body
+          in: body
+          schema:
+            $ref: "#/definitions/MissionReq"
+          required: true
+
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  $ref: "#/definitions/MissionPublic"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
   /missions/{id}:
     get:
@@ -1052,6 +1104,72 @@ paths:
           description: package not found
           schema:
             $ref: "#/definitions/ErrorMsg"
+  /drones:
+    get:
+      description: Get all drones
+      tags:
+        - drone
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+        -
+          in: query
+          name: statuses
+          description: the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
+          type: array
+          items:
+            type: string
+        -
+          in: query
+          name: sortBy
+          description: the sort column. Allowed values 'serialNumber', 'name', 'type', 'mileage', '-serialNumber', '-name', '-type', '-mileage'
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Drone"
+  /drones/{id}:
+    put:
+      description: Update a drone's location
+      tags:
+        - drone
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the drone location data
+          schema:
+            $ref: "#/definitions/DroneUpdateReq"
+          required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
   /requests:
     get:
@@ -1178,23 +1296,661 @@ paths:
           schema:
             $ref: "#/definitions/ErrorMsg"
 
-  /drones:
+  /provider/dashboard:
     get:
-      description: Get all drones
+      description: Get the dashboard information for thee current logged in user. Provider role only.
+      tags:
+        - dashboard
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              pendingRequestCount:
+                type: number
+              scheduledMissionCount:
+                type: number
+              inProgressMissionCount:
+                type: number
+              completedMissionCount:
+                type: number
+              droneCount:
+                type: number
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests:
+    get:
+      description: Search package requests of the current logged in user. Sort by request's created date DESC. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: limit
+          description: the search limit
+          type: integer
+          required: true
+        - in: query
+          name: offset
+          description: the search offset
+          type: integer
+        - in: query
+          name: statuses
+          description: the request statuses filter. Refer to `Const.RequestStatus` in js model
+          type: array
+          items:
+            type: string
+        - in: query
+          name: launchDate
+          description: the launch date filter
+          type: string
+          format: date
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  # Package Request
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    serviceName:
+                      type: string
+                    launchDate:
+                      type: string
+                    startingPoint:
+                      $ref: "#/definitions/Address"
+                    destinatitonPoint:
+                      $ref: "#/definitions/Address"
+                    distance:
+                      type: number
+                    payout:
+                      type: number
+                    packageName:
+                      type: string
+                    whatToBeDelivered:
+                      type: string
+                    weight:
+                      type: number
+                    customer:
+                      type: object
+                      properties:
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        address:
+                          $ref: "#/definitions/Address"
+                        phone:
+                          type: string
+                        email:
+                          type: string
+                        photoUrl:
+                          type: string
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/accept:
+    post:
+      description: Accept a new/pending request of the current logged in user, then generate a notification to customer. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/reject:
+    post:
+      description: Reject a new/pending request of the current logged in user, then generate a notification to customer. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/cancel:
+    post:
+      description: Cancel a scheduled / in-progress request of the current logged in user, then generate a notification to customer. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/assign-drone:
+    post:
+      description: Assign drone to a pending request of the current logged in user. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the request data
+          schema:
+            $ref: "#/definitions/AssignDroneReq"
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}:
+    get:
+      description: Get details of a request of the current logged in user. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            # Package Request
+            type: object
+            properties:
+              id:
+                type: string
+              serviceName:
+                type: string
+              launchDate:
+                type: string
+              startingPoint:
+                $ref: "#/definitions/Address"
+              destinatitonPoint:
+                $ref: "#/definitions/Address"
+              distance:
+                type: number
+              payout:
+                type: number
+              packageName:
+                type: string
+              whatToBeDelivered:
+                type: string
+              weight:
+                type: number
+              customer:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  address:
+                    $ref: "#/definitions/Address"
+                  phone:
+                    type: string
+                  email:
+                    type: string
+                  photoUrl:
+                    type: string
+              mission:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  pilot:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  startingPoint:
+                    $ref: "#/definitions/Address"
+                  destinationPoint:
+                    $ref: "#/definitions/Address"
+                  startedAt:
+                    type: string
+                  completedAt:
+                    type: string
+                  telemetry:
+                    type: object
+                    properties:
+                      lat:
+                        type: number
+                      long:
+                        type: number
+                      speed:
+                        type: number
+                      distance:
+                        type: number
+                  eta:
+                    type: number
+                  frontCameraUrl:
+                    type: string
+                  backCameraUrl:
+                    type: string
+                  gallery:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        thumbnailUrl:
+                          type: string
+                        videoUrl:
+                          type: string
+                        imageUrl:
+                          type: string
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/complete:
+    post:
+      description: Complete a request of the current logged in user, then generate a notification to customer. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/mission-estimation:
+    post:
+      description: Update mission estimation of an in-progress request of the current logged in user. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the request data
+          schema:
+            $ref: "#/definitions/MissionEstimationReq"
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/requests/{id}/mission-telemetry:
+    post:
+      description: Update mission telemetry of a completed request of the current logged in user. Provider role only.
+      tags:
+        - request
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: the request id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the request data
+          schema:
+            $ref: "#/definitions/MissionTelemetryReq"
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. The provider does not have this request
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/drones/current-locations:
+    get:
+      description: Get status and location of all drones of the current logged in user. Provider role only.
       tags:
         - drone
+      security:
+        - Bearer: []
       responses:
         200:
           description: Successful operation
           schema:
             type: array
             items:
-              $ref: "#/definitions/Drone"
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: drone status
+                currentLocation:
+                  type: array
+                  items:
+                    type: number
+                  description: "[long, lat] coordinate"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
-    post:
-      description: Create a drone
+  /provider/drones:
+    get:
+      description: Search drones that the current logged in user provides. Provider role only.
       tags:
         - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: limit
+          description: the search limit
+          type: integer
+          required: true
+        - in: query
+          name: offset
+          description: the search offset
+          type: integer
+        - in: query
+          name: statuses
+          description: the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
+          type: array
+          items:
+            type: string
+        - in: query
+          name: sortBy
+          description: the sort field. Allowed `serialNumber`, `name`, `type`, `mileage`. Default order is ascending. Prefix with `-` for descending order e.g. `-name`
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  # Drone
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    imageUrl:
+                      type: string
+                    thumbnailUrl:
+                      type: string
+                    serialNumber:
+                      type: string
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    mileage:
+                      type: number
+                    minSpeed:
+                      type: number
+                    maxSpeed:
+                      type: number
+                    maxFlightTime:
+                      type: number
+                    maxCargoWeight:
+                      type: number
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+    post:
+      description: Create a drone for the current logged in user. Provider role only.
+      tags:
+        - drone
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -1203,30 +1959,36 @@ paths:
             $ref: "#/definitions/Drone"
           required: true
       responses:
-        200:
-          description: successful operation
+        201:
+          description: Successful operation
           schema:
             $ref: "#/definitions/Drone"
         400:
-          description: invalid parameters
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
           schema:
             $ref: "#/definitions/ErrorMsg"
 
-  /drones/{id}:
-    put:
-      description: Update a drone's location
+  /provider/drones/{id}:
+    get:
+      description: Get detail of a drone
       tags:
         - drone
       parameters:
         - in: path
           name: id
           type: string
-          required: true
-        - in: body
-          name: body
-          description: the drone location data
-          schema:
-            $ref: "#/definitions/DroneUpdateReq"
           required: true
       responses:
         200:
@@ -1241,38 +2003,616 @@ paths:
           description: drone not found
           schema:
             $ref: "#/definitions/ErrorMsg"
+    put:
+      description: Update a drone for the current logged in user. Provider role only.
+      tags:
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the drone request data
+          schema:
+            $ref: "#/definitions/Drone"
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Drone"
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not have this drone
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+    delete:
+      description: Delete a drone for the current logged in user. Provider role only.
+      tags:
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+      responses:
+        204:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not have this drone
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/drones/{droneId}/missions/monthly-count:
+    get:
+      description: Get the number of drone missions for each day in a specific month for the current logged in user. Provider role only.
+      tags:
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: droneId
+          type: string
+          required: true
+        - in: query
+          name: month
+          type: string
+          description: the month to count, e.g. Nov-2016
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                date:
+                  type: string
+                count:
+                  type: number
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not have this drone
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/drones/{droneId}/missions:
+    get:
+      description: Get drone missions for the current logged in user. Always sort by mission start time DESC. Provider role only.
+      tags:
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: droneId
+          type: string
+          required: true
+        - in: query
+          name: date
+          type: string
+          description: "the mission start date filter, e.g. 15-Nov-2016"
+        - in: query
+          name: status
+          type: string
+          description: the mission status filter. Allowed `waiting`, `in-progress`, `completed`
+        - in: query
+          name: limit
+          type: integer
+          description: the search limit
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                startedAt:
+                  type: string
+                serviceName:
+                  type: string
+                startingPoint:
+                  $ref: "#/definitions/Address"
+                destinationPoint:
+                  $ref: "#/definitions/Address"
+                rating:
+                  type: integer
+                whatToBeDelivered:
+                  type: string
+                weight:
+                  type: number
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not have this drone
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/services:
+    get:
+      description: Search services that the current logged in user provides. Provider role only.
+      tags:
+        - service
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: limit
+          description: the search limit
+          type: integer
+          required: true
+        - in: query
+          name: offset
+          description: the search offset
+          type: integer
+        - in: query
+          name: sortBy
+          description: the sort field. Allowed `name`, `pricing`. Default order is ascending. Prefix with `-` for descending order e.g. `-name`.
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  # Service
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    pricing:
+                      type: string
+                    description:
+                      type: string
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+    post:
+      description: Create a new service with its packages for the current logged in user. Provider role only.
+      tags:
+        - service
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: body
+          description: the service and packages request data
+          schema:
+            $ref: "#/definitions/Service"
+          required: true
+      responses:
+        201:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /provider/services/{id}:
+    delete:
+      description: Delete the service and its packages for the current logged in user. Provider role only.
+      tags:
+        - service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+      responses:
+        204:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not offer this service
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+    get:
+      description: Get the service and its packages for the current logged in user. Provider role only.
+      tags:
+        - service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not offer this service
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+    put:
+      description: Update the service and create/update/delete its packages for the current logged in user. Provider role only.
+      tags:
+        - service
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: the service and its packages request data
+          schema:
+            $ref: "#/definitions/Service"
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-provider is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in provider does not offer this service
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /dronePosition/{id}:
+    get:
+      description: Get a list of positions of a drone
+      tags:
+        - drone
+      parameters:
+        - in: path
+          description: id of drone
+          name: id
+          type: string
+          required: true
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: true
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    droneId:
+                      type: string
+                    lat:
+                      type: number
+                    lng:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: drone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
 definitions:
-  User:
+  MissionReq:
     type: object
     properties:
-      id:
+      missionName:
         type: string
-      firstName:
+      plannedHomePosition:
         type: string
-      lastName:
+      missionItems:
         type: string
-      phone:
+      status:
         type: string
-      role:
+      drone:
         type: string
-  Category:
+      provider:
+        type: string
+      package:
+        type: string
+      pilot:
+        type: string
+      startingPoint:
+        type: string
+      startedAt:
+        type: string
+      completedAt:
+        type: string
+      scheduledAt:
+        type: string
+      telemetry:
+        type: string
+      eta:
+        type: string
+      frontCameraUrl:
+        type: string
+      backCameraUrl:
+        type: string
+      gallery:
+        type: string
+      rating:
+        type: string
+      specialRequirements:
+        type: string
+      notes:
+        type: string
+      weight:
+        type: string
+      whatToBeDelivered:
+        type: string
+      estimation:
+        type: string
+      result:
+        type: string
+    required:
+      - status
+  MissionEstimationReq:
+    type: object
+    properties:
+      launchTime:
+        type: string
+        format: date
+      speed:
+        type: number
+      distance:
+        type: number
+      time:
+        type: number
+    required:
+      - launchTime
+      - speed
+      - distance
+      - time
+
+  MissionTelemetryReq:
+    type: object
+    properties:
+      startedAt:
+        type: string
+        format: date
+      completedAt:
+        type: string
+        format: date
+      distance:
+        type: number
+      averageSpeed:
+        type: number
+      maxSpeed:
+        type: number
+      minSpeed:
+        type: number
+      gallery:
+        type: array
+        items:
+          type: object
+          properties:
+            thumbnailUrl:
+              type: string
+            videoUrl:
+              type: string
+            imageUrl:
+              type: string
+    required:
+      - startedAt
+      - completedAt
+      - distance
+      - averageSpeed
+      - minSpeed
+      - maxSpeed
+
+  AssignDroneReq:
+    type: object
+    properties:
+      droneId:
+        type: string
+      scheduledLaunchDate:
+        type: string
+      specialRequirements:
+        type: array
+        items:
+          type: string
+      notes:
+        type: string
+    required:
+      - droneId
+      - scheduledLaunchDate
+
+  Service:
     type: object
     properties:
       id:
         type: string
       name:
         type: string
-
-  Rating:
-    type: object
-    properties:
-      count:
-        type: number
-      sum:
-        type: number
-      avg:
-        type: number
+      pricing:
+        type: string
+      description:
+        type: string
+      packages:
+        type: array
+        description: Service must have at least 1 package
+        items:
+          $ref: "#/definitions/Package"
+    required:
+      - name
+      - pricing
+      - description
 
   Package:
     type: object
@@ -1283,21 +2623,103 @@ definitions:
         type: string
       description:
         type: string
-      longDescription:
+      deliverySpeed:
+        type: number
+      costPerMile:
+        type: number
+      insuranceClaim:
+        type: number
+      maxWeight:
+        type: number
+      price:
+        type: number
+      discountPrice:
+        type: number
+    required:
+      - name
+      - description
+      - price
+
+  Drone:
+    type: object
+    properties:
+      id:
         type: string
-      shortDescription:
+      serialNumber:
         type: string
+      name:
+        type: string
+      type:
+        type: string
+      minSpeed:
+        type: number
+      maxSpeed:
+        type: number
+      maxFlightTime:
+        type: number
+      maxCargoWeight:
+        type: number
+      maxAltitude:
+        type: number
+      cameraResolution:
+        type: number
+      videoResolution:
+        type: number
+      hasWiFi:
+        type: boolean
+      hasBluetooth:
+        type: boolean
+      engineType:
+        type: string
+      numberOfRotors:
+        type: integer
+      hasAccelerometer:
+        type: boolean
+      hasGyroscope:
+        type: boolean
+      hasRadar:
+        type: boolean
+      hasGPS:
+        type: boolean
+      hasObstacleSensors:
+        type: boolean
+      hasUltraSonicAltimeter:
+        type: boolean
       imageUrl:
         type: string
-      thumbnailUrl:
-        type: string
-      sponsored:
-        type: boolean
-      promoted:
-        type: boolean
-      discount:
+      mileage:
         type: number
+      status:
+        type: string
+        enum:
+          - in-motions
+          - idle-ready
+          - idle-busy
+      specificationContent:
+        type: string
+      specificationImageUrl:
+        type: string
+      specificationPDFUrl:
+        type: string
+    required:
+      - serialNumber
+      - name
+      - type
 
+  LoginRes:
+    type: object
+    properties:
+      accessToken:
+        type: string
+      user:
+        $ref: "#/definitions/User"
+  Category:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
   Notification:
     type: object
     properties:
@@ -1317,7 +2739,35 @@ definitions:
       readAt:
         type: string
         format: date
-
+  MissionPublic:
+    type: object
+    properties:
+      id:
+        type: string
+      package:
+        $ref: "#/definitions/Package"
+  Rating:
+    type: object
+    properties:
+      count:
+        type: number
+      sum:
+        type: number
+      avg:
+        type: number
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
 
   Address:
     type: object
@@ -1332,58 +2782,12 @@ definitions:
         type: string
       city:
         type: string
+      state:
+        type: string
       postalCode:
         type: string
       primary:
         type: boolean
-
-  MissionPublic:
-    type: object
-    properties:
-      id:
-        type: string
-      package:
-        $ref: "#/definitions/Package"
-
-  ErrorMsg:
-    type: object
-    properties:
-      error:
-        type: string
-      status:
-        type: number
-
-  LoginRes:
-    type: object
-    properties:
-      accessToken:
-        type: string
-      user:
-        $ref: "#/definitions/User"
-
-  Drone:
-    type: object
-    properties:
-      id:
-        type: string
-      name:
-        type: string
-      deviceId:
-        type: string
-        description: the hardware id of the device that is updating the gps
-      status:
-        type: string
-        description: drone status, allow idle-ready, idle-busy, in-motion
-      lat:
-        type: number
-      lng:
-        type: number
-    required:
-      - name
-      - status
-      - lat
-      - lng
-
   DroneUpdateReq:
     type: object
     properties:
@@ -1391,8 +2795,13 @@ definitions:
         type: number
       lng:
         type: number
-      deviceId:
-        type: string
     required:
       - lat
       - lng
+  ErrorMsg:
+    type: object
+    properties:
+      error:
+        type: string
+      status:
+        type: number

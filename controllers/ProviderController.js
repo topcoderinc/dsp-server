@@ -21,6 +21,7 @@ module.exports = {
   getPackages,
   getMissions,
   getReviews,
+  dashboard,
 };
 
 /**
@@ -72,4 +73,13 @@ function* getMissions(req, res) {
  */
 function* getReviews(req, res) {
   res.json(yield ProviderService.getReviews(req.params.id, req.query));
+}
+
+/**
+ * get Dashboard of provider
+ * @param req
+ * @param res
+ */
+function* dashboard(req, res) {
+  res.json(yield ProviderService.dashboard(req.auth.payload.providerId));
 }

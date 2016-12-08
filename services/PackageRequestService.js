@@ -14,14 +14,33 @@ const joi = require('joi');
 const _ = require('lodash');
 
 const Package = require('../models').Package;
+const User = require('../models').User;
+const Mission = require('../models').Mission;
+const MissionStatus = require('../enum').MissionStatus;
+const MissionService = require('../services/MissionService');
+
+const Drone = require('../models').Drone;
+const Service = require('../models').Service;
 const PackageRequest = require('../models').PackageRequest;
 const errors = require('common-errors');
 const enums = require('../enum');
-
+const helper = require('../common/helper');
+const RequestStatus = require('../enum').RequestStatus;
+const NotificationService = require('../services/NotificationService');
+const NotificationType = require('../enum').NotificationType;
 // Exports
 module.exports = {
   get,
   create,
+  search,
+  accept,
+  reject,
+  cancel,
+  getSingleByProvider,
+  assignDrone,
+  complete,
+  missionEstimation,
+  missionTelemetry,
 };
 
 // the joi schema for search
@@ -49,7 +68,7 @@ create.schema = {
  * @param {Object}    entity          the parsed request body
  */
 function* create(entity) {
-  const pack = yield Package.findOne({ _id: entity.package });
+  const pack = yield Package.findOne({_id: entity.package});
   if (!pack) {
     throw new errors.NotFoundError(`package not found with specified id ${entity.package}`);
   }
@@ -79,13 +98,13 @@ get.schema = {
  * @param {Object}    query       the query in url
  */
 function* get(id, query) {
-  const criteria = { user: id };
+  const criteria = {user: id};
   if (query.status) {
     criteria.status = query.status;
   }
   const total = yield PackageRequest.find(criteria).count();
   const docs = yield PackageRequest.find(criteria).skip(query.offset || 0).limit(query.limit)
-        .populate('mission').populate('provider').populate('package');
+    .populate('mission').populate('provider').populate('package');
   return {
     total,
     items: _.map(docs, (d) => {
@@ -95,11 +114,306 @@ function* get(id, query) {
           id: d.mission.id,
         };
       }
-
       sanitized.package = _.pick(d.package, 'id', 'name');
       sanitized.provider = _.pick(d.provider, 'id', 'name');
-
       return sanitized;
     }),
   };
+}
+
+
+search.schema = {
+  providerId: joi.string().required(),
+  entity: joi.object().keys({
+    limit: joi.number().integer().required(),
+    offset: joi.number().integer(),
+    statuses: joi.array().items(joi.string().valid(_.values(enums.RequestStatus))),
+    launchDate: joi.date(),
+  }).required(),
+};
+/**
+ * get all request by provider id and status,launchDate
+ * @param provider_id the provider id
+ * @param entity
+ */
+function* search(providerId, entity) {
+  const criteria = {provider: providerId};
+  if (!_.isNil(entity.statuses)) {
+    criteria.status = {$in: entity.statuses};
+  }
+  if (!_.isNil(entity.launchDate)) {
+    const date = new Date(entity.launchDate);
+    criteria.launchDate = {$gte: date, $lte: date.getTime() + (24 * 60 * 60 * 1000)};
+  }
+
+  const total = yield PackageRequest.find(criteria).count();
+  const docs = yield PackageRequest.find(criteria).sort({createdAt: -1}).skip(entity.offset || 0).limit(entity.limit)
+    .populate('mission').populate('user').populate('package');
+
+  const items = [];
+  for (let i = 0; i < docs.length; i++) {
+    const d = docs[i];
+    const sanitized = _.pick(d, 'id', 'launchDate', 'whatToBeDelivered', 'weight', 'payout');
+    sanitized.startingPoint = d.startingPoint.toObject();
+    sanitized.destinationPoint = d.destinationPoint.toObject();
+    sanitized.serviceName = (yield Service.findOne({_id: d.package.service})).name;
+    sanitized.packageName = d.package.name;
+    sanitized.customer = _.pick(d.user, 'firstName', 'lastName', 'phone', 'email');
+    sanitized.customer.adress = d.user.address.toObject();
+    sanitized.customer.photoUrl = d.user.avatarUrl;
+    sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates,
+      sanitized.destinationPoint.coordinates);
+    items.push(sanitized);
+  }
+  return {
+    total,
+    items,
+  };
+}
+
+/**
+ * get a request by providerId and requestId , it's private function use for accept,complete,etc...
+ * @param providerId
+ * @param requestId
+ * @return {*}
+ * @private
+ */
+function * _getSingleByProvider(providerId, requestId) {
+  const request = yield PackageRequest.findOne({provider: providerId, _id: requestId});
+  if (!request) {
+    throw new errors.NotFoundError('The provider does not have this request');
+  }
+  return request;
+}
+
+/**
+ * accept a request by provider and request id , if status is not pending , it will raise an ArgumentError
+ * @param providerId
+ * @param requestId
+ */
+function* accept(providerId, requestId) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+
+
+  if (request.status === RequestStatus.PENDING) {
+    request.status = RequestStatus.SCHEDULED;
+    yield request.save();
+  } else {
+    throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to accept`, 400);
+  }
+  yield NotificationService.create(request.user.toString(), NotificationType.REQUEST_ACCEPTED, {});
+}
+
+/**
+ * reject a request by provider and request id , if status is not pending , it will raise an ArgumentError
+ * @param providerId
+ * @param requestId
+ */
+function* reject(providerId, requestId) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+  if (request.status === RequestStatus.PENDING) {
+    request.status = RequestStatus.REJECTED;
+    yield request.save();
+  } else {
+    throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to reject`, 400);
+  }
+  yield NotificationService.create(request.user.toString(), NotificationType.REQUEST_REJECTED, {});
+}
+
+
+/**
+ * Cancel a scheduled / in-progress request of the current logged in user,
+ * then generate a notification to customer. Provider role only.
+ * @param providerId
+ * @param requestId
+ */
+function* cancel(providerId, requestId) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+  if (request.status === RequestStatus.SCHEDULED || request.status === RequestStatus.IN_PROGRESS) {
+    request.status = RequestStatus.CANCELLED;
+    yield request.save();
+  } else {
+    throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to cancel`, 400);
+  }
+  yield NotificationService.create(request.user.toString(), NotificationType.REQUEST_CANCELLED, {});
+}
+
+/**
+ * complete a request by provider and request id , if status is not in-progress , it will raise an ArgumentError
+ * @param providerId
+ * @param requestId
+ */
+function* complete(providerId, requestId) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+  if (request.status === RequestStatus.IN_PROGRESS) {
+    request.status = RequestStatus.COMPLETED;
+    yield request.save();
+  } else {
+    throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to cancel`, 400);
+  }
+}
+
+
+assignDrone.schema = {
+  providerId: joi.string().required(),
+  requestId: joi.string().required(),
+  entity: joi.object().keys({
+    droneId: joi.string().required(),
+    scheduledLaunchDate: joi.string().required(),
+    specialRequirements: joi.array().items(joi.string()),
+    notes: joi.string(),
+  }).required(),
+};
+/**
+ * Assign drone to a pending request of the current logged in user. Provider role only.
+ * if status is not pending , raise a ArgumentError
+ * if drone not belong provider , raise a ArgumentError
+ * @param providerId
+ * @param requestId
+ */
+
+function* assignDrone(providerId, requestId, entity) {
+  const request = yield PackageRequest.findOne({provider: providerId, _id: requestId}).populate('service');
+
+  if (!request) {
+    throw new errors.NotFoundError('The provider does not have this request');
+  }
+
+  if (request.status !== RequestStatus.PENDING) {
+    throw new errors.ArgumentError(`cannot assign drone in request status = ${request.status}`);
+  }
+
+  const drone = yield Drone.findOne({_id: entity.droneId});
+  if (!drone) {
+    throw new errors.ArgumentError(`provider dont have drone id = ${entity.droneId}`);
+  }
+
+  if (drone.provider.toString() !== providerId) {
+    throw new errors.NotPermittedError('Current logged in provider does not have permission');
+  }
+
+  // if mission not exist , create mission bind it
+  let mission = yield Mission.findOne({_id: request.mission});
+  if (!mission) {
+    mission = yield Mission.create({
+      status: MissionStatus.SCHEDULED,
+      drone,
+      provider: providerId,
+      package: request.package,
+      pilot: drone.pilots[Math.floor(Math.random() * drone.pilots.length)],
+      startingPoint: request.startingPoint,
+      destinationPoint: request.destinationPoint,
+    });
+  }
+
+  mission.drone = drone;
+  mission.status = MissionStatus.WAITING;
+
+  mission.weight = request.weight;
+  mission.whatToBeDelivered = request.whatToBeDelivered;
+  mission.notes = entity.notes;
+  mission.scheduledAt = entity.scheduledLaunchDate;
+  mission.specialRequirements = entity.specialRequirements;
+  yield mission.save();
+
+  request.mission = mission;
+  request.launchDate = entity.scheduledLaunchDate;
+
+  yield request.save();
+}
+
+/**
+ * get a request by provider id and request id
+ * @param providerId the provider id
+ * @param requestId the request id
+ */
+function* getSingleByProvider(providerId, requestId) {
+  const request = yield PackageRequest.findOne({provider: providerId, _id: requestId})
+    .populate('mission').populate('user').populate('package');
+  if (!request) {
+    throw new errors.NotFoundError('The provider does not have this request');
+  }
+  const d = request;
+  const sanitized = _.pick(d, 'id', 'launchDate', 'whatToBeDelivered', 'weight', 'payout');
+  sanitized.startingPoint = d.startingPoint.toObject();
+  sanitized.destinationPoint = d.destinationPoint.toObject();
+  sanitized.packageName = d.package.name;
+  sanitized.serviceName = (yield Service.findOne({_id: d.package.service})).name;
+  sanitized.customer = _.pick(d.user, 'firstName', 'lastName', 'phone', 'email');
+  sanitized.customer.adress = d.user.address.toObject();
+  sanitized.customer.photoUrl = d.user.avatarUrl;
+  sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates, sanitized.destinationPoint.coordinates);
+
+  if (d.mission) {
+    const pilot = _.pick(yield User.findOne({_id: d.mission.pilot}), '_id', 'name');
+    sanitized.mission = _.pick(d.mission, 'id', 'status', 'startedAt', 'gallery',
+      'completedAt', 'telemetry', 'eta', 'frontCameraUrl', 'backCameraUrl');
+    sanitized.mission.gallery = _.map(d.mission.gallery, (g) => g.toObject());
+    sanitized.mission.startingPoint = d.mission.startingPoint.toObject();
+    sanitized.mission.destinationPoint = d.mission.destinationPoint.toObject();
+    sanitized.mission.pilot = {id: pilot._id, name: pilot.name};
+  }
+  return sanitized;
+}
+
+
+missionEstimation.schema = {
+  providerId: joi.string().required(),
+  requestId: joi.string().required(),
+  entity: joi.object().keys({
+    launchTime: joi.string().required(),
+    speed: joi.number().required(),
+    distance: joi.number().required(),
+    time: joi.number().required(),
+  }).required(),
+};
+/**
+ * Update mission estimation of an in-progress request of the current logged in user. Provider role only.
+ * @param providerId
+ * @param requestId
+ * @param entity
+ */
+function* missionEstimation(providerId, requestId, entity) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+  if (!request.mission) {
+    throw new errors.ArgumentError(`the request dont have mission , request id = ${requestId}`);
+  }
+
+  return yield MissionService.estimation(request.mission.toString(), entity);
+}
+
+
+missionTelemetry.schema = {
+  providerId: joi.string().required(),
+  requestId: joi.string().required(),
+  entity: joi.object().keys({
+    startedAt: joi.date().required(),
+    completedAt: joi.date().required(),
+    distance: joi.number().required(),
+    averageSpeed: joi.number().required(),
+    maxSpeed: joi.number().required(),
+    minSpeed: joi.number().required(),
+    gallery: joi.array().items(joi.object().keys({
+      thumbnailUrl: joi.string(),
+      videoUrl: joi.string(),
+      imageUrl: joi.string(),
+    })),
+  }).required(),
+};
+
+
+/**
+ * Update mission telemetry of a completed request of the current logged in user. Provider role only.
+ *
+ * put values to mission telemetry, and update mission result
+ * @param providerId
+ * @param requestId
+ * @param entity
+ */
+function* missionTelemetry(providerId, requestId, entity) {
+  const request = yield _getSingleByProvider(providerId, requestId);
+  if (!request.mission) {
+    throw new errors.ArgumentError(`the request dont have mission , request id = ${request._id}`);
+  }
+  return yield MissionService.telemetry(request.mission.toString(), entity);
 }

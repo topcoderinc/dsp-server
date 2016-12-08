@@ -1,0 +1,50 @@
+[
+  {
+    "name": "provider1",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider1@qq.com",
+    "password": "123456",
+    "role": "provider"
+  },
+  {
+    "name": "provider2",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider2@qq.com",
+    "password": "123456",
+    "role": "provider"
+  },
+  {
+    "name": "provider3",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider3@qq.com",
+    "password": "123456",
+    "role": "provider"
+  },
+  {
+    "name": "provider4",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider4@qq.com",
+    "password": "123456",
+    "role": "provider"
+  },
+  {
+    "name": "provider5",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider5@qq.com",
+    "password": "123456",
+    "role": "provider"
+  },
+  {
+    "name": "provider6",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "provider6@qq.com",
+    "password": "123456",
+    "role": "provider"
+  }
+]
