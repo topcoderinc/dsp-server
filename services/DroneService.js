@@ -120,7 +120,7 @@ function* update(providerId, id, entity) {
 
 const getAllEntitySchema = joi.object().keys({
   offset: joi.number().integer(),
-  limit: joi.number().integer().required(),
+  limit: joi.number().integer(),
   statuses: joi.array().items(joi.string().valid(_.values(DroneStatus))),
   sortBy: joi.string().valid(['serialNumber', 'name', 'type', 'mileage',
     '-serialNumber', '-name', '-type', '-mileage']),
@@ -174,11 +174,11 @@ function * _getAll(providerId, entity) {
     sortBy[name] = value;
   }
 
-  const docs = yield Drone.find(criteria).sort(sortBy).skip(entity.offset || 0).limit(entity.limit);
+  const docs = yield Drone.find(criteria).sort(sortBy).skip(entity.offset || 0).limit(entity.limit || 1000);
   return {
     total: yield Drone.find(criteria).count(),
-    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'type',
-      'mileage', 'minSpeed', 'maxSpeed', 'maxFlightTime', 'maxCargoWeight')),
+    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'status','thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'type',
+      'mileage', 'minSpeed', 'maxSpeed', 'maxFlightTime', 'maxCargoWeight','currentLocation')),
   };
 }
 
