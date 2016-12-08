@@ -65,8 +65,7 @@ co(function*() {
   yield PackageRequest.remove({});
   yield Notification.remove({});
   yield DronePosition.remove({});
-  logger.info(`creating ${drones.length} drones`);
-  const droneDocs = yield Drone.create(drones);
+  
     // encrypt password
   yield _.map(users, (u) => function* () {
     if (u.password) {
@@ -101,9 +100,9 @@ co(function*() {
   const providerUserDocs = yield User.create(providerUsers);
 
 
-  logger.info('creating 1000 services');
+  logger.info('creating 100 services');
   const serviceDcos = [];
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 100; i++) {
     serviceDcos.push(yield Service.create({
       name: 'service ' + i,
       pricing: i,
