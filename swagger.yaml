@@ -60,7 +60,7 @@ paths:
             $ref: "#/definitions/ErrorMsg"
   /login/social:
     post:
-      description: Authenticate the user via social network (if not registered, it should auto-register)
+      description: Authenticate the user via social network (if not registered, it should auto-register a consumer user)
       produces:
         - application/json
       tags:
@@ -77,13 +77,6 @@ paths:
                 type: string
               name:
                 type: string
-              role:
-                type: string
-                description: user role
-                enum:
-                  - provider
-                  - consumer
-                  - admin
             required:
               - email
               - name
@@ -128,6 +121,18 @@ paths:
                   - provider
                   - consumer
                   - admin
+              provider:
+                type: obejct
+                description: if `role` is provider, then this one is required
+                properties:
+                  name:
+                    type: string
+                  status:
+                    enum:
+                      - active
+                      - inactive
+                  location:
+                    $ref: "#/definitions/Address"
             required:
               - email
               - password

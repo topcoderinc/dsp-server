@@ -15,6 +15,7 @@ const joi = require('joi');
 const models = require('../models');
 
 const User = models.User;
+const Provider = models.Provider;
 const helper = require('../common/helper');
 const errors = require('common-errors');
 const jwt = require('jsonwebtoken');
@@ -22,9 +23,10 @@ const httpStatus = require('http-status');
 const config = require('config');
 const MailService = require('./MailService');
 const logger = require('../common/logger');
-const Role = require('../enum').Role;
-const ProviderService = require('./ProviderService');
+const enums = require('../enum');
 const _ = require('lodash');
+
+const Role = enums.Role;
 
 // Exports
 module.exports = {
@@ -56,6 +58,19 @@ register.schema = {
     password: joi.string().required(),
     phone: joi.string().required(),
     role: joi.string().valid(_.values(Role)),
+    provider:joi.object().keys({
+      name: joi.string().required(),
+      status: joi.string().valid(_.values(enums.ProviderStatus)).required(),
+      location: joi.object().keys({
+        coordinates:joi.array().items(joi.number()).length(2).required(),
+        line1: joi.string().required(),
+        line2: joi.string(),
+        city: joi.string().required(),
+        state: joi.string().required(),
+        postalCode: joi.string().required(),
+        primary: joi.boolean().required(),
+      }).required(),
+    }).when('role',{is:Role.PROVIDER, then: joi.required(), otherwise: joi.forbidden()}),
   }).required(),
 };
 
@@ -64,7 +79,6 @@ registerSocialUser.schema = {
   entity: joi.object().keys({
     name: joi.string().required(),
     email: joi.string().email().required(),
-    role: joi.string().valid(_.values(Role)),
   }).required(),
 };
 
@@ -81,6 +95,22 @@ function* register(entity) {
   entity.name = `${entity.firstName} ${entity.lastName}`;
 
   entity.role = entity.role || Role.CONSUMER;
+
+  if(entity.role === Role.PROVIDER){
+    // set initial field
+    _.extend(entity.provider,{
+      keywords:[''], // will be update when package created or updated
+      simpleKeywords:[''],// will be update when package created or updated
+      rating:{// will be update when review of related mission created 
+        count:0,
+        sum:0,
+        avg:0
+      }
+    });
+    const provider = yield Provider.create(entity.provider);
+    entity.provider = provider.id;
+  }
+
   const user = yield User.create(entity);
 
   const userObj = user.toObject();
@@ -105,7 +135,7 @@ function* registerSocialUser(entity) {
   if (existingUser) {
     user = existingUser;
   } else {
-    entity.role = entity.role || Role.CONSUMER;
+    entity.role = Role.CONSUMER;
     user = yield User.create(entity);
   }
 
