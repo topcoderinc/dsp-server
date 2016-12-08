@@ -310,7 +310,7 @@
 		{
 			"id": "99b84027-1ee5-04fd-79be-0baa486fbba2",
 			"headers": "Authorization: Bearer {{provider-user-token}}\n",
-			"url": "{{URL}}/provider/drones?limit=10&offset=10&statuses=in-motions,idle-busy&sortBy=-name",
+			"url": "{{URL}}/provider/drones?limit=10&offset=10&statuses=in-motion,idle-busy&sortBy=-name",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",

@@ -24,7 +24,7 @@ const DroneSchema = new mongoose.Schema({
   // realtime coordinate of the drone
   currentLocation: {type: [Number]},
   deviceId: { type: String, required: false },
-  provider: {type: ObjectId, required: true, ref: 'Provider'},
+  provider: {type: ObjectId, required: false, ref: 'Provider'},
   pilots: {type: [{type: ObjectId, ref: 'User'}]},
   serialNumber: {type: String, required: true},
   accessories: {type: Mixed},
