@@ -10,6 +10,7 @@
         "line1": "Address 1",
         "city": "City 1",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -20,6 +21,7 @@
         "line1": "Address 1",
         "city": "City 2",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],
@@ -53,6 +55,7 @@
         "line1": "Address 1",
         "city": "City 3",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -63,6 +66,7 @@
         "line1": "Address 1",
         "city": "City 4",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],
@@ -96,6 +100,7 @@
         "line1": "Address 1",
         "city": "City 5",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -106,6 +111,7 @@
         "line1": "Address 2",
         "city": "City 6",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],
@@ -138,6 +144,7 @@
         "line1": "Address 1",
         "city": "City 7",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -148,6 +155,7 @@
         "line1": "Address 1",
         "city": "City 8",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],
@@ -181,6 +189,7 @@
         "line1": "Address 1",
         "city": "City 1",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -191,6 +200,7 @@
         "line1": "Address 1",
         "city": "City 2",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],
@@ -224,6 +234,7 @@
         "line1": "Address 1",
         "city": "City 1",
         "postalCode": "10000",
+        "state": "state",
         "primary": true
       },
       {
@@ -234,6 +245,7 @@
         "line1": "Address 1",
         "city": "City 2",
         "postalCode": "20000",
+        "state": "state",
         "primary": false
       }
     ],

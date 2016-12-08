@@ -23,19 +23,10 @@ const Role = {
   PILOT: 'pilot',
 };
 
-// todo: define proper statuses
-const ProviderStatus = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-};
-
-// todo: define needed accessories
-const DroneAccessories = {
-  CAMERA: 'camera',
-};
 
 const MissionStatus = {
   WAITING: 'waiting',
+  SCHEDULED: 'scheduled',
   IN_PROGRESS: 'in-progress',
   COMPLETED: 'completed',
 };
@@ -43,12 +34,35 @@ const MissionStatus = {
 const NotificationType = {
   MISSION_STARTED: 'mission-started',
   MISSION_COMPLETED: 'mission-completed',
+  REQUEST_ACCEPTED: 'request-accepted', // to consumer, created by provider after accepting a request
+  REQUEST_REJECTED: 'request-rejected', // to consumer, created by provider after rejecting a request
+  REQUEST_CANCELLED: 'request-cancelled', // to consumer, created by provider after cancelling a scheduled request
 };
 
 const RequestStatus = {
+  PENDING: 'pending',
+  REJECTED: 'rejected',
+  SCHEDULED: 'scheduled',
   IN_PROGRESS: 'in-progress',
   COMPLETED: 'completed',
   CANCELLED: 'cancelled',
+};
+
+
+const ProviderStatus = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+};
+
+
+const DroneAccessories = {
+  CAMERA: 'camera',
+};
+
+// todo: define proper types
+const DroneType = {
+  type1: 'type1',
+  type2: 'type2',
 };
 
 module.exports = {
@@ -57,6 +71,8 @@ module.exports = {
   Role,
   ProviderStatus,
   DroneAccessories,
+  DroneType,
+
   MissionStatus,
   NotificationType,
   RequestStatus,

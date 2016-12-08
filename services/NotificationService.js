@@ -16,12 +16,37 @@ const httpStatus = require('http-status');
 const Notification = require('../models').Notification;
 const helper = require('../common/helper');
 const errors = require('common-errors');
+const _ = require('lodash');
+const NotificationType = require('../enum').NotificationType;
+
 
 // Exports
 module.exports = {
   get,
   read,
+  create,
 };
+
+
+create.schema = {
+  userId: joi.string().required(),
+  type: joi.string().valid(_.values(NotificationType)).required(),
+  values: joi.object().required(),
+};
+
+/**
+ * create notification to user
+ * @param userId
+ * @param type
+ * @param values
+ */
+function* create(userId, type, values) {
+  yield Notification.create({
+    user: userId,
+    type,
+    values,
+  });
+}
 
 // the joi schema for create
 read.schema = {
@@ -36,7 +61,7 @@ read.schema = {
  *
  */
 function* read(userId, notificationId) {
-  const doc = yield Notification.findOne({ _id: notificationId });
+  const doc = yield Notification.findOne({_id: notificationId});
   if (!doc) {
     throw new errors.NotFoundError(`notification not found with specified id ${notificationId}`);
   }
@@ -63,6 +88,6 @@ get.schema = {
  * @param {String}    id          the user id
  */
 function* get(id) {
-  const docs = yield Notification.find({ user: id });
+  const docs = yield Notification.find({user: id});
   return helper.sanitizeArray(docs);
 }
