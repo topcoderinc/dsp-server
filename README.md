@@ -1,14 +1,16 @@
 DRONE SERIES - WEBAPI IMPLEMENT PRODUCER API
 ---
 
+# Setup
+- node v7 https://nodejs.org/en/
+- mongodb 3.2+ https://www.mongodb.com/
+
 # local deployment
-First, you need install mongodb , and start it with default port.
-[https://www.mongodb.com](https://www.mongodb.com)
 
 1. open terminal to project root dir ,Install node dependencies using `npm install`
 2. check code with `npm lint`
 3. To create random test data run `npm run testdata`
-4. run server `npm run start`
+4. run server `npm start`
 
 
 #test
@@ -16,6 +18,10 @@ First, you need install mongodb , and start it with default port.
 2. import `test/Provider-dsp.postman_collection` , `test/Provider-dsp-env.postman_environment.json`.
 3. test data create 6 provider with user , use username `provider1` - `provder6`, password `123456` login , when login success ,the token will be injected to postman env.
 4. test other api endpoints.
+
+# test nfx
+import `test/NFZ.postman_collection.json`  
+it contains only endpoints for No Fly Zone endpoints
 
 # env
 

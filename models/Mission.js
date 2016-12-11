@@ -16,6 +16,7 @@ const enums = require('../enum');
 const Address = require('./Address').AddressSchema;
 const helper = require('../common/helper');
 
+const Mixed = mongoose.Schema.Types.Mixed;
 const Schema = mongoose.Schema;
 const GallerySchema = new Schema({
   thumbnailUrl: String,
@@ -33,6 +34,13 @@ GallerySchema.options.toObject.transform = function (doc, ret, options) {
   return sanitized;
 };
 
+// Region to Fly Zone (RTFZ)
+const ZoneSchema = new Schema({
+  location: {type: Mixed, required: true, index: '2dsphere'},
+  description: String,
+  // styles for google map
+  style: {type: Mixed, default: {}},
+});
 
 const MissionSchema = new mongoose.Schema({
   missionName: { type: String, required: false },
@@ -89,6 +97,11 @@ const MissionSchema = new mongoose.Schema({
     avgSpeed: Number,
     maxSpeed: {type: Number, default: 0},
     minSpeed: {type: Number, default: 0},
+  },
+
+  zones: {
+    type: [ZoneSchema],
+    default: [],
   },
 });
 

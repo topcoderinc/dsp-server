@@ -366,4 +366,26 @@ module.exports = {
       method: 'deleteSingle',
     },
   },
+  '/nfz/search': {
+    post: {
+      controller: 'NoFlyController',
+      method: 'search',
+    },
+  },
+  '/nfz': {
+    post: {
+      controller: 'NoFlyController',
+      method: 'create',
+    },
+  },
+  '/nfz/:id': {
+    put: {
+      controller: 'NoFlyController',
+      method: 'update',
+    },
+    delete: {
+      controller: 'NoFlyController',
+      method: 'remove',
+    },
+  },
 };

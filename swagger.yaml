@@ -122,12 +122,13 @@ paths:
                   - consumer
                   - admin
               provider:
-                type: obejct
+                type: object
                 description: if `role` is provider, then this one is required
                 properties:
                   name:
                     type: string
                   status:
+                    type: string
                     enum:
                       - active
                       - inactive
@@ -2467,7 +2468,129 @@ paths:
           description: drone not found
           schema:
             $ref: "#/definitions/ErrorMsg"
-
+  /nfz/search:
+    post:
+      description: search no fly zones
+      produces:
+        - application/json
+      tags:
+       - no fly zone
+      parameters:
+        - in: body
+          name: body
+          description: search criteria
+          required: true
+          schema:
+            type: object
+            properties:
+              mission:
+                type: string
+              isActive:
+                type: boolean
+              isPermanent:
+                type: boolean
+              geometry:
+                $ref: "#/definitions/GeoJSON"
+              matchTime:
+                type: boolean
+              offset:
+                type: number
+              limit:
+                type: number
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  $ref: "#/definitions/NoFlyZone"
+        "400":
+          description: invalid search criteria
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /nfz/:
+    post:
+      description: create a fly zone
+      produces:
+        - application/json
+      tags:
+       - no fly zone
+      parameters:
+        - in: body
+          name: body
+          description: values
+          required: true
+          schema:
+            $ref: "#/definitions/NoFlyZone"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/NoFlyZone"
+        "400":
+          description: invalid input parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /nfz/{id}:
+    post:
+      description: update a fly zone
+      produces:
+        - application/json
+      tags:
+       - no fly zone
+      parameters:
+        - in: path
+          description: id of no fly zone
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: values
+          required: true
+          schema:
+            $ref: "#/definitions/NoFlyZone"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/NoFlyZone"
+        "400":
+          description: invalid input parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: fly zone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+    delete:
+      description: delete a fly zone
+      produces:
+        - application/json
+      tags:
+       - no fly zone
+      parameters:
+        - in: path
+          description: id of no fly zone
+          name: id
+          type: string
+          required: true
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          description: invalid id
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: fly zone not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 definitions:
   MissionReq:
     type: object
@@ -2798,10 +2921,48 @@ definitions:
     required:
       - lat
       - lng
+  NoFlyZone:
+    type: object
+    properties:
+      id:
+        type: string
+      mission:
+        type: string
+      location:
+        type: object
+      description:
+        type: string
+      isActive:
+        type: boolean
+      isPermanent:
+        type: boolean
+      startTime:
+        type: string
+      endTime:
+        type: string
+      style:
+        type: object
+    required:
+      - description
+      - isActive
+      - isPermanent
+      - location
+  GeoJSON:
+    type: object
+    properties:
+      type:
+        type: string
+      coordinates:
+        type: array
+        items:
+          type: number
+    required:
+      - type
+      - coordinates
   ErrorMsg:
     type: object
     properties:
-      error:
+      mission:
         type: string
       status:
         type: number

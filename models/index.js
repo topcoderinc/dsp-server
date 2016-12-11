@@ -78,6 +78,11 @@ const AddressSchema = require('./Address').AddressSchema;
 
 const Address = db.model('Address', AddressSchema);
 
+// NoFlyZone
+const NoFlyZoneSchema = require('./NoFlyZone').NoFlyZoneSchema;
+
+const NoFlyZone = db.model('NoFlyZone', NoFlyZoneSchema);
+
 module.exports = {
   Drone,
   DronePosition,
@@ -92,4 +97,5 @@ module.exports = {
   Notification,
   Service,
   Address,
+  NoFlyZone,
 };

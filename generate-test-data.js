@@ -27,6 +27,7 @@ const PackageRequest = models.PackageRequest;
 const Notification = models.Notification;
 const Service = models.Service;
 const DronePosition = models.DronePosition;
+const NoFlyZone = models.NoFlyZone;
 
 const drones = require('./data/drones.json');
 const users = require('./data/users.json');
@@ -39,6 +40,7 @@ const requests = require('./data/packageRequests.json');
 const notifications = require('./data/notifications.json');
 const providerUsers = require('./data/provider-users.json');
 const positions = require('./data/dronePositions.json');
+const noFlyZones = require('./data/no-fly-zones.json');
 
 const MissionStatus = require('./enum').MissionStatus;
 const RequestStatus = require('./enum').RequestStatus;
@@ -65,6 +67,7 @@ co(function*() {
   yield PackageRequest.remove({});
   yield Notification.remove({});
   yield DronePosition.remove({});
+  yield NoFlyZone.remove({});
 
     // encrypt password
   yield _.map(users, (u) => function* () {
@@ -209,6 +212,9 @@ co(function*() {
   });
   logger.info(`creating ${positions.length} dronePositions`);
   yield DronePosition.create(positions);
+
+  logger.info(`creating ${noFlyZones.length} no fly zones`);
+  yield NoFlyZone.create(noFlyZones);
 
   logger.info('data created successfully');
 }).then(() => {

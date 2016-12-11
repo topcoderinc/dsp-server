@@ -123,6 +123,9 @@ function sanitizeSchema(schema) {
   if (!schema.options.toObject) {
     schema.options.toObject = {};
   }
+  if (!schema.options.toJSON) {
+    schema.options.toJSON = {};
+  }
 
   /**
    * Transform the given document to be sent to client
@@ -131,11 +134,12 @@ function sanitizeSchema(schema) {
    * @param  {Object}   ret         the already converted object
    * @param  {Object}   options     the transform options
    */
-  schema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
+  const transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
     const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt');
     sanitized.id = doc._id;
     return sanitized;
   };
+  schema.options.toJSON.transform = schema.options.toObject.transform = transform;
 }
 
 
