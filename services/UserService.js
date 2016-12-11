@@ -58,11 +58,11 @@ register.schema = {
     password: joi.string().required(),
     phone: joi.string().required(),
     role: joi.string().valid(_.values(Role)),
-    provider:joi.object().keys({
+    provider: joi.object().keys({
       name: joi.string().required(),
       status: joi.string().valid(_.values(enums.ProviderStatus)).required(),
       location: joi.object().keys({
-        coordinates:joi.array().items(joi.number()).length(2).required(),
+        coordinates: joi.array().items(joi.number()).length(2).required(),
         line1: joi.string().required(),
         line2: joi.string(),
         city: joi.string().required(),
@@ -70,7 +70,7 @@ register.schema = {
         postalCode: joi.string().required(),
         primary: joi.boolean().required(),
       }).required(),
-    }).when('role',{is:Role.PROVIDER, then: joi.required(), otherwise: joi.forbidden()}),
+    }).when('role', {is: Role.PROVIDER, then: joi.required(), otherwise: joi.forbidden()}),
   }).required(),
 };
 
@@ -96,16 +96,16 @@ function* register(entity) {
 
   entity.role = entity.role || Role.CONSUMER;
 
-  if(entity.role === Role.PROVIDER){
+  if (entity.role === Role.PROVIDER) {
     // set initial field
-    _.extend(entity.provider,{
-      keywords:[''], // will be update when package created or updated
-      simpleKeywords:[''],// will be update when package created or updated
-      rating:{// will be update when review of related mission created 
-        count:0,
-        sum:0,
-        avg:0
-      }
+    _.extend(entity.provider, {
+      keywords: [''], // will be update when package created or updated
+      simpleKeywords: [''], // will be update when package created or updated
+      rating: {// will be update when review of related mission created
+        count: 0,
+        sum: 0,
+        avg: 0,
+      },
     });
     const provider = yield Provider.create(entity.provider);
     entity.provider = provider.id;

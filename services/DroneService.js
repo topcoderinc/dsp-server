@@ -177,8 +177,8 @@ function * _getAll(providerId, entity) {
   const docs = yield Drone.find(criteria).sort(sortBy).skip(entity.offset || 0).limit(entity.limit || 1000);
   return {
     total: yield Drone.find(criteria).count(),
-    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'status','thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'type',
-      'mileage', 'minSpeed', 'maxSpeed', 'maxFlightTime', 'maxCargoWeight','currentLocation')),
+    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'status', 'thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'type',
+      'mileage', 'minSpeed', 'maxSpeed', 'maxFlightTime', 'maxCargoWeight', 'currentLocation')),
   };
 }
 
@@ -227,7 +227,7 @@ updateLocation.schema = {
   entity: joi.object().keys({
     lat: joi.number().required(),
     lng: joi.number().required(),
-  }).required()
+  }).required(),
 };
 
 /**

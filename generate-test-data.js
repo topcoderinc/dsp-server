@@ -65,7 +65,7 @@ co(function*() {
   yield PackageRequest.remove({});
   yield Notification.remove({});
   yield DronePosition.remove({});
-  
+
     // encrypt password
   yield _.map(users, (u) => function* () {
     if (u.password) {

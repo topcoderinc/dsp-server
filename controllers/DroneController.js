@@ -99,7 +99,7 @@ function* currentLocations(req, res) {
  */
 function* updateLocation(req, res) {
   const drone = yield DroneService.updateLocation(req.params.id, req.body);
-  res.json(drone)
+  res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }
 
@@ -107,6 +107,6 @@ function* updateLocation(req, res) {
  * obsolete , post drone
  */
 function* createEmpty(req, res) {
-  res.json({})
+  res.json({});
 }
 

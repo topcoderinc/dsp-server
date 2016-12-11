@@ -2,7 +2,7 @@
   "extends": "airbnb-base",
   "rules": {
     "no-use-before-define": 0,
-    "strict": 0,
+    "strict": [2, "global"],
     "camelcase": 0,
     "object-curly-spacing": 0,
     "comma-dangle": 1,
@@ -29,6 +29,7 @@
     ]
   },
   "parserOptions": {
+    "sourceType": "script",
     "ecmaVersion": 6
   }
 }

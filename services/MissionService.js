@@ -49,7 +49,7 @@ search.schema = {
  */
 function* search(entity) {
   const total = yield Mission.find().count();
-  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit||100).populate('package');
+  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit || 100).populate('package');
   return {
     total,
     items: _.map(docs, (d) => (d.toObject())),
@@ -85,10 +85,10 @@ function* create(entity) {
 /**
  * Get a mission identified by id
  */
-function* update(id,entity) {
+function* update(id, entity) {
   const mission = yield Mission.findOne({_id: id});
   if (!mission) {
-    throw new errors.NotFoundError(`Mission not found`);
+    throw new errors.NotFoundError('Mission not found');
   }
   _.extend(mission, entity);
   yield mission.save();
@@ -101,7 +101,7 @@ function* update(id,entity) {
 function* remove(id) {
   const mission = yield Mission.findOne({_id: id});
   if (!mission) {
-    throw new errors.NotFoundError(`Mission not found`);
+    throw new errors.NotFoundError('Mission not found');
   }
   yield mission.remove();
 }
@@ -127,7 +127,7 @@ function prepareMissionFile(plannedHomePosition, missionItems) {
 function* download(id) {
   const mission = yield Mission.findOne({_id: id});
   if (!mission) {
-    throw new errors.NotFoundError(`Mission not found`);
+    throw new errors.NotFoundError('Mission not found');
   }
   const missionFile = prepareMissionFile(mission.plannedHomePosition, mission.missionItems);
   return {

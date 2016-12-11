@@ -1,6 +1,7 @@
 /**
  * Represents the schema for Address (embedded type).
  */
+'use strict';
 
 const mongoose = require('../datasource').getMongoose();
 const timestamps = require('mongoose-timestamp');

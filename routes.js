@@ -123,7 +123,7 @@ module.exports = {
       controller: 'MissionController',
       method: 'search',
     },
-    post:{
+    post: {
       controller: 'MissionController',
       middleware: [auth()],
       method: 'create',
@@ -135,12 +135,12 @@ module.exports = {
       middleware: [auth()],
       method: 'getSingle',
     },
-    put:{
+    put: {
       controller: 'MissionController',
       middleware: [auth()],
       method: 'update',
     },
-    delete:{
+    delete: {
       controller: 'MissionController',
       middleware: [auth()],
       method: 'remove',
@@ -280,7 +280,7 @@ module.exports = {
     post: {
       controller: 'DroneController',
       method: 'createEmpty',
-    }
+    },
   },
   '/drones/:id': {
     get: {
@@ -290,7 +290,7 @@ module.exports = {
     put: {
       controller: 'DroneController',
       method: 'updateLocation',
-    }
+    },
   },
 
   '/provider/drones': {
