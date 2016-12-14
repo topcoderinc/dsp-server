@@ -39,7 +39,7 @@
   },
   {
     "name": "drone1",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone1 accessories"
@@ -77,7 +77,7 @@
   },
   {
     "name": "drone2",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone2 accessories"
@@ -115,7 +115,7 @@
   },
   {
     "name": "drone3",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone3 accessories"
@@ -153,7 +153,7 @@
   },
   {
     "name": "drone4",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone4 accessories"
@@ -191,7 +191,7 @@
   },
   {
     "name": "drone5",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone5 accessories"
@@ -229,7 +229,7 @@
   },
   {
     "name": "drone6",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone6 accessories"
@@ -267,7 +267,7 @@
   },
   {
     "name": "drone7",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone7 accessories"
@@ -381,7 +381,7 @@
   },
   {
     "name": "drone10",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone10 accessories"
@@ -419,7 +419,7 @@
   },
   {
     "name": "drone11",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone11 accessories"
@@ -457,7 +457,7 @@
   },
   {
     "name": "drone12",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone12 accessories"
@@ -533,7 +533,7 @@
   },
   {
     "name": "drone14",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone14 accessories"
@@ -571,7 +571,7 @@
   },
   {
     "name": "drone15",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone15 accessories"
@@ -647,7 +647,7 @@
   },
   {
     "name": "drone17",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone17 accessories"
@@ -685,7 +685,7 @@
   },
   {
     "name": "drone18",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone18 accessories"
@@ -837,7 +837,7 @@
   },
   {
     "name": "drone22",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone22 accessories"
@@ -875,7 +875,7 @@
   },
   {
     "name": "drone23",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone23 accessories"
@@ -913,7 +913,7 @@
   },
   {
     "name": "drone24",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone24 accessories"
@@ -951,7 +951,7 @@
   },
   {
     "name": "drone25",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone25 accessories"
@@ -1027,7 +1027,7 @@
   },
   {
     "name": "drone27",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone27 accessories"
@@ -1065,7 +1065,7 @@
   },
   {
     "name": "drone28",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone28 accessories"
@@ -1103,7 +1103,7 @@
   },
   {
     "name": "drone29",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone29 accessories"
@@ -1179,7 +1179,7 @@
   },
   {
     "name": "drone31",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone31 accessories"
@@ -1217,7 +1217,7 @@
   },
   {
     "name": "drone32",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone32 accessories"
@@ -1293,7 +1293,7 @@
   },
   {
     "name": "drone34",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone34 accessories"
@@ -1369,7 +1369,7 @@
   },
   {
     "name": "drone36",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone36 accessories"
@@ -1483,7 +1483,7 @@
   },
   {
     "name": "drone39",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone39 accessories"
@@ -1559,7 +1559,7 @@
   },
   {
     "name": "drone41",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone41 accessories"
@@ -1673,7 +1673,7 @@
   },
   {
     "name": "drone44",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone44 accessories"
@@ -1711,7 +1711,7 @@
   },
   {
     "name": "drone45",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone45 accessories"
@@ -1787,7 +1787,7 @@
   },
   {
     "name": "drone47",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone47 accessories"
@@ -1825,7 +1825,7 @@
   },
   {
     "name": "drone48",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone48 accessories"
@@ -1863,7 +1863,7 @@
   },
   {
     "name": "drone49",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone49 accessories"
@@ -1901,7 +1901,7 @@
   },
   {
     "name": "drone50",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone50 accessories"
@@ -1977,7 +1977,7 @@
   },
   {
     "name": "drone52",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone52 accessories"
@@ -2015,7 +2015,7 @@
   },
   {
     "name": "drone53",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone53 accessories"
@@ -2053,7 +2053,7 @@
   },
   {
     "name": "drone54",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone54 accessories"
@@ -2091,7 +2091,7 @@
   },
   {
     "name": "drone55",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone55 accessories"
@@ -2167,7 +2167,7 @@
   },
   {
     "name": "drone57",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone57 accessories"
@@ -2205,7 +2205,7 @@
   },
   {
     "name": "drone58",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone58 accessories"
@@ -2243,7 +2243,7 @@
   },
   {
     "name": "drone59",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone59 accessories"
@@ -2319,7 +2319,7 @@
   },
   {
     "name": "drone61",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone61 accessories"
@@ -2357,7 +2357,7 @@
   },
   {
     "name": "drone62",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone62 accessories"
@@ -2395,7 +2395,7 @@
   },
   {
     "name": "drone63",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone63 accessories"
@@ -2433,7 +2433,7 @@
   },
   {
     "name": "drone64",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone64 accessories"
@@ -2509,7 +2509,7 @@
   },
   {
     "name": "drone66",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone66 accessories"
@@ -2623,7 +2623,7 @@
   },
   {
     "name": "drone69",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone69 accessories"
@@ -2661,7 +2661,7 @@
   },
   {
     "name": "drone70",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone70 accessories"
@@ -2699,7 +2699,7 @@
   },
   {
     "name": "drone71",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone71 accessories"
@@ -2737,7 +2737,7 @@
   },
   {
     "name": "drone72",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone72 accessories"
@@ -2813,7 +2813,7 @@
   },
   {
     "name": "drone74",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone74 accessories"
@@ -2965,7 +2965,7 @@
   },
   {
     "name": "drone78",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone78 accessories"
@@ -3003,7 +3003,7 @@
   },
   {
     "name": "drone79",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone79 accessories"
@@ -3079,7 +3079,7 @@
   },
   {
     "name": "drone81",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone81 accessories"
@@ -3117,7 +3117,7 @@
   },
   {
     "name": "drone82",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone82 accessories"
@@ -3193,7 +3193,7 @@
   },
   {
     "name": "drone84",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone84 accessories"
@@ -3269,7 +3269,7 @@
   },
   {
     "name": "drone86",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone86 accessories"
@@ -3307,7 +3307,7 @@
   },
   {
     "name": "drone87",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone87 accessories"
@@ -3383,7 +3383,7 @@
   },
   {
     "name": "drone89",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone89 accessories"
@@ -3459,7 +3459,7 @@
   },
   {
     "name": "drone91",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone91 accessories"
@@ -3535,7 +3535,7 @@
   },
   {
     "name": "drone93",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone93 accessories"
@@ -3611,7 +3611,7 @@
   },
   {
     "name": "drone95",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone95 accessories"
@@ -3649,7 +3649,7 @@
   },
   {
     "name": "drone96",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone96 accessories"
@@ -3725,7 +3725,7 @@
   },
   {
     "name": "drone98",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone98 accessories"
@@ -3763,7 +3763,7 @@
   },
   {
     "name": "drone99",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone99 accessories"
@@ -3877,7 +3877,7 @@
   },
   {
     "name": "drone102",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone102 accessories"
@@ -3991,7 +3991,7 @@
   },
   {
     "name": "drone105",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone105 accessories"
@@ -4029,7 +4029,7 @@
   },
   {
     "name": "drone106",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone106 accessories"
@@ -4067,7 +4067,7 @@
   },
   {
     "name": "drone107",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone107 accessories"
@@ -4181,7 +4181,7 @@
   },
   {
     "name": "drone110",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone110 accessories"
@@ -4295,7 +4295,7 @@
   },
   {
     "name": "drone113",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone113 accessories"
@@ -4371,7 +4371,7 @@
   },
   {
     "name": "drone115",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone115 accessories"
@@ -4447,7 +4447,7 @@
   },
   {
     "name": "drone117",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone117 accessories"
@@ -4485,7 +4485,7 @@
   },
   {
     "name": "drone118",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone118 accessories"
@@ -4523,7 +4523,7 @@
   },
   {
     "name": "drone119",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone119 accessories"
@@ -4561,7 +4561,7 @@
   },
   {
     "name": "drone120",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone120 accessories"
@@ -4675,7 +4675,7 @@
   },
   {
     "name": "drone123",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone123 accessories"
@@ -4713,7 +4713,7 @@
   },
   {
     "name": "drone124",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone124 accessories"
@@ -4827,7 +4827,7 @@
   },
   {
     "name": "drone127",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone127 accessories"
@@ -4903,7 +4903,7 @@
   },
   {
     "name": "drone129",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone129 accessories"
@@ -4979,7 +4979,7 @@
   },
   {
     "name": "drone131",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone131 accessories"
@@ -5017,7 +5017,7 @@
   },
   {
     "name": "drone132",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone132 accessories"
@@ -5093,7 +5093,7 @@
   },
   {
     "name": "drone134",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone134 accessories"
@@ -5169,7 +5169,7 @@
   },
   {
     "name": "drone136",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone136 accessories"
@@ -5245,7 +5245,7 @@
   },
   {
     "name": "drone138",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone138 accessories"
@@ -5283,7 +5283,7 @@
   },
   {
     "name": "drone139",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone139 accessories"
@@ -5321,7 +5321,7 @@
   },
   {
     "name": "drone140",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone140 accessories"
@@ -5359,7 +5359,7 @@
   },
   {
     "name": "drone141",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone141 accessories"
@@ -5397,7 +5397,7 @@
   },
   {
     "name": "drone142",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone142 accessories"
@@ -5435,7 +5435,7 @@
   },
   {
     "name": "drone143",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone143 accessories"
@@ -5473,7 +5473,7 @@
   },
   {
     "name": "drone144",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone144 accessories"
@@ -5511,7 +5511,7 @@
   },
   {
     "name": "drone145",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone145 accessories"
@@ -5549,7 +5549,7 @@
   },
   {
     "name": "drone146",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone146 accessories"
@@ -5587,7 +5587,7 @@
   },
   {
     "name": "drone147",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone147 accessories"
@@ -5625,7 +5625,7 @@
   },
   {
     "name": "drone148",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone148 accessories"
@@ -5777,7 +5777,7 @@
   },
   {
     "name": "drone152",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone152 accessories"
@@ -5853,7 +5853,7 @@
   },
   {
     "name": "drone154",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone154 accessories"
@@ -5891,7 +5891,7 @@
   },
   {
     "name": "drone155",
-    "status": "in-motions",
+    "status": "in-motion",
     "accessories": {
       "accessorie": {
         "name": "drone155 accessories"

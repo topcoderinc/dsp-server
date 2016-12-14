@@ -1125,7 +1125,7 @@ paths:
         -
           in: query
           name: statuses
-          description: the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
+          description: the drone statuses filter. Allowed `in-motion`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
           type: array
           items:
             type: string
@@ -1884,7 +1884,7 @@ paths:
           type: integer
         - in: query
           name: statuses
-          description: the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
+          description: the drone statuses filter. Allowed `in-motion`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)
           type: array
           items:
             type: string
@@ -2692,7 +2692,7 @@ definitions:
       status:
         type: string
         enum:
-          - in-motions
+          - in-motion
           - idle-ready
           - idle-busy
       specificationContent:

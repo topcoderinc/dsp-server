@@ -241,7 +241,7 @@ function *updateLocation(id, entity) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
-  drone.currentLocation = [entity.lat, entity.lng];
+  drone.currentLocation = [entity.lng, entity.lat];
   yield drone.save();
 
   return drone.toObject();
