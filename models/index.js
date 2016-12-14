@@ -16,6 +16,11 @@ const DroneSchema = require('./Drone').DroneSchema;
 
 const Drone = db.model('Drone', DroneSchema);
 
+// Drone position model
+const DronePositionSchema = require('./DronePosition').DronePositionSchema;
+
+const DronePosition = db.model('DronePosition', DronePositionSchema);
+
 // Mission model
 const MissionSchema = require('./Mission').MissionSchema;
 
@@ -75,6 +80,7 @@ const Address = db.model('Address', AddressSchema);
 
 module.exports = {
   Drone,
+  DronePosition,
   Mission,
   User,
   Category,

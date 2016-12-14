@@ -12,7 +12,7 @@ const SocialType = {
 };
 
 const DroneStatus = {
-  IN_MOTIONS: 'in-motions',
+  IN_MOTIONS: 'in-motion',
   IDLE_READY: 'idle-ready',
   IDLE_BUSY: 'idle-busy',
 };
