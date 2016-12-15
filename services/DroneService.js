@@ -15,6 +15,7 @@ const joi = require('joi');
 const models = require('../models');
 
 const Drone = models.Drone;
+const DronePosition = models.DronePosition;
 const helper = require('../common/helper');
 const errors = require('common-errors');
 const DroneStatus = require('../enum').DroneStatus;
@@ -243,6 +244,9 @@ function *updateLocation(id, entity) {
 
   drone.currentLocation = [entity.lng, entity.lat];
   yield drone.save();
+
+  entity.droneId = id;
+  yield DronePosition.create(entity);
 
   return drone.toObject();
 }
