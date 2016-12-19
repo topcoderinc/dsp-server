@@ -12,13 +12,21 @@
  */
 
 const DroneService = require('../services/DroneService');
+const helper = require('../common/helper');
 
 // Exports
 module.exports = {
   getAll,
+  getAllByProvider,
   create,
   update,
+  deleteSingle,
+  getSingle,
+  currentLocations,
+  updateLocation,
+  createEmpty,
 };
+
 
 /**
  * Create a drone in the system
@@ -27,7 +35,7 @@ module.exports = {
  * @param res the response
  */
 function* create(req, res) {
-  res.json(yield DroneService.create(req.body));
+  res.json(yield DroneService.create(req.auth.payload.providerId, req.body));
 }
 
 /**
@@ -37,9 +45,19 @@ function* create(req, res) {
  * @param res the response
  */
 function* getAll(req, res) {
-  res.json(yield DroneService.getAll());
+  yield helper.splitQueryToArray(req.query, 'statuses');
+  res.json(yield DroneService.getAll(req.query));
 }
 
+/**
+ * get all drone by provider id
+ * @param req
+ * @param res
+ */
+function* getAllByProvider(req, res) {
+  yield helper.splitQueryToArray(req.query, 'statuses');
+  res.json(yield DroneService.getAllByProvider(req.auth.payload.providerId, req.query));
+}
 /**
  * Update a drone
  *
@@ -47,7 +65,48 @@ function* getAll(req, res) {
  * @param res the response
  */
 function* update(req, res) {
-  const drone = yield DroneService.update(req.params.id, req.body);
-  res.json();
+  res.json(yield DroneService.update(req.auth.payload.providerId, req.params.id, req.body));
+}
+
+/**
+ * delete drone by id
+ */
+function* deleteSingle(req, res) {
+  res.json(yield DroneService.deleteSingle(req.auth.payload.providerId, req.params.id), 204);
+}
+
+/**
+ * get single drone by id
+ * @param req
+ * @param res
+ */
+function * getSingle(req, res) {
+  res.json(yield DroneService.getSingle(req.params.id));
+}
+
+/**
+ * get drones current Location
+ * @param req
+ * @param res
+ */
+function* currentLocations(req, res) {
+  res.json(yield DroneService.currentLocations(req.auth.payload.providerId));
+}
+
+
+/**
+ * update a drone location
+ */
+function* updateLocation(req, res) {
+  const drone = yield DroneService.updateLocation(req.params.id, req.body);
+  res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }
+
+/**
+ * obsolete , post drone
+ */
+function* createEmpty(req, res) {
+  res.json({});
+}
+

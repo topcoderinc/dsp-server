@@ -1,21 +1,35 @@
 {
   "extends": "airbnb-base",
   "rules": {
-      "no-use-before-define": 0,
-      "strict": 0,
-      "comma-dangle": 1,
-      "func-names": 0,
-      "no-underscore-dangle": 0,
-      "prefer-rest-params": 0,
-      "no-param-reassign": 0,
-      "prefer-template": 0,
-      "new-cap": 0,
-      "global-require": 0,
-      "consistent-return": 0,
-      "newline-per-chained-call": 0,
-      "max-len": [2, 130]
+    "no-use-before-define": 0,
+    "strict": [2, "global"],
+    "camelcase": 0,
+    "object-curly-spacing": 0,
+    "comma-dangle": 1,
+    "func-names": 0,
+    "no-underscore-dangle": 0,
+    "prefer-rest-params": 0,
+    "require-yield": 0,
+    "prefer-const": 0,
+    "one-var": 0,
+    "no-param-reassign": 0,
+    "prefer-template": 0,
+    "new-cap": 0,
+    "no-extend-native": 0,
+    "no-restricted-syntax": 0,
+    "no-unused-vars": 0,
+    "no-mixed-operators": 0,
+    "global-require": 0,
+    "consistent-return": 0,
+    "newline-per-chained-call": 0,
+    "generator-star-spacing": 0,
+    "max-len": [
+      2,
+      130
+    ]
   },
   "parserOptions": {
+    "sourceType": "script",
     "ecmaVersion": 6
   }
 }

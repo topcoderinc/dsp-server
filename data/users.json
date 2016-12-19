@@ -1,10 +1,25 @@
-[{
+[
+  {
     "name": "user1",
     "firstName": "fisrt",
     "lastName": "last",
     "email": "2427546644@qq.com",
-    "password": "123456"
-}, {
+    "password": "123456",
+    "avatarUrl": "http://google.com",
+    "phone": "+1 123-1234-123",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    }
+  },
+  {
     "name": "user2",
     "firstName": "fisrt",
     "lastName": "last",
@@ -12,4 +27,5 @@
     "socialNetworkType": "Google",
     "socialNetworkId": 1,
     "socialNetworkAccessToken": "123456"
-}]
+  }
+]

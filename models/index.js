@@ -16,7 +16,7 @@ const DroneSchema = require('./Drone').DroneSchema;
 
 const Drone = db.model('Drone', DroneSchema);
 
-// DronePosition model
+// Drone position model
 const DronePositionSchema = require('./DronePosition').DronePositionSchema;
 
 const DronePosition = db.model('DronePosition', DronePositionSchema);
@@ -66,6 +66,23 @@ const NotificationSchema = require('./Notification').NotificationSchema;
 
 const Notification = db.model('Notification', NotificationSchema);
 
+// Service model
+
+const ServiceSchema = require('./Service').ServiceSchema;
+
+const Service = db.model('Service', ServiceSchema);
+
+
+// Address
+const AddressSchema = require('./Address').AddressSchema;
+
+const Address = db.model('Address', AddressSchema);
+
+// NoFlyZone
+const NoFlyZoneSchema = require('./NoFlyZone').NoFlyZoneSchema;
+
+const NoFlyZone = db.model('NoFlyZone', NoFlyZoneSchema);
+
 module.exports = {
   Drone,
   DronePosition,
@@ -78,4 +95,7 @@ module.exports = {
   PackageRequest,
   SavedPackage,
   Notification,
+  Service,
+  Address,
+  NoFlyZone,
 };
