@@ -21,6 +21,7 @@ const Role = {
   CONSUMER: 'consumer',
   PROVIDER: 'provider',
   PILOT: 'pilot',
+  PILOT: 'admin',
 };
 
 
