@@ -43,7 +43,7 @@ function _assertExists(id, entity) {
  * @private
  */
 function* _validateMission(values) {
-  if (!values.mission) {
+  if (values.mission) {
     yield MissionService.getSingle(values.mission);
   }
   if (values.isPermanent) {
