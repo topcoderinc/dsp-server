@@ -14,7 +14,7 @@ module.exports = {
 
   LOG_LEVEL: process.env.LOG_LEVEL || 'debug',
   PORT: process.env.PORT || 3500,
-  AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || 'nope',
+  AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || 'h7p6V93Shau3SSvqGrl6V4xrATlkrVGm',
   JWT_SECRET: process.env.JWT_SECRET || 'JWT_SECRET',
   SALT_WORK_FACTOR: 2,
   TOKEN_EXPIRES: 10 * 60 * 60,
