@@ -211,11 +211,11 @@ forgotPassword.schema = {
  */
 function* forgotPassword(entity) {
   const code = Math.floor(Math.random() * 100000).toString(16);
-  // print out code for debug purpose
-  logger.debug(`reset password code is ${code}`);
+  const subject = 'Reset your password';
+  const link = config.RESET_PASSWORD_LINK.replace(':token', code);
   const text = 'You received this email because you send a reset password request to us, ' +
     'if you never registered, please ignore. ' +
-    `The verify code is ${code}\n -- example.com`;
+    `To reset your password <a href="${link}">click here</a><br><br> -- Dsp Server Team`;
   const html = `<p>${text}</p>`;
 
   const user = yield User.findOne({email: entity.email});
@@ -228,7 +228,7 @@ function* forgotPassword(entity) {
   user.resetPasswordExpiration = date.setSeconds(date.getSeconds() + config.RESET_CODE_EXPIRES);
   yield user.save();
 
-  yield MailService.sendMessage(user.email, html, text);
+  yield MailService.sendMessage(user.email, html, text, subject);
 }
 
 // the joi schema for resetPassword
