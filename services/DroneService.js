@@ -42,6 +42,7 @@ const droneCreateorUpdateEntityJoi = joi.object().keys({
   deviceId: joi.string(),
   serialNumber: joi.string().required(),
   name: joi.string().required(),
+  description: joi.string(),
   type: joi.string().valid(_.values(DroneType)).required(),
   minSpeed: joi.number(),
   maxSpeed: joi.number(),
@@ -178,7 +179,7 @@ function * _getAll(providerId, entity) {
   const docs = yield Drone.find(criteria).sort(sortBy).skip(entity.offset || 0).limit(entity.limit || 1000);
   return {
     total: yield Drone.find(criteria).count(),
-    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'status', 'thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'type',
+    items: _.map(docs, (d) => _.pick(d, 'id', 'imageUrl', 'status', 'thumbnailUrl', 'deviceId', 'serialNumber', 'name', 'description', 'type',
       'mileage', 'minSpeed', 'maxSpeed', 'maxFlightTime', 'maxCargoWeight', 'currentLocation')),
   };
 }

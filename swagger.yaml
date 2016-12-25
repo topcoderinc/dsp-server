@@ -1917,6 +1917,8 @@ paths:
                       type: string
                     name:
                       type: string
+                    description:
+                      type: string
                     type:
                       type: string
                     mileage:
@@ -2771,6 +2773,8 @@ definitions:
       serialNumber:
         type: string
       name:
+        type: string
+      description:
         type: string
       type:
         type: string
