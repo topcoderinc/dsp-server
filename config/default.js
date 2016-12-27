@@ -20,6 +20,7 @@ module.exports = {
   TOKEN_EXPIRES: 10 * 60 * 60,
   API_VERSION: 1,
   RESET_CODE_EXPIRES: 60 * 60,
+  MAX_NEAREST_DRONES: 1,
 
 
   db: {

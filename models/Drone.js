@@ -23,7 +23,7 @@ const DroneSchema = new mongoose.Schema({
   description: { type: String, required: false },
   status: {type: String, enum: _.values(DroneStatus), required: true},
   // realtime coordinate of the drone
-  currentLocation: {type: [Number]},
+  currentLocation: {type: [Number], index: '2dsphere'},
   deviceId: { type: String, required: false },
   provider: {type: ObjectId, required: false, ref: 'Provider'},
   pilots: {type: [{type: ObjectId, ref: 'User'}]},

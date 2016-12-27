@@ -1158,11 +1158,19 @@ paths:
           schema:
             $ref: "#/definitions/DroneUpdateReq"
           required: true
+        - in: query
+          name: returnNFZ
+          type: string
+          description: true if return the conflicted no fly zones. `noFlyZones` will be added to the response
+        - in: query
+          name: returnNearestDrones
+          type: string
+          description: true if return the nearest drones. `nearestDrones` will be added to the response
       responses:
         200:
           description: successful operation
           schema:
-            $ref: "#/definitions/Drone"
+            $ref: "#/definitions/UpdateDronePositionRes"
         400:
           description: invalid parameters
           schema:
@@ -2963,6 +2971,39 @@ definitions:
     required:
       - type
       - coordinates
+  UpdateDronePositionRes:
+    allOf:
+      - $ref: '#/definitions/Drone'
+      - properties:
+          noFlyZones:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                description:
+                  type: string
+          nearestDrones:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                currentLocation:
+                  type: array
+                  items:
+                    type: number
+                serialNumber:
+                  type: string
+                status:
+                  type: string
+                distance:
+                  type: number
+                
   ErrorMsg:
     type: object
     properties:
