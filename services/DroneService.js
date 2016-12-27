@@ -190,7 +190,7 @@ function * _getAll(providerId, entity) {
  */
 function* currentLocations(providerId) {
   const docs = yield Drone.find({provider: providerId});
-  return _.map(docs, (d) => _.pick(d, 'status', 'currentLocation'));
+  return _.map(docs, (d) => _.pick(d, 'status', 'currentLocation', 'serialNumber', "id"));
 }
 
 /**
