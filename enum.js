@@ -7,8 +7,8 @@
  * Contains app enums and constants
  */
 const SocialType = {
-  GOOGLE: 'Google',
-  FACEBOOK: 'Facebook',
+  GOOGLE: 'google-oauth2',
+  FACEBOOK: 'facebook',
 };
 
 const DroneStatus = {

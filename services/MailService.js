@@ -12,25 +12,25 @@
 
 const nodemailer = require('nodemailer');
 const logger = require('../common/logger');
+const smtpTransport = require('nodemailer-smtp-transport');
+const config = require('config');
 
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  service: 'qq',
-  port: 465,
-  host: 'smtp.qq.com',
-  secureConnection: true,
+  port: config.mail.SMTP_PORT,
+  host: config.mail.SMTP_HOST,
   auth: {
-    user: 'cqy24@qq.com',
-    pass: 'vafsjkvrnyakbjfh',
+    user: config.mail.SMTP_USERNAME,
+    pass: config.mail.SMTP_PASSWORD,
   },
 });
 
-function* sendMessage(mailTo, html, text) {
+function* sendMessage(mailTo, html, text, subject) {
     // setup e-mail data with unicode symbols
   const mailOptions = {
-    from: '"do not reply" <cqy24@qq.com>', // sender address
+    from: config.mail.FROM_EMAIL, // sender address
     to: mailTo, // list of receivers
-    subject: 'Reset your password please', // Subject line
+    subject, // Subject line
     text, // plaintext body
     html, // html body
   };

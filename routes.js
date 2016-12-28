@@ -29,6 +29,7 @@ module.exports = {
   '/login/social': {
     post: {
       controller: 'UserController',
+      middleware: [auth()],
       method: 'registerSocialUser',
     },
   },
