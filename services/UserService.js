@@ -134,7 +134,6 @@ function* registerSocialUser(auth, entity) {
   // we don't need to check here for social network type, as social network id itself
   // embed the social network type
   const existingUser = yield User.findOne({ $or: [{email: entity.email}, {socialNetworkId: auth.sub}] });
-console.log(auth);
   let user;
   if (existingUser) {
     // update social network type
