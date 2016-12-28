@@ -48,7 +48,7 @@
     "isPermanent": true,
     "mission": "594d77ec37275a4d97dddb0c",
     "style": {
-      "fillColor": "#FF0000"
+      "fillColor": "red"
     }
   },
   {
@@ -108,7 +108,7 @@
     "isPermanent": true,
     "mission": "594d77ec37275a4d97dddb0c",
     "style": {
-      "fillColor": "#FF0000"
+      "fillColor": "red"
     }
   },
   {
@@ -189,7 +189,7 @@
     "startTime": "2016-12-11T17:46:23.169Z",
     "endTime": "2030-12-11T17:46:23.169Z",
     "style": {
-      "fillColor": "#FF0000"
+      "fillColor": "yellow"
     }
   }
 ]

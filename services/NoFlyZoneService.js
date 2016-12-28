@@ -89,8 +89,8 @@ function* search(criteria) {
           $or: [
             {
               isPermanent: false,
-              startTime: {$gte: new Date()},
-              endTime: {$lte: new Date()},
+              startTime: {$lte: new Date()},
+              endTime: {$gte: new Date()},
             },
             {
               isPermanent: true,
@@ -105,6 +105,7 @@ function* search(criteria) {
     items: NoFlyZone
       .find(filter)
       .skip(criteria.offset)
+      .sort('-id')
       .limit(criteria.limit),
   };
 }
@@ -134,9 +135,13 @@ function* create(values) {
 create.schema = {
   values: joi.object().keys({
     location: joi.geoJSON().required(),
+    circle: {
+      center: joi.array().items(joi.number()),
+      radius: joi.number(),
+    },
     description: joi.string().required(),
-    startTime: joi.date().iso(),
-    endTime: joi.date().iso(),
+    startTime: joi.date().iso().allow(null),
+    endTime: joi.date().iso().allow(null),
     style: joi.object(),
     isActive: joi.bool().required(),
     isPermanent: joi.bool().required(),
@@ -161,6 +166,10 @@ update.schema = {
   values: {
     id: joi.any().strip(),
     location: joi.geoJSON().required(),
+    circle: joi.object({
+      center: joi.array().items(joi.number()),
+      radius: joi.number(),
+    }).allow(null),
     description: joi.string().required(),
     startTime: joi.date().iso(),
     endTime: joi.date().iso(),

@@ -60,13 +60,12 @@ function* search(entity) {
 // the joi schema for getSingle
 getSingle.schema = {
   id: joi.string().required(),
-  userId: joi.string().required(),
 };
 
 /**
  * Get a mission identified by id
  */
-function* getSingle(id, userId) {
+function* getSingle(id) {
   const mission = yield Mission.findOne({_id: id});
   if (!mission) {
     throw new errors.NotFoundError(`mission not found with specified id ${id}`);
