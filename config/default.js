@@ -31,5 +31,10 @@ module.exports = {
     SMTP_USERNAME: process.env.SMTP_USERNAME,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD,
   },
+  RESET_PASSWORD_SUBJECT: 'Reset your password',
+  RESET_PASSWORD_TEMPLATE: 'You received this email because you send a reset password request to us, ' +
+    'if you never registered, please ignore. ' +
+    'To reset your password <a href=":link">click here</a><br><br> -- Dsp Server Team',
+  // this is a frontend url, the user is redirected to this url from user's mailbox
   RESET_PASSWORD_LINK: 'http://localhost:3000/reset-password?token=:token',
 };
