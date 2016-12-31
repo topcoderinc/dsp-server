@@ -27,6 +27,7 @@ See https://github.com/lorenwest/node-config/wiki/Configuration-Files
 |`JWT_SECRET`| The jwt secret |
 |`mail.SMTP_HOST`| The smtp hostname |
 |`mail.SMTP_PORT`| The smtp port |
+|`mail.EMAIL_FROM`| The from email address |
 |`mail.SMTP_USERNAME`| The smtp username |
 |`mail.SMTP_PASSWORD`| The smtp password |
 
@@ -61,8 +62,8 @@ you also can export those values before run(data from forum).
 `export AUTH0_CLIENT_ID="3CGKzjS2nVSqHxHHE64RhvvKY6e0TYpK"`
 `export JWT_SECRET="fJtXfFYt-F9iees7CSw8rOOr-tYsJocoZTz3pLF5NynamB07JFPeFOEuzfbcT7SD"`
 `export MONGOLAB_URI="mongodb://topcoder:t0pP455@ds147777.mlab.com:47777/dsp1"`
-#modify
-register and social login add role params
-default is `consumer` if role is empty
-#video
-https://youtu.be/rYBDekZ-hik
+`export SMTP_HOST="smtp.gmail.com"`
+`export SMTP_PORT="465"`
+`export SMTP_USERNAME="youremail"`
+`export SMTP_PASSWORD="yourpassword"`
+`export EMAIL_FROM="your@email.com"`

@@ -25,9 +25,9 @@ module.exports = {
     poolSize: 5,
   },
   mail: {
-    SMTP_HOST: 'smtp.mailgun.org',
-    SMTP_PORT: 587,
-    FROM_EMAIL: 'noreply@kb-dsp-server-dev.herokuapp.com',
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    FROM_EMAIL: process.env.EMAIL_FROM,
     SMTP_USERNAME: process.env.SMTP_USERNAME,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD,
   },
