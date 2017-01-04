@@ -1845,6 +1845,12 @@ paths:
             items:
               type: object
               properties:
+                id:
+                  type: string
+                  description: drone id
+                serialNumber:
+                  type: string
+                  description: drone serialNumber
                 status:
                   type: string
                   description: drone status
@@ -1916,6 +1922,8 @@ paths:
                     serialNumber:
                       type: string
                     name:
+                      type: string
+                    description:
                       type: string
                     type:
                       type: string
@@ -2771,6 +2779,8 @@ definitions:
       serialNumber:
         type: string
       name:
+        type: string
+      description:
         type: string
       type:
         type: string

@@ -84,7 +84,7 @@
         },
         "/login/social": {
             "post": {
-                "description": "Authenticate the user via social network (if not registered, it should auto-register)",
+                "description": "Authenticate the user via social network (if not registered, it should auto-register a consumer user)",
                 "produces": [
                     "application/json"
                 ],
@@ -105,15 +105,6 @@
                                 },
                                 "name": {
                                     "type": "string"
-                                },
-                                "role": {
-                                    "type": "string",
-                                    "description": "user role",
-                                    "enum": [
-                                        "provider",
-                                        "consumer",
-                                        "admin"
-                                    ]
                                 }
                             },
                             "required": [
@@ -180,6 +171,25 @@
                                         "consumer",
                                         "admin"
                                     ]
+                                },
+                                "provider": {
+                                    "type": "object",
+                                    "description": "if `role` is provider, then this one is required",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "active",
+                                                "inactive"
+                                            ]
+                                        },
+                                        "location": {
+                                            "$ref": "#/definitions/Address"
+                                        }
+                                    }
                                 }
                             },
                             "required": [
@@ -1193,6 +1203,47 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create mission",
+                "tags": [
+                    "mission"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/MissionReq"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "total": {
+                                    "type": "integer"
+                                },
+                                "items": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/MissionPublic"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid parameters",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    }
+                }
             }
         },
         "/missions/{id}": {
@@ -1527,6 +1578,37 @@
                 "description": "Get all drones",
                 "tags": [
                     "drone"
+                ],
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "the search offset",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "the search limit",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "statuses",
+                        "description": "the drone statuses filter. Allowed `in-motion`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortBy",
+                        "description": "the sort column. Allowed values 'serialNumber', 'name', 'type', 'mileage', '-serialNumber', '-name', '-type', '-mileage'",
+                        "type": "string"
+                    }
                 ],
                 "responses": {
                     "200": {
@@ -2603,6 +2685,14 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "drone id"
+                                    },
+                                    "serialNumber": {
+                                        "type": "string",
+                                        "description": "drone serialNumber"
+                                    },
                                     "status": {
                                         "type": "string",
                                         "description": "drone status"
@@ -2667,7 +2757,7 @@
                     {
                         "in": "query",
                         "name": "statuses",
-                        "description": "the drone statuses filter. Allowed `in-motions`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)",
+                        "description": "the drone statuses filter. Allowed `in-motion`, `idle-ready`, `idle-busy` (refer to `Const.DroneStatus` in js model)",
                         "type": "array",
                         "items": {
                             "type": "string"
@@ -2707,6 +2797,9 @@
                                                 "type": "string"
                                             },
                                             "name": {
+                                                "type": "string"
+                                            },
+                                            "description": {
                                                 "type": "string"
                                             },
                                             "type": {
@@ -3557,9 +3650,279 @@
                     }
                 }
             }
+        },
+        "/nfz/search": {
+            "post": {
+                "description": "search no fly zones",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "no fly zone"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "search criteria",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "mission": {
+                                    "type": "string"
+                                },
+                                "isActive": {
+                                    "type": "boolean"
+                                },
+                                "isPermanent": {
+                                    "type": "boolean"
+                                },
+                                "geometry": {
+                                    "$ref": "#/definitions/GeoJSON"
+                                },
+                                "matchTime": {
+                                    "type": "boolean"
+                                },
+                                "offset": {
+                                    "type": "number"
+                                },
+                                "limit": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "total": {
+                                    "type": "integer"
+                                },
+                                "items": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/NoFlyZone"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid search criteria",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    }
+                }
+            }
+        },
+        "/nfz/": {
+            "post": {
+                "description": "create a fly zone",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "no fly zone"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "values",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NoFlyZone"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/NoFlyZone"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input parameters",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    }
+                }
+            }
+        },
+        "/nfz/{id}": {
+            "post": {
+                "description": "update a fly zone",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "no fly zone"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "description": "id of no fly zone",
+                        "name": "id",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "values",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NoFlyZone"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/NoFlyZone"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input parameters",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "404": {
+                        "description": "fly zone not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete a fly zone",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "no fly zone"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "description": "id of no fly zone",
+                        "name": "id",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "invalid id",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "404": {
+                        "description": "fly zone not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "MissionReq": {
+            "type": "object",
+            "properties": {
+                "missionName": {
+                    "type": "string"
+                },
+                "plannedHomePosition": {
+                    "type": "string"
+                },
+                "missionItems": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "drone": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "package": {
+                    "type": "string"
+                },
+                "pilot": {
+                    "type": "string"
+                },
+                "startingPoint": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "scheduledAt": {
+                    "type": "string"
+                },
+                "telemetry": {
+                    "type": "string"
+                },
+                "eta": {
+                    "type": "string"
+                },
+                "frontCameraUrl": {
+                    "type": "string"
+                },
+                "backCameraUrl": {
+                    "type": "string"
+                },
+                "gallery": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "string"
+                },
+                "specialRequirements": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "string"
+                },
+                "whatToBeDelivered": {
+                    "type": "string"
+                },
+                "estimation": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status"
+            ]
+        },
         "MissionEstimationReq": {
             "type": "object",
             "properties": {
@@ -3736,6 +4099,9 @@
                 "name": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "type": {
                     "type": "string"
                 },
@@ -3799,7 +4165,7 @@
                 "status": {
                     "type": "string",
                     "enum": [
-                        "in-motions",
+                        "in-motion",
                         "idle-ready",
                         "idle-busy"
                     ]
@@ -3959,10 +4325,66 @@
                 "lng"
             ]
         },
+        "NoFlyZone": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "mission": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "object"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "isPermanent": {
+                    "type": "boolean"
+                },
+                "startTime": {
+                    "type": "string"
+                },
+                "endTime": {
+                    "type": "string"
+                },
+                "style": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "isActive",
+                "isPermanent",
+                "location"
+            ]
+        },
+        "GeoJSON": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "coordinates": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "coordinates"
+            ]
+        },
         "ErrorMsg": {
             "type": "object",
             "properties": {
-                "error": {
+                "mission": {
                     "type": "string"
                 },
                 "status": {

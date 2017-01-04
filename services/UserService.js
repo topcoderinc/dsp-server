@@ -76,6 +76,7 @@ register.schema = {
 
 // the joi schema for register user via social login
 registerSocialUser.schema = {
+  auth: joi.object().required(),
   entity: joi.object().keys({
     name: joi.string().required(),
     email: joi.string().email().required(),
@@ -125,16 +126,22 @@ function* register(entity) {
 /**
  * Register a user via social login
  *
+ * @param {Object}  auth          the currently logged in user context
  * @param {Object}  entity        the post entity from the client
  */
-function* registerSocialUser(entity) {
+function* registerSocialUser(auth, entity) {
   // make sure the email is unique
-  const existingUser = yield User.findOne({email: entity.email});
-
+  // we don't need to check here for social network type, as social network id itself
+  // embed the social network type
+  const existingUser = yield User.findOne({ $or: [{email: entity.email}, {socialNetworkId: auth.sub}] });
   let user;
   if (existingUser) {
-    user = existingUser;
+    // update social network type
+    existingUser.socialNetworkType = auth.sub.substring(0, auth.sub.indexOf('|'));
+    user = yield existingUser.save();
   } else {
+    entity.socialNetworkId = auth.sub;
+    entity.socialNetworkType = auth.sub.substring(0, auth.sub.indexOf('|'));
     entity.role = Role.CONSUMER;
     user = yield User.create(entity);
   }
@@ -211,16 +218,18 @@ forgotPassword.schema = {
  */
 function* forgotPassword(entity) {
   const code = Math.floor(Math.random() * 100000).toString(16);
-  // print out code for debug purpose
-  logger.debug(`reset password code is ${code}`);
-  const text = 'You received this email because you send a reset password request to us, ' +
-    'if you never registered, please ignore. ' +
-    `The verify code is ${code}\n -- example.com`;
+  const subject = config.RESET_PASSWORD_SUBJECT;
+  const link = config.RESET_PASSWORD_LINK.replace(':token', code);
+  const text = config.RESET_PASSWORD_TEMPLATE.replace(':link', link);
   const html = `<p>${text}</p>`;
 
   const user = yield User.findOne({email: entity.email});
   if (!user) {
     throw new errors.NotFoundError('user not found with the specified email');
+  }
+  // check if the user is social network user, and if yes than don't allow forgot password
+  if (user.socialNetworkId) {
+    throw new errors.ValidationError('social network user cannot reset password', httpStatus.BAD_REQUEST);
   }
 
   user.resetPasswordCode = code;
@@ -228,7 +237,7 @@ function* forgotPassword(entity) {
   user.resetPasswordExpiration = date.setSeconds(date.getSeconds() + config.RESET_CODE_EXPIRES);
   yield user.save();
 
-  yield MailService.sendMessage(user.email, html, text);
+  yield MailService.sendMessage(user.email, html, text, subject);
 }
 
 // the joi schema for resetPassword
@@ -253,6 +262,10 @@ function* resetPassword(entity) {
     user.resetPasswordCode !== entity.code ||
     user.resetPasswordExpiration.getTime() - new Date().getTime() < 0) {
     throw new errors.HttpStatusError(400, 'invalid code');
+  }
+  // check if the user is social network user, and if yes than don't allow forgot password
+  if (user.socialNetworkId) {
+    throw new errors.ValidationError('social network user cannot reset password', httpStatus.BAD_REQUEST);
   }
 
   user.password = yield helper.hashString(entity.password, config.SALT_WORK_FACTOR);

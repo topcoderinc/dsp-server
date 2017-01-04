@@ -16,8 +16,16 @@ const helper = require('../common/helper');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const Mixed = mongoose.Schema.Types.Mixed;
 
+const CircleSchema = new mongoose.Schema({
+  center: [Number],
+  radius: Number,
+});
+
 const NoFlyZoneSchema = new mongoose.Schema({
   location: {type: Mixed, required: true, index: '2dsphere'},
+  // if defined, the polygon is an approximated circle
+  // circle contains data for frontend
+  circle: {type: CircleSchema, default: null},
   description: String,
   startTime: Date,
   endTime: Date,

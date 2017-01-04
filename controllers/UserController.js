@@ -50,7 +50,7 @@ function* register(req, res) {
  * @param res the response
  */
 function* registerSocialUser(req, res) {
-  res.json(yield UserService.registerSocialUser(req.body));
+  res.json(yield UserService.registerSocialUser(req.auth, req.body));
 }
 
 /**
