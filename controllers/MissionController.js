@@ -87,7 +87,7 @@ function* search(req, res) {
  * @param res the response
  */
 function* getSingle(req, res) {
-  res.json(yield MissionService.getSingle(req.params.id, req.auth.sub));
+  res.json(yield MissionService.getSingle(req.params.id));
 }
 
 
