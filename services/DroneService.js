@@ -10,6 +10,7 @@
  * @version     1.0
  */
 
+const config = require('config');
 const joi = require('joi');
 
 const models = require('../models');
@@ -21,6 +22,7 @@ const errors = require('common-errors');
 const DroneStatus = require('../enum').DroneStatus;
 const DroneType = require('../enum').DroneType;
 const ProviderService = require('./ProviderService');
+const NoFlyZoneService = require('./NoFlyZoneService');
 
 const _ = require('lodash');
 
@@ -230,14 +232,24 @@ updateLocation.schema = {
     lat: joi.number().required(),
     lng: joi.number().required(),
   }).required(),
+  opts: joi.object().keys({
+    returnNFZ: joi.boolean(),
+    returnNearestDrones: joi.boolean(),
+  }).default({}),
 };
 
 /**
  * update a drone location
- * @param id
- * @param entity
+ * @param {String} id the drone id to update
+ * @param {Object} entity the new coordinates
+ * @param {Number} entity.lat the latitude
+ * @param {Number} entity.lng the longitude
+ * @param {Object} opts the options
+ * @param {Boolean} opts.returnNFZ true if return the conflicted no fly zone
+ * @param {Boolean} opts.returnNearestDrones true if return the nearest drone
+ * @returns {Drone} the updated drone
  */
-function *updateLocation(id, entity) {
+function *updateLocation(id, entity, opts) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
@@ -248,6 +260,48 @@ function *updateLocation(id, entity) {
 
   entity.droneId = id;
   yield DronePosition.create(entity);
+  const result = drone.toObject();
+  if (!opts.returnNFZ && !opts.returnNearestDrones) {
+    return result;
+  }
+  const actions = {};
+  const geometry = {
+    type: 'Point',
+    coordinates: drone.currentLocation,
+  };
+  if (opts.returnNFZ) {
+    actions.noFlyZones = function* () {
+      // there should be only a few overlapping NFZ
+      const maxNFZ = 1e5;
+      const {items} = yield NoFlyZoneService.search({
+        isActive: true,
+        matchTime: true,
+        geometry,
+        limit: maxNFZ,
+      });
+      return items.map((item) => _.pick(item.toObject(), 'id', 'description'));
+    };
+  }
 
-  return drone.toObject();
+  if (opts.returnNearestDrones) {
+    actions.nearestDrones = function* () {
+      const nearest = yield Drone.geoNear(geometry, {
+        spherical: true,
+        limit: config.MAX_NEAREST_DRONES,
+        query: {
+          // exclude this drone because distance is always 0
+          // note: _id must be an ObjectId instance, string doesn't work
+          _id: { $ne: drone._id },
+        },
+      });
+      return nearest.map((item) => {
+        const mapped = _.pick(item.obj, 'name', 'currentLocation', 'serialNumber', 'status');
+        mapped.distance = item.dis;
+        mapped.id = item.obj._id;
+        return mapped;
+      });
+    };
+  }
+  _.assignIn(result, yield actions);
+  return result;
 }

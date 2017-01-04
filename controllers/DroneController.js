@@ -98,7 +98,7 @@ function* currentLocations(req, res) {
  * update a drone location
  */
 function* updateLocation(req, res) {
-  const drone = yield DroneService.updateLocation(req.params.id, req.body);
+  const drone = yield DroneService.updateLocation(req.params.id, req.body, req.query);
   res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }
