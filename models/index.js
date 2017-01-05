@@ -83,6 +83,11 @@ const NoFlyZoneSchema = require('./NoFlyZone').NoFlyZoneSchema;
 
 const NoFlyZone = db.model('NoFlyZone', NoFlyZoneSchema);
 
+// Question model
+const QuestionSchema = require('./Question').QuestionSchema;
+
+const Question = db.model('Question', QuestionSchema);
+
 module.exports = {
   Drone,
   DronePosition,
@@ -98,4 +103,5 @@ module.exports = {
   Service,
   Address,
   NoFlyZone,
+  Question,
 };

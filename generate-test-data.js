@@ -28,6 +28,7 @@ const Notification = models.Notification;
 const Service = models.Service;
 const DronePosition = models.DronePosition;
 const NoFlyZone = models.NoFlyZone;
+const Question = models.Question;
 
 const drones = require('./data/drones.json');
 const users = require('./data/users.json');
@@ -41,6 +42,7 @@ const notifications = require('./data/notifications.json');
 const providerUsers = require('./data/provider-users.json');
 const positions = require('./data/dronePositions.json');
 const noFlyZones = require('./data/no-fly-zones.json');
+const questions = require('./data/questions.json');
 
 const MissionStatus = require('./enum').MissionStatus;
 const RequestStatus = require('./enum').RequestStatus;
@@ -68,6 +70,7 @@ co(function*() {
   yield Notification.remove({});
   yield DronePosition.remove({});
   yield NoFlyZone.remove({});
+  yield Question.remove({});
 
     // encrypt password
   yield _.map(users, (u) => function* () {
@@ -141,7 +144,7 @@ co(function*() {
   _.each(missions, (m, i) => {
     m.package = packageDocs[i % packageDocs.length].id;
     m.provider = packageDocs[i % packageDocs.length].provider;
-    m.pilot = userDocs[0].id; // setting all to first user for testing convinience
+    m.pilot = userDocs[0].id; // setting all to first user for testing convenience
     m.drone = droneDocs[i % droneDocs.length].id;
     m.status = _.values(MissionStatus)[Math.floor(Math.random() * _.values(MissionStatus).length)];
     m.telemetry = {
@@ -160,10 +163,12 @@ co(function*() {
     }];
   });
   logger.info(`creating ${missions.length} missions`);
-  const missionDocs = yield Mission.create(missions);
+  const missionDocs = yield Mission.create(
+    _.map(missions, (mission, index) => _.assign(mission, {missionName: mission.missionName + ' ' + index}))
+  );
 
   _.each(reviews, (r, i) => {
-    r.user = userDocs[0].id; // setting all to first user for testing convinience
+    r.user = userDocs[0].id; // setting all to first user for testing convenience
     r.mission = missionDocs[i % missionDocs.length].id;
     r.provider = missionDocs[i % missionDocs.length].provider;
   });
@@ -171,7 +176,7 @@ co(function*() {
   yield Review.create(reviews);
 
   _.each(requests, (r, i) => {
-    r.user = userDocs[0].id; // setting all to first user for testing convinience
+    r.user = userDocs[0].id; // setting all to first user for testing convenience
     r.package = packageDocs[i % packageDocs.length].id;
     r.provider = packageDocs[i % packageDocs.length].provider;
   });
@@ -190,7 +195,14 @@ co(function*() {
     const mindex = i % missionDocs.length;
     missionDocs[mindex].provider = requestDocs[i].provider;
     missionDocs[mindex].status = Math.random() > 0.5 ? MissionStatus.IN_PROGRESS : MissionStatus.COMPLETED;
-    missionDocs[mindex].pilot = providerUserDocs[i % providerDocs.length].id;
+    // add some missions to the pilot user
+    if (i % (providerDocs.length + 1) !== providerDocs.length) {
+      missionDocs[mindex].pilot = providerUserDocs[i % (providerDocs.length + 1)].id;
+    } else {
+      missionDocs[mindex].pilot = userDocs[2].id; // pilot user
+      // for pilot user use all possible statuses
+      missionDocs[mindex].status = MissionStatus[_.keys(MissionStatus)[Math.floor(_.keys(MissionStatus).length * Math.random())]];
+    }
     if (missionDocs[mindex].status === MissionStatus.IN_PROGRESS) {
       missionDocs[mindex].startedAt = new Date();
       missionDocs[mindex].launchDate = new Date();
@@ -202,7 +214,7 @@ co(function*() {
     yield missionDocs[mindex].save();
   }
   _.each(notifications, (n) => {
-    n.user = userDocs[0].id; // setting all to first user for testing convinience
+    n.user = userDocs[0].id; // setting all to first user for testing convenience
   });
   logger.info(`creating ${notifications.length} notifications`);
   yield Notification.create(notifications);
@@ -215,6 +227,9 @@ co(function*() {
 
   logger.info(`creating ${noFlyZones.length} no fly zones`);
   yield NoFlyZone.create(noFlyZones);
+
+  logger.info(`creating ${questions.length} questions`);
+  const questionDocs = yield Question.create(questions);
 
   logger.info('data created successfully');
 }).then(() => {

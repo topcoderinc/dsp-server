@@ -23,6 +23,9 @@ module.exports = {
   getAllByDrone,
   download,
   remove,
+  getPilotChecklist,
+  updatePilotChecklist,
+  fetchPilotMissions,
 };
 
 /**
@@ -97,4 +100,34 @@ function* monthlyCountByDrone(req, res) {
 
 function* getAllByDrone(req, res) {
   res.json(yield MissionService.getAllByDrone(req.params.droneId, req.query));
+}
+
+/**
+ * Get a pilot checklist
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* getPilotChecklist(req, res) {
+  res.json(yield MissionService.getPilotChecklist(req.params.id, req.auth.sub));
+}
+
+/**
+ * Update a pilot checklist
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* updatePilotChecklist(req, res) {
+  res.json(yield MissionService.updatePilotChecklist(req.params.id, req.auth.sub, req.body));
+}
+
+/**
+ * Fetch pilot mission list
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* fetchPilotMissions(req, res) {
+  res.json(yield MissionService.fetchPilotMissions(req.auth.sub, req.query));
 }
