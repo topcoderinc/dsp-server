@@ -42,7 +42,6 @@ const categories = require('./data/categories.json');
 const providers = require('./data/providers.json');
 const packages = require('./data/packages.json');
 const missions = require('./data/missions.json');
-const reviews = require('./data/reviews.json');
 const requests = require('./data/packageRequests.json');
 const notifications = require('./data/notifications.json');
 const providerUsers = require('./data/provider-users.json');
@@ -91,11 +90,6 @@ co(function*() {
 
   logger.info(`creating ${categories.length} categories`);
   const categoryDocs = yield Category.create(categories);
-
-
-  _.each(providers, (p, i) => {
-    p.category = [categoryDocs[i % categoryDocs.length].id];
-  });
 
   logger.info(`creating ${providers.length} providers`);
   const providerDocs = yield Provider.create(providers);
@@ -149,6 +143,7 @@ co(function*() {
   const packageDocs = yield Package.create(packages);
 
   _.each(missions, (m, i) => {
+    m.package = packageDocs[i % packageDocs.length].id;
     m.provider = packageDocs[i % packageDocs.length].provider;
     m.pilot = userDocs[0].id; // setting all to first user for testing convenience
     m.drone = droneDocs[i % droneDocs.length].id;
@@ -160,26 +155,18 @@ co(function*() {
       distance: 12,
     };
     m.eta = 2;
-    m.frontCameraUrl = 'http://google.com';
-    m.backCameraUrl = 'http://google.com';
+    m.frontCameraUrl = '/assets/front-camera.jpg';
+    m.backCameraUrl = '/assets/back-camera.jpg';
     m.gallery = [{
       thumbnailUrl: 'http://google.com',
       videoUrl: 'http://google.com',
-      imageUrl: 'http://google.com',
+      imageUrl: `/assets/mission-gallery-image-0${i % 4 + 1}.jpg`,
     }];
   });
   logger.info(`creating ${missions.length} missions`);
   const missionDocs = yield Mission.create(
     _.map(missions, (mission, index) => _.assign(mission, {missionName: mission.missionName + ' ' + index}))
   );
-
-  _.each(reviews, (r, i) => {
-    r.user = userDocs[0].id; // setting all to first user for testing convenience
-    r.mission = missionDocs[i % missionDocs.length].id;
-    r.provider = missionDocs[i % missionDocs.length].provider;
-  });
-  logger.info(`creating ${reviews.length} reviews`);
-  yield Review.create(reviews);
 
   _.each(requests, (r, i) => {
     r.user = userDocs[0].id; // setting all to first user for testing convenience
@@ -201,10 +188,8 @@ co(function*() {
     today.add((i + 10) % 31 - 15, 'd');
 
     requestDocs[i].mission = missionDocs[i % missionDocs.length].id;
-    requestDocs[i].status = i % 2 ? RequestStatus.IN_PROGRESS : RequestStatus.PENDING;
-    if (requestDocs[i].status === RequestStatus.IN_PROGRESS) {
-      requestDocs[i].launchDate = today.toDate();
-    }
+    requestDocs[i].status = _.values(RequestStatus)[i % _.values(RequestStatus).length];
+    requestDocs[i].launchDate = new Date();
     yield requestDocs[i].save();
 
     const mindex = i % missionDocs.length;

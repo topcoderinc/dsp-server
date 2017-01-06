@@ -16,6 +16,7 @@ const _ = require('lodash');
 const Package = require('../models').Package;
 const User = require('../models').User;
 const Mission = require('../models').Mission;
+const Review = require('../models').Review;
 const MissionStatus = require('../enum').MissionStatus;
 const MissionService = require('../services/MissionService');
 
@@ -31,6 +32,7 @@ const NotificationType = require('../enum').NotificationType;
 // Exports
 module.exports = {
   get,
+  getSingle,
   create,
   search,
   accept,
@@ -45,21 +47,49 @@ module.exports = {
 
 // the joi schema for search
 create.schema = {
-  entity: joi.object().keys({
-    user: joi.string().required(),
-    package: joi.string().required(),
-    recipientName: joi.string().required(),
-    phoneNumber: joi.string().required(),
-    destinationPoint: joi.object().keys({
-      coordinates: joi.array().items(joi.number()).length(2).required(),
-      line1: joi.string().required(),
-      line2: joi.string(),
-      city: joi.string().required(),
-      postalCode: joi.string().required(),
+  entity: joi.alternatives().try(
+    joi.object().keys({
+      user: joi.string().required(),
+      package: joi.string().required(),
+      recipientName: joi.string().required(),
+      phoneNumber: joi.string().required(),
+      title: joi.string().required(),
+      destinationPoint: joi.object().keys({
+        coordinates: joi.array().items(joi.number()).length(2).required(),
+        line1: joi.string().required(),
+        line2: joi.string(),
+        state: joi.string().required(),
+        city: joi.string().required(),
+        postalCode: joi.string().required(),
+        primary: joi.boolean().required(),
+      }).required(),
+      startingPoint: joi.object().keys({
+        coordinates: joi.array().items(joi.number()).length(2).required(),
+        line1: joi.string().required(),
+        line2: joi.string(),
+        state: joi.string().required(),
+        city: joi.string().required(),
+        postalCode: joi.string().required(),
+        primary: joi.boolean().required(),
+      }).required(),
+      launchDate: joi.date().required(),
+      whatToBeDelivered: joi.string().required(),
     }),
-    launchDate: joi.date(),
-    additionalInfo: joi.string(),
-  }).required(),
+    joi.object().keys({
+      user: joi.string().required(),
+      package: joi.string().required(),
+      title: joi.string().required(),
+      whatToBeDelivered: joi.string().required(),
+      zones: joi.array().items(joi.object().keys({
+        location: joi.object().keys({
+          type: joi.string().required(),
+          coordinates: joi.array().required(),
+        }).required(),
+        description: joi.string().required(),
+        style: joi.object().required(),
+      })).min(1).required(),
+    })
+  ),
 };
 
 /**
@@ -73,7 +103,7 @@ function* create(entity) {
     throw new errors.NotFoundError(`package not found with specified id ${entity.package}`);
   }
   entity.provider = pack.provider;
-  entity.status = enums.RequestStatus.IN_PROGRESS;
+  entity.status = enums.RequestStatus.PENDING;
   entity.contactInfo = {
     recipientName: entity.recipientName,
     phoneNumber: entity.phoneNumber,
@@ -85,7 +115,7 @@ function* create(entity) {
 get.schema = {
   id: joi.string().required(),
   query: joi.object().keys({
-    limit: joi.number().integer().min(1).required(),
+    limit: joi.number().integer().required(),
     offset: joi.number().integer().min(0),
     status: joi.string().valid(_.values(enums.RequestStatus)),
   }),
@@ -103,12 +133,18 @@ function* get(id, query) {
     criteria.status = query.status;
   }
   const total = yield PackageRequest.find(criteria).count();
-  const docs = yield PackageRequest.find(criteria).skip(query.offset || 0).limit(query.limit)
-    .populate('mission').populate('provider').populate('package');
+  let docs;
+  if (query.limit < 0) {
+    docs = yield PackageRequest.find(criteria).populate('mission').populate('provider').populate('package');
+  } else {
+    docs = yield PackageRequest.find(criteria).skip(query.offset || 0).limit(query.limit)
+      .populate('mission').populate('provider').populate('package');
+  }
+
   return {
     total,
     items: _.map(docs, (d) => {
-      const sanitized = _.pick(d, 'id', 'status', 'launchDate');
+      const sanitized = _.pick(d, 'id', 'status', 'launchDate', 'title');
       if (d.mission) {
         sanitized.mission = {
           id: d.mission.id,
@@ -121,6 +157,48 @@ function* get(id, query) {
   };
 }
 
+
+getSingle.schema = {
+  userId: joi.string().required(),
+  requestId: joi.string().required(),
+};
+
+/**
+ * get a request by userId and requestId
+ * @param userId
+ * @param requestId
+ * @return {*}
+ * @private
+ */
+function * getSingle(userId, requestId) {
+  helper.validateObjectId(requestId);
+  const request = yield PackageRequest.findOne({user: userId, _id: requestId});
+  if (!request) {
+    throw new errors.NotFoundError('The request does not exist');
+  }
+  const doc = request.toObject();
+  if (request.mission) {
+    const mission = yield Mission.findOne({_id: request.mission}).populate('pilot').populate('provider');
+    doc.mission = mission.toObject();
+    if (mission.pilot) {
+      doc.mission.pilot = mission.pilot.toObject();
+    }
+    if (mission.provider) {
+      doc.mission.provider = mission.provider.toObject();
+      const providerUser = yield User.findOne({provider: mission.provider.id});
+      if (providerUser) {
+        doc.mission.provider.phone = providerUser.phone;
+      }
+    }
+    if (request.status === enums.RequestStatus.COMPLETED) {
+      const review = yield Review.findOne({mission: mission.id});
+      if (review) {
+        doc.mission.review = review.toObject();
+      }
+    }
+  }
+  return doc;
+}
 
 search.schema = {
   providerId: joi.string().required(),
@@ -153,16 +231,30 @@ function* search(providerId, entity) {
   const items = [];
   for (let i = 0; i < docs.length; i++) {
     const d = docs[i];
-    const sanitized = _.pick(d, 'id', 'launchDate', 'whatToBeDelivered', 'weight', 'payout');
-    sanitized.startingPoint = d.startingPoint.toObject();
-    sanitized.destinationPoint = d.destinationPoint.toObject();
-    sanitized.serviceName = (yield Service.findOne({_id: d.package.service})).name;
+    const sanitized = _.pick(d, 'id', 'status', 'launchDate', 'whatToBeDelivered', 'weight', 'payout', 'zones', 'title');
+    const service = yield Service.findOne({_id: d.package.service}).populate('category');
+
+    if (d.startingPoint) {
+      sanitized.startingPoint = d.startingPoint.toObject();
+    }
+    if (d.destinationPoint) {
+      sanitized.destinationPoint = d.destinationPoint.toObject();
+    }
+    if (d.startingPoint && d.destinationPoint) {
+      sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates,
+        sanitized.destinationPoint.coordinates);
+    }
+    sanitized.serviceName = service.name;
+    if (service.category) {
+      sanitized.serviceType = service.category.name;
+    }
     sanitized.packageName = d.package.name;
     sanitized.customer = _.pick(d.user, 'firstName', 'lastName', 'phone', 'email');
-    sanitized.customer.adress = d.user.address.toObject();
+    if (d.user.address) {
+      sanitized.customer.address = d.user.address.toObject();
+    }
     sanitized.customer.photoUrl = d.user.avatarUrl;
-    sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates,
-      sanitized.destinationPoint.coordinates);
+
     items.push(sanitized);
   }
   return {
@@ -279,7 +371,7 @@ function* assignDrone(providerId, requestId, entity) {
     throw new errors.NotFoundError('The provider does not have this request');
   }
 
-  if (request.status !== RequestStatus.PENDING) {
+  if (request.status !== RequestStatus.PENDING && request.status !== RequestStatus.SCHEDULED) {
     throw new errors.ArgumentError(`cannot assign drone in request status = ${request.status}`);
   }
 
