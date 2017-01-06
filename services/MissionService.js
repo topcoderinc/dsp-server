@@ -16,6 +16,8 @@ const _ = require('lodash');
 const Mission = require('../models').Mission;
 const MissioNStatus = require('../enum').MissionStatus;
 const Service = require('../models').Service;
+const Category = require('../models').Category;
+const Package = require('../models').Package;
 const errors = require('common-errors');
 const ObjectId = require('mongoose').Types.ObjectId;
 const DroneService = require('./DroneService');
@@ -269,19 +271,27 @@ function* getAllByDrone(droneId, entity) {
 
   const querySet = {drone: droneId};
 
+  if (entity.status) {
+    querySet.status = entity.status;
+  }
+
   if (!_.isNil(entity.date)) {
     const date = new Date(entity.date);
     querySet.startedAt = {$gte: date, $lte: date.getTime() + (24 * 60 * 60 * 1000)};
   }
 
   const docs = yield Mission.find(querySet).sort({startedAt: -1})
-    .populate('package').skip(entity.offset || 0).limit(entity.limit || 0);
+    .populate('packageRequest').skip(entity.offset || 0).limit(entity.limit || 0);
   const ret = [];
   for (let i = 0; i < docs.length; i++) {
     const d = docs[i];
-    const sanz = _.pick(d, 'startedAt', 'rating', 'whatToBeDelivered', 'weight');
+    const pack = (yield Package.findOne({_id: d.packageRequest.package}));
+    const service = (yield Service.findOne({_id: pack.service}));
+    const category = (yield Category.findOne({_id: service.category}));
+    const sanz = _.pick(d, 'startedAt', 'rating', 'whatToBeDelivered', 'weight', 'missionName', 'completedAt', 'scheduledAt');
     sanz.id = d._id;
-    sanz.serviceName = (yield Service.findOne({_id: d.package.service})).name;
+    sanz.serviceName = service.name;
+    sanz.serviceType = category.name;
     sanz.startingPoint = d.startingPoint.toObject();
     sanz.destinationPoint = d.destinationPoint.toObject();
     ret.push(sanz);

@@ -15,6 +15,7 @@ const _ = require('lodash');
 const logger = require('./common/logger');
 const helper = require('./common/helper');
 const models = require('./models');
+const moment = require('moment');
 
 const Drone = models.Drone;
 const User = models.User;
@@ -111,6 +112,7 @@ co(function*() {
       pricing: i,
       description: 'hello ,i am service ' + i,
       provider: providerDocs[i % providerDocs.length].id,
+      category: categoryDocs[i % categoryDocs.length].id,
     }));
   }
 
@@ -139,7 +141,6 @@ co(function*() {
   const packageDocs = yield Package.create(packages);
 
   _.each(missions, (m, i) => {
-    m.package = packageDocs[i % packageDocs.length].id;
     m.provider = packageDocs[i % packageDocs.length].provider;
     m.pilot = userDocs[0].id; // setting all to first user for testing convinience
     m.drone = droneDocs[i % droneDocs.length].id;
@@ -180,25 +181,35 @@ co(function*() {
   const requestDocs = yield PackageRequest.create(requests);
 
   for (let i = 0; i < requestDocs.length; i++) {
+    const today = moment();
+    today.hour('10');
+    today.minute('9');
+    today.second('7');
+    today.millisecond('500');
+    // put missions +-15 days from today
+    // i + 10 is to make 'drone36' with id '583e6e9df4209e0aa5d94da6' to have missions in different months for testing
+    today.add((i + 10) % 31 - 15, 'd');
+
     requestDocs[i].mission = missionDocs[i % missionDocs.length].id;
-    requestDocs[i].status = Math.random() > 0.5 ? RequestStatus.PENDING : RequestStatus.IN_PROGRESS;
+    requestDocs[i].status = i % 2 ? RequestStatus.IN_PROGRESS : RequestStatus.PENDING;
     if (requestDocs[i].status === RequestStatus.IN_PROGRESS) {
-      requestDocs[i].launchDate = new Date();
+      requestDocs[i].launchDate = today.toDate();
     }
     yield requestDocs[i].save();
 
     const mindex = i % missionDocs.length;
+    missionDocs[mindex].packageRequest = requestDocs[i].id;
     missionDocs[mindex].provider = requestDocs[i].provider;
-    missionDocs[mindex].status = Math.random() > 0.5 ? MissionStatus.IN_PROGRESS : MissionStatus.COMPLETED;
+    missionDocs[mindex].status = i % 2 ? MissionStatus.IN_PROGRESS : MissionStatus.COMPLETED;
     missionDocs[mindex].pilot = providerUserDocs[i % providerDocs.length].id;
-    if (missionDocs[mindex].status === MissionStatus.IN_PROGRESS) {
-      missionDocs[mindex].startedAt = new Date();
-      missionDocs[mindex].launchDate = new Date();
-    } else if (missionDocs[mindex].status === MissionStatus.COMPLETED) {
-      missionDocs[mindex].startedAt = new Date();
-      missionDocs[mindex].launchDate = new Date();
-      missionDocs[mindex].completedAt = new Date();
+    missionDocs[mindex].scheduledAt = today.add(1, 'h').toDate(); // +1 hour
+    missionDocs[mindex].startedAt = today.add(2, 'h').toDate(); // +2 hours
+    missionDocs[mindex].launchDate = today.toDate();
+    if (missionDocs[mindex].status === MissionStatus.COMPLETED) {
+      missionDocs[mindex].completedAt = today.add(3, 'h').toDate(); // +3 hours
     }
+    missionDocs[mindex].whatToBeDelivered = requestDocs[i].whatToBeDelivered;
+    missionDocs[mindex].weight = requestDocs[i].weight;
     yield missionDocs[mindex].save();
   }
   _.each(notifications, (n) => {
