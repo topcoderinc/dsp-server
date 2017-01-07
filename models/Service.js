@@ -16,6 +16,7 @@ const _ = require('lodash');
 
 const ServiceSchema = new Schema({
   provider: {type: Schema.Types.ObjectId, required: true, ref: 'Provider'},
+  category: {type: Schema.Types.ObjectId, required: true, ref: 'Category'},
   name: {type: String, required: true},
   pricing: {type: String, required: true},
   description: {type: String, required: true},
@@ -34,7 +35,7 @@ if (!ServiceSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 ServiceSchema.options.toObject.transform = function (doc, ret, options) {
-  const sanitized = _.omit(ret, '__v', '_id', 'provider');
+  const sanitized = _.omit(ret, '__v', '_id', 'provider', 'category');
   sanitized.id = doc._id;
   return sanitized;
 };

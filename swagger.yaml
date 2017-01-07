@@ -2188,6 +2188,14 @@ paths:
                   type: string
                 weight:
                   type: number
+                serviceType:
+                  type: string
+                missionName:
+                  type: string
+                completedAt:
+                  type: string
+                scheduledAt:
+                  type: string
         400:
           description: Invalid parameters
           schema:

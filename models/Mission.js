@@ -49,7 +49,7 @@ const MissionSchema = new mongoose.Schema({
   status: {type: String, enum: _.values(enums.MissionStatus), required: true},
   drone: {type: Schema.Types.ObjectId, required: false, ref: 'Drone'},
   provider: {type: Schema.Types.ObjectId, required: false, ref: 'Provider'},
-  package: {type: Schema.Types.ObjectId, required: false, ref: 'Package'},
+  packageRequest: {type: Schema.Types.ObjectId, required: false, ref: 'PackageRequest'},
   pilot: {type: Schema.Types.ObjectId, required: false, ref: 'User'},
   startingPoint: {type: Address, required: false},
   destinationPoint: {type: Address, required: false},
@@ -77,7 +77,7 @@ const MissionSchema = new mongoose.Schema({
   specialRequirements: [String],
   notes: String,
 
-  // from package
+  // from packageRequest
   weight: Number,
   whatToBeDelivered: String,
 
@@ -119,7 +119,7 @@ if (!MissionSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 MissionSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'package', 'pilot', 'drone');
+  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot', 'drone');
   sanitized.startingPoint = _.omit(sanitized.startingPoint, '_id');
   sanitized.destinationPoint = _.omit(sanitized.destinationPoint, '_id');
   sanitized.id = doc._id;
