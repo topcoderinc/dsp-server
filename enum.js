@@ -66,6 +66,10 @@ const DroneType = {
   type2: 'type2',
 };
 
+const AWSAuthTypes = {
+  MISSION: 'MISSION',
+};
+
 module.exports = {
   SocialType,
   DroneStatus,
@@ -77,4 +81,5 @@ module.exports = {
   MissionStatus,
   NotificationType,
   RequestStatus,
+  AWSAuthTypes,
 };

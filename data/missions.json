@@ -1,6 +1,7 @@
 [
   {
     "_id": "594d77ec37275a4d97dddb0c",
+    "pilot": "5870c6c774d5e9092699f45f",
     "status": "waiting",
     "startingPoint": {
       "coordinates": [

@@ -17,6 +17,8 @@
     "url": ""
   },
   "dependencies": {
+    "aws-sdk": "^2.7.21",
+    "aws-sdk-promise": "0.0.2",
     "bcryptjs": "^2.3.0",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",

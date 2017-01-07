@@ -24,8 +24,20 @@
     "firstName": "fisrt",
     "lastName": "last",
     "email": "topcoder@gmail.com",
-    "socialNetworkType": "Google",
+    "socialNetworkType": "google-oauth2",
     "socialNetworkId": 1,
     "socialNetworkAccessToken": "123456"
+  },
+  {
+    "_id" : "5870c6c774d5e9092699f45f",
+    "createdAt" : "2017-01-07T10:45:27.395Z",
+    "updatedAt" : "2017-01-07T10:45:27.395Z",
+    "password" : "pilot",
+    "firstName" : "John",
+    "lastName" : "Pilot",
+    "email" : "pilot@pilot.com",
+    "phone" : "997",
+    "name" : "John Pilot",
+    "role" : "consumer"
   }
 ]

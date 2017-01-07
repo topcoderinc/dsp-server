@@ -141,7 +141,9 @@ co(function*() {
   _.each(missions, (m, i) => {
     m.package = packageDocs[i % packageDocs.length].id;
     m.provider = packageDocs[i % packageDocs.length].provider;
-    m.pilot = userDocs[0].id; // setting all to first user for testing convinience
+    if (!m.pilot) {
+      m.pilot = userDocs[0].id; // setting all to first user for testing convinience
+    }
     m.drone = droneDocs[i % droneDocs.length].id;
     m.status = _.values(MissionStatus)[Math.floor(Math.random() * _.values(MissionStatus).length)];
     m.telemetry = {
@@ -190,7 +192,9 @@ co(function*() {
     const mindex = i % missionDocs.length;
     missionDocs[mindex].provider = requestDocs[i].provider;
     missionDocs[mindex].status = Math.random() > 0.5 ? MissionStatus.IN_PROGRESS : MissionStatus.COMPLETED;
-    missionDocs[mindex].pilot = providerUserDocs[i % providerDocs.length].id;
+    if (!missionDocs[mindex].pilot) {
+      missionDocs[mindex].pilot = providerUserDocs[i % providerDocs.length].id;
+    }
     if (missionDocs[mindex].status === MissionStatus.IN_PROGRESS) {
       missionDocs[mindex].startedAt = new Date();
       missionDocs[mindex].launchDate = new Date();

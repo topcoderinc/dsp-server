@@ -389,4 +389,11 @@ module.exports = {
       method: 'remove',
     },
   },
+  '/aws/federation-token': {
+    post: {
+      controller: 'AWSController',
+      middleware: [auth()],
+      method: 'getFederationToken',
+    },
+  },
 };

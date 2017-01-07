@@ -2599,6 +2599,51 @@ paths:
           description: fly zone not found
           schema:
             $ref: "#/definitions/ErrorMsg"
+            
+  /aws/federation-token:
+    post:
+      description: Generate federation token from AWS
+      produces:
+        - application/json
+      tags:
+       - aws
+      parameters:
+        - in: body
+          name: body
+          description: the requests params, different types can contain different values
+          required: true
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              region:
+                type: string
+              credentials:
+                type: object
+                properties:
+                  accessKeyId:
+                    type: string
+                  secretAccessKey:
+                    type: string
+                  sessionToken:
+                    type: string
+              data:
+                type: object
+        "400":
+          description: invalid input parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 definitions:
   MissionReq:
     type: object
