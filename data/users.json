@@ -24,7 +24,7 @@
     "firstName": "fisrt",
     "lastName": "last",
     "email": "topcoder@gmail.com",
-    "socialNetworkType": "Google",
+    "socialNetworkType": "google-oauth2",
     "socialNetworkId": 1,
     "socialNetworkAccessToken": "123456"
   }
