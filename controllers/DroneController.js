@@ -98,7 +98,14 @@ function* currentLocations(req, res) {
  * update a drone location
  */
 function* updateLocation(req, res) {
-  const drone = yield DroneService.updateLocation(req.params.id, req.body);
+  const nfzFields = helper.convertQueryFieldStringToArray(req.query.nfzFields);
+  const nearDroneFields = helper.convertQueryFieldStringToArray(req.query.nearDroneFields);
+  const returnNFZ = req.query.returnNFZ;
+  const nfzLimit = req.query.nfzLimit;
+  const nearDronesMaxDist = req.query.nearDronesMaxDist;
+  const nearDronesLimit = req.query.nearDronesLimit;
+  const drone = yield DroneService.updateLocation(req.params.id, req.body, returnNFZ,
+    nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
   res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }

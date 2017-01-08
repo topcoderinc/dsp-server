@@ -71,6 +71,8 @@ function* _validateMission(values) {
  * [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]
  * @param {Number} criteria.limit the limit
  * @param {Number} criteria.offset the offset
+ *
+ * @param {Array} criteria.projFields an array of field names needs to be projected and returned.
  */
 function* search(criteria) {
   let filter = _.pick(criteria, 'mission', 'isActive', 'isPermanent');
@@ -89,8 +91,8 @@ function* search(criteria) {
           $or: [
             {
               isPermanent: false,
-              startTime: {$lte: new Date()},
-              endTime: {$gte: new Date()},
+              startTime: {$gte: new Date()},
+              endTime: {$lte: new Date()},
             },
             {
               isPermanent: true,
@@ -100,10 +102,14 @@ function* search(criteria) {
       ],
     };
   }
+  let projection = '';
+  if (criteria.projFields && criteria.projFields.length > 0) {
+    projection = criteria.projFields.join(' ');
+  }
   return yield {
     total: NoFlyZone.count(filter),
     items: NoFlyZone
-      .find(filter)
+      .find(filter, projection)
       .skip(criteria.offset)
       .sort('-id')
       .limit(criteria.limit),
@@ -119,6 +125,7 @@ search.schema = {
     matchTime: joi.bool(),
     offset: joi.offset(),
     limit: joi.limit(),
+    projFields: joi.array().items(joi.string()).default([]),
   },
 };
 
