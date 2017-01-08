@@ -30,7 +30,12 @@ const Service = models.Service;
 const DronePosition = models.DronePosition;
 const NoFlyZone = models.NoFlyZone;
 
-const drones = require('./data/drones.json');
+let drones;
+if (process.argv[2] === 'drones-within-area') {
+  drones = require('./data/drones-within-area.json');
+} else {
+  drones = require('./data/drones.json');
+}
 const users = require('./data/users.json');
 const categories = require('./data/categories.json');
 const providers = require('./data/providers.json');
