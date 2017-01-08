@@ -23,6 +23,7 @@
     "consistent-return": 0,
     "newline-per-chained-call": 0,
     "generator-star-spacing": 0,
+    "linebreak-style":0,
     "max-len": [
       2,
       130
