@@ -25,6 +25,75 @@ DRONE SERIES - WEBAPI IMPLEMENT PRODUCER API
 import `test/NFZ.postman_collection.json`  
 it contains only endpoints for No Fly Zone endpoints
 
+# Smart Location Updates
+I added three query parameters `returnNFZ`, `nfzFields` and `nfzLimit` to API *PUT `/drones/{id}`* for getting the array of violated No fly zones in the response data.
+A Sample usage to get the violated no fly zones with fields `description`, `isActive`, `isPermanent`:
+    ```
+    curl -X PUT -H "Content-Type: application/json"  -d '{
+       	"lat":38.90709540316193,
+       	"lng":-77.03920125961304
+    }' "$URL/drones/5866f36af66a5654a0816991?returnNFZ=true&nfzFields=description,isActive,isPermanent"
+    ```
+  The response data will contain an extra field `noFlyZones`, which contains an array of `NoFlyZone` that the drone has violated.
+  You could specified the returned fields of `noFlyZones` by `nfzFields` parameter. If you omit the `nfzFields`, all fields except the `location` will be returned.
+  The parameter `nfzLimit` is for limit the number of returned `NoFlyZone`s, if it is omitted, then all the `NoFlyZone`s are returned.
+  Note: the `_id` of the `NoFlyZone` is always returned.
+The approach to get the array of violated no fly zones is based on the `NoFlyZoneService.search`, the steps are:
+ 1. Define the search criteria: be active, matched time, geometry is "Point" type, the point coordinate is  the drone's location.
+    ```
+    {
+       isActive: true,
+        matchTime: true,
+        geometry: {
+          type: 'Point',
+          coordinates: drone.currentLocation,
+        },
+        projFields: ['circle', 'description', 'startTime', 'endTime', 'isActive', 'isPermanent', 'mission'],
+    }
+    ```
+ 2. Call `NoFlyZoneService.search` to search no fly zones. Since we only needs to get part of the fields of `NoFlyZone`, I added a field `projFields` to the search criteria. 
+    The field `projFields` could search in MongoDB with projection, which helps to improve the performance.
+    Additionally, the `projFields` could be overrided by `nfzFields` if it is provided.
+    `nfzFields=description,isActive,isPermanent` will be converted to `['description', 'isActive', 'isPermanent']`.
+ 3. Retrieve the array of no fly zones from the returned object, and add the `items` field to the response of this API. It is added to the field `noFlyZones`.
+# Nearest Drone Updates
+I added another three query parameters `nearDronesMaxDist`, `nearDroneFields` and `nearDronesLimit` to API *PUT `/drones/{id}`* for getting the nearest drones.
+A Sample usage to get 100 nearest drones within 1000 meters:
+    ```
+    curl -X PUT -H "Content-Type: application/json"  -d '{
+       	"lat":38.90709540316193,
+       	"lng":-77.03920125961304
+    }' "$URL/drones/5866f36af66a5654a0816991?nearDronesMaxDist=1000&nearDronesLimit=100&nearDroneFields=currentLocation,status,name,description"
+    ```
+  The response data will contain an extra field `nearestDrones`. This field contains an array of `Drones` (100 at most) that are ordered by distance.
+  To avoid return all fields of drones in the response data, you could specify the fields to be returned by `nearDroneFields`. The example above returns the fields `currentLocation`, `status`, `name`, `description`, `_id`.
+  If the `nearDronesMaxDist` is omitted or 0, no nearest drones will be contained in the response data.
+  If the `nearDronesLimit` is omitted or 0, only 1 nearest drone will be returned.
+  If the `nearDroneFields` is omitted, all the fields of drones will be returned, which is not necessary. So this field is suggested to be provided.
+  A new field `dist` is contained in the response data for indicating the distance (in meter) between the drone and the current drone.
+  Note: the `_id` of `Drone` is always returned.
+The approach to get the array of nearest drones is based on the geospatial of MongoDB. The steps are:
+ 1. Add the `2dsphere` index to `Drone.currentLocation`, since it is not a required field, we need to specify `sparse: true`.
+ 2. Rebuild the index. Since the data are for test, we could regenerate test data for rebuilding the index for simplicity.
+ 3. As we need to add `dist` field to the response data, we use `$geoNear` instead of `$nearSphere`.
+    Set the `$geoNear` option as
+    ```
+    {
+      near: {
+        type: 'Point',
+        coordinates: drone.currentLocation,
+      },
+      distanceField: 'dist',
+      maxDistance: nearDronesMaxDist,
+      spherical: true,
+      query: {
+        _id: { $ne: ObjectId(id) },
+      },
+    }
+    ```
+    which means to search by `Point` and filter the current drone itself.
+ 4. Add `limit` and `$project` according to the query parameter `nearDronesLimit`, `nearDroneFields`.
+ 5. Aggregate `Drone` and add returned array to the response of this API. The array is added to the field `nearestDrones`.  
 # env
 
 you also can export those values before run(data from forum).
