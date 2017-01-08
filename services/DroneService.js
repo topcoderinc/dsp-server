@@ -296,7 +296,7 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
         type: 'Point',
         coordinates: drone.currentLocation,
       },
-      distanceField: 'dist',
+      distanceField: 'distance',
       maxDistance: nearDronesMaxDist,
       spherical: true,
       query: {
