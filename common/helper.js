@@ -28,6 +28,8 @@ module.exports = {
   getFlatternDistance,
   splitQueryToArray,
   validateObjectId,
+  convertQueryFieldStringToArray,
+  convertArrayToProjectionObject,
 };
 
 /**
@@ -238,4 +240,35 @@ function validateObjectId(id) {
   if (!ObjectId.isValid(id)) {
     throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, `id ${id} is not valid`);
   }
+}
+/**
+ * Helper method to convert query field string like a,b,c to array ['a', 'b', 'c']
+ * @param queryFieldString
+ * @returns {*}
+ */
+function convertQueryFieldStringToArray(queryFieldString) {
+  if (queryFieldString && queryFieldString.length > 0) {
+    return queryFieldString.split(',');
+  }
+  return [];
+}
+/**
+ * Helper method to convert array of field names to the projection object of Mongoose
+ * Example:
+ *     Convert fieldArray: ['a', 'b', 'c'] to
+ *     {
+ *      a: 1
+ *      b: 1
+ *      c: 1
+ *     }
+ *
+ * @param fieldArray Array that contains the field name
+ * @returns {*}
+ */
+function convertArrayToProjectionObject(fieldArray) {
+  let projection = null;
+  if (fieldArray && fieldArray.length > 0) {
+    projection = Object.assign(...fieldArray.map(field => ({[field]: 1})));
+  }
+  return projection;
 }

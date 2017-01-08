@@ -89,8 +89,8 @@ function* search(criteria) {
           $or: [
             {
               isPermanent: false,
-              startTime: {$lte: new Date()},
-              endTime: {$gte: new Date()},
+              startTime: {$gte: new Date()},
+              endTime: {$lte: new Date()},
             },
             {
               isPermanent: true,
