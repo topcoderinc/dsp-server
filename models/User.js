@@ -49,7 +49,7 @@ if (!UserSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 UserSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'password', 'provider', 'createdAt', 'updatedAt');
+  const sanitized = _.omit(ret, '__v', '_id', 'password', 'createdAt', 'updatedAt');
   sanitized.id = doc._id;
   return sanitized;
 };
