@@ -2697,11 +2697,14 @@ paths:
                     - text
               missionStatus:
                 type: string
+              missionName:
+                type: string
               pilotChecklist:
                 $ref: "#/definitions/PilotChecklist"
             required:
               - questions
               - missionStatus
+              - missionName
         400:
           description: Invalid parameters
           schema:

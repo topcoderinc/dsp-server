@@ -305,7 +305,7 @@ getPilotChecklist.schema = {
 *
  * @param   {String}   id               mission id
  * @param   {String}   pilotId          pilot id
- * @return  {Object}   mission status, question list and a pilot checklist if available
+ * @return  {Object}   mission name, mission status, question list and a pilot checklist if available
  */
 function* getPilotChecklist(id, pilotId) {
   const mission = yield Mission.findOne({_id: id});
@@ -319,6 +319,7 @@ function* getPilotChecklist(id, pilotId) {
   }
 
   const response = {
+    missionName: mission.missionName,
     missionStatus: mission.status,
   };
   // get questions texts to send them in response
