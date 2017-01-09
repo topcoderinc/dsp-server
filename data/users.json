@@ -27,5 +27,26 @@
     "socialNetworkType": "google-oauth2",
     "socialNetworkId": 1,
     "socialNetworkAccessToken": "123456"
+  },
+  {
+    "name": "pilot",
+    "firstName": "fisrt",
+    "lastName": "last",
+    "email": "pilot@pilot.com",
+    "password": "pilot",
+    "avatarUrl": "http://google.com",
+    "phone": "+1 123-1234-123",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    },
+    "role": "pilot"
   }
 ]

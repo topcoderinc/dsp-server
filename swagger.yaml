@@ -2642,6 +2642,192 @@ paths:
           description: fly zone not found
           schema:
             $ref: "#/definitions/ErrorMsg"
+
+  /pilot/missions:
+    get:
+      description: Get list of missions for the current logged in pilot. Pilot role only.
+      tags:
+        - pilot
+        - mission
+      security:
+        - Bearer: []
+      parameters:
+        -
+          name: offset
+          in: query
+          description: the search offset
+          required: false
+          type: integer
+        -
+          name: limit
+          in: query
+          description: the search limit
+          required: false
+          type: integer
+        -
+          name: sortBy
+          in: query
+          description: the sort field. Allowed `missionName`, `status`. Default order is ascending. Prefix with `-` for descending order e.g. `-missionName`.
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+              items:
+                type: array
+                items:
+                  # Mission list
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    missionName:
+                      type: string
+                    status:
+                      type: string
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-pilot is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+  /pilot/checklist/{id}:
+    get:
+      description: Get the checklist for specified mission. Pilot role only.
+      tags:
+        - checklist
+        - pilot
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              questions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    text:
+                      type: string
+                  required:
+                    - id
+                    - text
+              missionStatus:
+                type: string
+              missionName:
+                type: string
+              pilotChecklist:
+                $ref: "#/definitions/PilotChecklist"
+            required:
+              - questions
+              - missionStatus
+              - missionName
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-pilot is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in pilot is not assigned to this mission
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+    put:
+      description: Update the checklist for specified mission. Pilot role only.
+      tags:
+        - checklist
+        - pilot
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: checklist answers and load flag if we want to load mission
+          schema:
+            type: object
+            properties:
+              answers:
+                type: array
+                items:
+                  $ref: "#/definitions/PilotChecklistAnswer"
+              load:
+                type: boolean
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              missionStatus:
+                type: string
+              pilotChecklist:
+                $ref: "#/definitions/PilotChecklist"
+            required:
+              - missionStatus
+              - pilotChecklist
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-pilot is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Current logged in pilot is not assigned to this mission
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+
+
 definitions:
   MissionReq:
     type: object
@@ -3025,6 +3211,36 @@ definitions:
     required:
       - type
       - coordinates
+  PilotChecklistAnswer:
+    type: object
+    properties:
+      question:
+        type: string
+      answer:
+        type: string
+        enum:
+          - yes
+          - no
+          - note
+      note:
+        type: string
+    required:
+      - question
+  PilotChecklist:
+    type: object
+    properties:
+      answers:
+        type: array
+        items:
+          $ref: "#/definitions/PilotChecklistAnswer"
+      user:
+        type: string
+      createdAt:
+        type: string
+        format: date
+      updatedAt:
+        type: string
+        format: date
   ErrorMsg:
     type: object
     properties:

@@ -66,6 +66,12 @@ const DroneType = {
   type2: 'type2',
 };
 
+const PilotChecklistAnswers = {
+  YES: 'yes',
+  NO: 'no',
+  NOTE: 'note',
+};
+
 module.exports = {
   SocialType,
   DroneStatus,
@@ -77,4 +83,5 @@ module.exports = {
   MissionStatus,
   NotificationType,
   RequestStatus,
+  PilotChecklistAnswers,
 };
