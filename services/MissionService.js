@@ -14,10 +14,11 @@ const joi = require('joi');
 const _ = require('lodash');
 
 const Mission = require('../models').Mission;
-const MissioNStatus = require('../enum').MissionStatus;
+const enums = require('../enum');
 const Service = require('../models').Service;
 const Category = require('../models').Category;
 const Package = require('../models').Package;
+const Question = require('../models').Question;
 const errors = require('common-errors');
 const ObjectId = require('mongoose').Types.ObjectId;
 const DroneService = require('./DroneService');
@@ -34,6 +35,9 @@ module.exports = {
   update,
   remove,
   download,
+  getPilotChecklist,
+  updatePilotChecklist,
+  fetchPilotMissions,
 };
 
 // the joi schema for search
@@ -51,7 +55,7 @@ search.schema = {
  */
 function* search(entity) {
   const total = yield Mission.find().count();
-  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit || 100).populate('package');
+  const docs = yield Mission.find().skip(entity.offset || 0).limit(entity.limit || 100).populate('packageRequest');
   return {
     total,
     items: _.map(docs, (d) => (d.toObject())),
@@ -256,7 +260,7 @@ getAllByDrone.schema = {
   entity: joi.object().keys({
     date: joi.date(),
     limit: joi.number().integer(),
-    status: joi.string().valid(_.values(MissioNStatus)),
+    status: joi.string().valid(_.values(enums.MissionStatus)),
     offset: joi.number().integer(),
   }).required(),
 };
@@ -297,4 +301,140 @@ function* getAllByDrone(droneId, entity) {
     ret.push(sanz);
   }
   return ret;
+}
+
+
+// the joi schema for getPilotChecklist
+getPilotChecklist.schema = {
+  id: joi.string().required(),
+  pilotId: joi.string().required(),
+};
+
+/**
+ * Get a pilot checklist for a certain mission
+*
+ * @param   {String}   id               mission id
+ * @param   {String}   pilotId          pilot id
+ * @return  {Object}   mission name, mission status, question list and a pilot checklist if available
+ */
+function* getPilotChecklist(id, pilotId) {
+  const mission = yield Mission.findOne({_id: id});
+
+  if (!mission) {
+    throw new errors.NotFoundError(`mission not found with specified id ${id}`);
+  }
+
+  if (mission.pilot.toString() !== pilotId) {
+    throw new errors.NotPermittedError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+  }
+
+  const response = {
+    missionName: mission.missionName,
+    missionStatus: mission.status,
+  };
+  // get questions texts to send them in response
+  response.questions = yield Question.find();
+
+  // if there are any answers, then add them to response
+  if (mission.pilotChecklist) {
+    response.pilotChecklist = _.omit(mission.pilotChecklist.toObject(), ['user']);
+  }
+
+  return response;
+}
+
+// the joi schema for updatePilotChecklist's answer
+const answersSchema = {
+  question: joi.string().required(),
+  answer: joi.string().valid(_.values(enums.PilotChecklistAnswers)),
+  note: joi.string(),
+};
+// the joi schema for updatePilotChecklist
+updatePilotChecklist.schema = {
+  id: joi.string().required(),
+  pilotId: joi.string().required(),
+  entity: joi.object().keys({
+    answers: joi.array().items(joi.object(answersSchema)).required(),
+    load: joi.bool(),
+  }).required(),
+};
+
+/**
+ * Update a pilot checklist for a certain mission
+ *
+ * @param   {String}   id               mission id
+ * @param   {String}   pilotId          pilot id
+ * @param   {Object}   entity
+ * @param   {Array}    entity.answers   array of answers
+ * @param   {Boolean}  entity.load      flag to load mission
+ * @return  {Object}   pilot checklist and mission status
+ */
+function* updatePilotChecklist(id, pilotId, entity) {
+  const mission = yield Mission.findOne({_id: id});
+
+  if (!mission) {
+    throw new errors.NotFoundError(`mission not found with specified id ${id}`);
+  }
+
+  if (mission.pilot.toString() !== pilotId) {
+    throw new errors.NotFoundError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+  }
+
+  if (!mission.pilotChecklist) {
+    mission.pilotChecklist = {};
+  }
+
+  mission.pilotChecklist.user = pilotId;
+  mission.pilotChecklist.answers = entity.answers;
+  if (entity.load) {
+    mission.status = 'in-progress';
+  }
+  yield mission.save();
+
+  const response = {
+    missionStatus: mission.status,
+  };
+  response.pilotChecklist = _.omit(mission.pilotChecklist.toObject(), ['user']);
+
+  return response;
+}
+
+// the joi schema for fetchPilotMissions
+fetchPilotMissions.schema = {
+  pilotId: joi.string(),
+  entity: joi.object().keys({
+    offset: joi.number().integer(),
+    limit: joi.number().integer(),
+    sortBy: joi.string(),
+  }).required(),
+};
+
+/**
+ * Fetch pilot missions
+ *
+ * @param   {String}   pilotId    pilot id
+ * @param   {Object}   entity     parameters of request: limit, offset, sortBy
+ * @return  {Object}   missions
+ */
+function* fetchPilotMissions(pilotId, entity) {
+  const query = {pilot: pilotId};
+  const sortBy = {};
+
+  if (entity.sortBy) {
+    const direction = entity.sortBy[0] === '-' ? -1 : 1;
+    const field = entity.sortBy[0] === '-' ? entity.sortBy.slice(1) : entity.sortBy;
+
+    sortBy[field] = direction;
+  }
+
+  const total = yield Mission.find(query).count();
+  const docs = yield Mission.find(query)
+    .skip(entity.offset || 0)
+    .limit(entity.limit || 100)
+    .sort(sortBy);
+
+  return {
+    total,
+    items: _.map(docs, (d) => (_.pick(d.toObject(), ['id', 'missionName', 'status']))),
+  };
 }

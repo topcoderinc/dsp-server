@@ -42,6 +42,39 @@ const ZoneSchema = new Schema({
   style: {type: Mixed, default: {}},
 });
 
+// Pilot checklist answer schema
+const PilotChecklistAnswerSchema = new Schema({
+  question: {type: Schema.Types.ObjectId, required: true, unique: true, ref: 'Question'},
+  answer: {type: String, enum: _.values(enums.PilotChecklistAnswers)},
+  note: String,
+});
+
+if (!PilotChecklistAnswerSchema.options.toObject) {
+  PilotChecklistAnswerSchema.options.toObject = {};
+}
+
+PilotChecklistAnswerSchema.options.toObject.transform = function (doc, ret, options) {
+  const sanitized = _.omit(ret, '__v', '_id');
+  return sanitized;
+};
+
+// Pilot checklist schema
+const PilotChecklistSchema = new Schema({
+  answers: {type: [PilotChecklistAnswerSchema]},
+  user: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
+});
+
+PilotChecklistSchema.plugin(timestamps);
+
+if (!PilotChecklistSchema.options.toObject) {
+  PilotChecklistSchema.options.toObject = {};
+}
+
+PilotChecklistSchema.options.toObject.transform = function (doc, ret, options) {
+  const sanitized = _.omit(ret, '__v', '_id');
+  return sanitized;
+};
+
 const MissionSchema = new mongoose.Schema({
   missionName: { type: String, required: false },
   plannedHomePosition: { type: mongoose.Schema.Types.Mixed, required: false },
@@ -51,6 +84,7 @@ const MissionSchema = new mongoose.Schema({
   provider: {type: Schema.Types.ObjectId, required: false, ref: 'Provider'},
   packageRequest: {type: Schema.Types.ObjectId, required: false, ref: 'PackageRequest'},
   pilot: {type: Schema.Types.ObjectId, required: false, ref: 'User'},
+  pilotChecklist: PilotChecklistSchema,
   startingPoint: {type: Address, required: false},
   destinationPoint: {type: Address, required: false},
 
@@ -119,7 +153,7 @@ if (!MissionSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 MissionSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot', 'drone');
+  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot', 'pilotChecklist', 'drone');
   sanitized.startingPoint = _.omit(sanitized.startingPoint, '_id');
   sanitized.destinationPoint = _.omit(sanitized.destinationPoint, '_id');
   sanitized.id = doc._id;
