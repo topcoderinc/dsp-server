@@ -12,6 +12,7 @@
 
 const joi = require('joi');
 const Package = require('../models').Package;
+const Service = require('../models').Service;
 const helper = require('../common/helper');
 const errors = require('common-errors');
 
@@ -88,11 +89,17 @@ getSingle.schema = {
  * Get a package identified by id
  */
 function* getSingle(id) {
+  helper.validateObjectId(id);
   const pack = yield Package.findOne({_id: id});
   if (!pack) {
     throw new errors.NotFoundError(`package not found with specified id ${id}`);
   }
-  return pack.toObject();
+  const sanitized = pack.toObject();
+  const service = yield Service.findOne({_id: pack.service}).populate('category');
+  if (service) {
+    sanitized.serviceType = service.category.name;
+  }
+  return sanitized;
 }
 
 // the joi schema for getRelated

@@ -1,5 +1,6 @@
 [
   {
+    "_id": "586a043af23edf4860579a70",
     "name": "package 1",
     "description": "description text",
     "longDescription": "long description text",
@@ -38,6 +39,7 @@
     "bestseller": true,
     "promoted": false
   },  {
+    "_id":"586cf7fe01baed61ded9ed94",
     "name": "package 2",
     "description": "description text",
     "longDescription": "long description text",

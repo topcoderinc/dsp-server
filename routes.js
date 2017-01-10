@@ -114,6 +114,13 @@ module.exports = {
       method: 'get',
     },
   },
+  '/requests/:id': {
+    get: {
+      controller: 'PackageRequestController',
+      middleware: [auth()],
+      method: 'getSingle',
+    },
+  },
   '/dronePosition/:id': {
     get: {
       controller: 'DronePositionController',

@@ -3,10 +3,11 @@
     "name": "user1",
     "firstName": "fisrt",
     "lastName": "last",
-    "email": "2427546644@qq.com",
+    "email": "consumer@consumer.com",
     "password": "123456",
-    "avatarUrl": "http://google.com",
+    "avatarUrl": "img/thumbnail.png",
     "phone": "+1 123-1234-123",
+    "role":"consumer",
     "address": {
       "coordinates": [
         73,

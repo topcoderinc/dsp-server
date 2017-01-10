@@ -326,7 +326,7 @@ paths:
           description: the max distance to search (in meters) from longitude, latitude
           required: true
           type: number
-        -
+        - 
           name: categoryId
           in: query
           description: the category id to filter
@@ -1083,12 +1083,8 @@ paths:
                 $ref: "#/definitions/Address"
               launchDate:
                 type: string
-              additionalInfo:
+              whatToBeDelivered:
                 type: string
-            required:
-              - recipientName
-              - phoneNumber
-              - destinationPoint
 
       responses:
         201:
@@ -1219,7 +1215,7 @@ paths:
         -
           name: limit
           in: query
-          description: the search limit
+          description: the search limit, if its value is less than 1, there won't be limitation on returned records, i.e. no pagination.
           required: true
           type: integer
         -
@@ -1243,6 +1239,8 @@ paths:
                   type: object
                   properties:
                     id:
+                      type: string
+                    title:
                       type: string
                     status:
                       type: string
@@ -1276,6 +1274,60 @@ paths:
           schema:
             $ref: "#/definitions/ErrorMsg"
 
+  /requests/{id}:
+    get:
+      description: Get specified package request of current user
+      security:
+        - Bearer: []
+      tags:
+       - request
+      parameters:
+        - name: id
+          in: path
+          description: the request id
+          required: true
+          type: string
+
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              contactInfo:
+                type: object
+              status:
+                type: string
+              launchDate:
+                type: string
+              mission:
+                type: object
+              payout:
+                type: number
+              destinationPoint:
+                $ref: "#/definitions/Address"
+              startingPoint:
+                $ref: "#/definitions/Address"
+              title:
+                type: string
+              weight:
+                type: number
+              whatToBeDelivered:
+                type: string
+              zones:
+                type: array
+                items:
+                  type: object
+        400:
+          description: invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: missing bearer token
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
   /mission/{id}/review:
     post:
@@ -1406,6 +1458,8 @@ paths:
                   type: object
                   properties:
                     id:
+                      type: string
+                    status:
                       type: string
                     serviceName:
                       type: string
@@ -2291,6 +2345,8 @@ paths:
                       type: string
                     description:
                       type: string
+                    category:
+                      type: string
         400:
           description: Invalid parameters
           schema:
@@ -2963,6 +3019,8 @@ definitions:
       pricing:
         type: string
       description:
+        type: string
+      category:
         type: string
       packages:
         type: array

@@ -43,9 +43,6 @@ function* create(entity) {
   if (!mission) {
     throw new errors.NotFoundError(`mission not found with specified id ${entity.mission}`);
   }
-  if (mission.pilot.toString() !== entity.user) {
-    throw new errors.HttpStatusError(403, 'no permission');
-  }
   entity.provider = mission.provider;
   const created = yield Review.create(entity);
   return _.omit(created.toObject(), 'user');

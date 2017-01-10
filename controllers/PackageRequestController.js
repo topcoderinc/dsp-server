@@ -18,6 +18,7 @@ const helper = require('../common/helper');
 module.exports = {
   create,
   get,
+  getSingle,
   search,
   accept,
   reject,
@@ -50,6 +51,10 @@ function* get(req, res) {
   res.json(yield PackageRequestService.get(req.auth.sub, req.query));
 }
 
+
+function* getSingle(req, res) {
+  res.json(yield PackageRequestService.getSingle(req.auth.sub, req.params.id));
+}
 
 /**
  *  get all packageRequests of current provider and lauchDate,statuses

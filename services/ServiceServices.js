@@ -16,10 +16,11 @@ const joi = require('joi');
 const Service = require('../models').Service;
 const Package = require('../models').Package;
 const Provider = require('../models').Provider;
+const Category = require('../models').Category;
 const PackageService = require('../services/PackageService');
 const ProviderService = require('../services/ProviderService');
-
 const errors = require('common-errors');
+const helper = require('../common/helper');
 
 const _ = require('lodash');
 
@@ -37,6 +38,7 @@ const serviceCreateOrUpdateEnityJoi = joi.object().keys({
   name: joi.string().required(),
   pricing: joi.string().required(),
   description: joi.string().required(),
+  category: joi.string(),
   packages: joi.array().items(joi.object().keys({
     id: joi.string(),
     name: joi.string().required(),
@@ -55,6 +57,14 @@ create.schema = {
   entity: serviceCreateOrUpdateEnityJoi,
 };
 
+function* validateCategoryId(id) {
+  helper.validateObjectId(id);
+  const doc = yield Category.findOne({_id: id});
+  if (!doc) {
+    throw new errors.NotFoundError(`category with id "${id}" not found`);
+  }
+}
+
 /**
  * Create a new service with its packages for the current logged in user. Provider role only.
  * @param providerId
@@ -65,6 +75,9 @@ function* create(providerId, entity) {
   const provider = yield Provider.findOne({_id: providerId}).populate('location');
   if (!provider) {
     throw new errors.NotFoundError(`provider not found with specified id ${providerId}`);
+  }
+  if (entity.category) {
+    yield validateCategoryId(entity.category);
   }
   entity.provider = providerId;
   const service = yield Service.create(entity);
@@ -102,6 +115,10 @@ function* update(providerId, id, entity) {
     throw new errors.NotPermittedError('Current logged in provider does not have permission');
   }
 
+  if (entity.category) {
+    yield validateCategoryId(entity.category);
+  }
+
   _.extend(service, entity);
   yield service.save();
   yield Package.remove({service: service.id});
@@ -113,12 +130,15 @@ function* update(providerId, id, entity) {
 
 
 function* getSingle(id) {
-  const service = yield Service.findOne({_id: id});
+  const service = yield Service.findOne({_id: id}).populate('category');
   if (!service) {
     throw new errors.NotFoundError(`Current logged in provider does not offer this service , id = ${id}`);
   }
 
   const ret = service.toObject();
+  if (service.category) {
+    ret.category = service.category.name;
+  }
   const packages = yield Package.find({service: service.id});
 
   ret.packages = _.map(packages, (p) => {
@@ -151,12 +171,15 @@ function* getAll(providerId, entity) {
     sortBy[name] = value;
   }
   const querySet = {provider: providerId};
-  const docs = yield Service.find(querySet).sort(sortBy).skip(entity.offset || 0).limit(entity.limit);
+  const docs = yield Service.find(querySet).populate('category').sort(sortBy).skip(entity.offset || 0).limit(entity.limit);
   return {
     total: yield Service.find(querySet).count(),
     items: _.map(docs, (d) => {
       const sanz = _.pick(d, 'name', 'pricing', 'description');
       sanz.id = d._id;
+      if (d.category) {
+        sanz.category = d.category.name;
+      }
       return sanz;
     }),
   };
