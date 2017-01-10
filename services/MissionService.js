@@ -22,6 +22,9 @@ const Question = require('../models').Question;
 const errors = require('common-errors');
 const ObjectId = require('mongoose').Types.ObjectId;
 const DroneService = require('./DroneService');
+const httpStatus = require('http-status');
+const rp = require('request-promise');
+const logger = require('../common/logger');
 
 // Exports
 module.exports = {
@@ -359,6 +362,82 @@ updatePilotChecklist.schema = {
   }).required(),
 };
 
+sendMissionToDrone.schema = {
+  missionId: joi.string().required(),
+};
+
+/**
+ * Synchronous utility function to convert mission items into an format understandable by drone
+ * to be sent to drone
+ * @param  {Object}   missionItems      the mission items to convert
+ * @return {Object}                     the converted mission items
+ */
+function convertMissionItems(missionItems) {
+  const response = [];
+  for (let i = 0; i < missionItems.length; i += 1) {
+    const single = missionItems[i];
+    response.push({
+      param1: single.param1,
+      param2: single.param2,
+      param3: single.param3,
+      param4: single.param4,
+      x: single.coordinate[0],
+      y: single.coordinate[1],
+      z: single.coordinate[2],
+      seq: i,
+      command: single.command,
+      target_system: 1,
+      target_component: 190,
+      frame: single.frame,
+      current: 0,
+      autocontinue: 1,
+    });
+  }
+  return response;
+}
+
+/**
+ * Send the mission to the drone
+ * This is a part of loading mission onto the drone.
+ * It involves two steps
+ * 1. Transforming the mission waypoints data into a format
+ *    understandable by drone
+ * 2. Firing http post request to drone
+ *
+ * @param   {String}   missionId        the id of the mission to load to drone
+ */
+function* sendMissionToDrone(missionId) {
+  const mission = yield Mission.findById(missionId).populate({path: 'drone'});
+  if (!mission) {
+    throw new errors.NotFoundError('mission not found with specified id');
+  }
+  if (mission.status !== enums.MissionStatus.COMPLETED) {
+    throw new errors.ValidationError('cannot send mission to drone for completed mission', httpStatus.BAD_REQUEST);
+  }
+  if (!mission.drone || !mission.drone.accessURL) {
+    throw new errors.ValidationError('cannot send mission, drone is not assigned ' +
+      'or drone accessURL is not defined', httpStatus.BAD_REQUEST);
+  }
+  if (!mission.pilotChecklist) {
+    throw new errors.ValidationError('cannot send mission, checlist is not completed', httpStatus.BAD_REQUEST);
+  }
+  if (!mission.missionItems) {
+    throw new errors.ValidationError('cannot send mission, mission waypoints are not defined', httpStatus.BAD_REQUEST);
+  }
+
+  // convert the waypoints to format understandable by drone
+  const missionData = convertMissionItems(mission.missionItems);
+  // send the mission to drone
+  const droneResponse = yield rp({
+    method: 'POST',
+    uri: `${mission.drone.accessURL}/mission`,
+    body: missionData,
+    json: true,
+  });
+
+  logger.info(`mission ${missionId} sent to drone, response from drone`, droneResponse);
+}
+
 /**
  * Update a pilot checklist for a certain mission
  *
@@ -387,6 +466,8 @@ function* updatePilotChecklist(id, pilotId, entity) {
   mission.pilotChecklist.user = pilotId;
   mission.pilotChecklist.answers = entity.answers;
   if (entity.load) {
+    // pilot clicked save and load button, so send mission to drone
+    yield sendMissionToDrone(id);
     mission.status = 'in-progress';
   }
   yield mission.save();
