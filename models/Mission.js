@@ -44,7 +44,7 @@ const ZoneSchema = new Schema({
 
 // Pilot checklist answer schema
 const PilotChecklistAnswerSchema = new Schema({
-  question: {type: Schema.Types.ObjectId, required: true, ref: 'Question'},
+  question: {type: Schema.Types.ObjectId, required: true, unique: true, sparse: true, ref: 'Question'},
   answer: {type: String, enum: _.values(enums.PilotChecklistAnswers)},
   note: String,
 });
@@ -153,7 +153,7 @@ if (!MissionSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 MissionSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot', 'pilotChecklist', 'drone');
+  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot');
   sanitized.startingPoint = _.omit(sanitized.startingPoint, '_id');
   sanitized.destinationPoint = _.omit(sanitized.destinationPoint, '_id');
   sanitized.id = doc._id;
