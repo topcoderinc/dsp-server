@@ -44,7 +44,7 @@ const ZoneSchema = new Schema({
 
 // Pilot checklist answer schema
 const PilotChecklistAnswerSchema = new Schema({
-  question: {type: Schema.Types.ObjectId, required: true, unique: true, ref: 'Question'},
+  question: {type: Schema.Types.ObjectId, required: true, unique: true, sparse: true, ref: 'Question'},
   answer: {type: String, enum: _.values(enums.PilotChecklistAnswers)},
   note: String,
 });
