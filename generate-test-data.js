@@ -49,6 +49,7 @@ const providerUsers = require('./data/provider-users.json');
 const positions = require('./data/dronePositions.json');
 const noFlyZones = require('./data/no-fly-zones.json');
 const questions = require('./data/questions.json');
+const waypoints = require('./data/waypoints.json');
 
 const MissionStatus = require('./enum').MissionStatus;
 const RequestStatus = require('./enum').RequestStatus;
@@ -145,6 +146,13 @@ co(function*() {
     droneDocs.push(yield Drone.create(drones[i]));
   }
 
+  // update drones to add accessURL's
+  for (let i = 0; i < droneDocs.length; i += 1) {
+    const drone = droneDocs[i];
+    drone.accessURL = `http://localhost:4040/${drone.id}`;
+    yield drone.save();
+  }
+
   logger.info(`creating ${packages.length} packages`);
   const packageDocs = yield Package.create(packages);
 
@@ -167,6 +175,8 @@ co(function*() {
       videoUrl: 'http://google.com',
       imageUrl: 'http://google.com',
     }];
+    m.plannedHomePosition = waypoints.plannedHomePosition;
+    m.missionItems = waypoints.missionItems;
   });
   logger.info(`creating ${missions.length} missions`);
   const missionDocs = yield Mission.create(

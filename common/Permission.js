@@ -24,17 +24,16 @@ const User = require('../models').User;
 function providerRoleCheck(req, res, next) {
   User.findOne({_id: req.auth.sub}, (err, user) => {
     if (!user) {
-      throw new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401);
+      next(new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401));
+    } else if (user.role !== Role.PROVIDER || !user.provider) {
+      next(new errors.NotPermittedError('Non-Provider is not allowed to access', 403));
+    } else {
+      req.auth.payload = {
+        role: Role.PROVIDER,
+        providerId: user.provider.toString(),
+      };
+      next();
     }
-
-    if (user.role !== Role.PROVIDER || !user.provider) {
-      throw new errors.NotPermittedError('Non-provider is not allowed to access', 403);
-    }
-    req.auth.payload = {
-      role: Role.PROVIDER,
-      providerId: user.provider.toString(),
-    };
-    next();
   });
 }
 /**
@@ -47,16 +46,15 @@ function providerRoleCheck(req, res, next) {
 function pilotRoleCheck(req, res, next) {
   User.findOne({_id: req.auth.sub}, (err, user) => {
     if (!user) {
-      throw new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401);
+      next(new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401));
+    } else if (user.role !== Role.PILOT) {
+      next(new errors.NotPermittedError('Non-pilot is not allowed to access', 403));
+    } else {
+      req.auth.payload = {
+        role: Role.PILOT,
+      };
+      next();
     }
-
-    if (user.role !== Role.PILOT) {
-      throw new errors.NotPermittedError('Non-pilot is not allowed to access', 403);
-    }
-    req.auth.payload = {
-      role: Role.PILOT,
-    };
-    next();
   });
 }
 

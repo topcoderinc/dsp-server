@@ -409,4 +409,18 @@ module.exports = {
       method: 'fetchPilotMissions',
     },
   },
+  '/missions/:id/drone-status': {
+    get: {
+      controller: 'MissionController',
+      middleware: [auth(), pilotRole()],
+      method: 'checkDroneStatus',
+    },
+  },
+  '/missions/:id/load': {
+    post: {
+      controller: 'MissionController',
+      middleware: [auth(), pilotRole()],
+      method: 'loadMissionToDrone',
+    },
+  },
 };
