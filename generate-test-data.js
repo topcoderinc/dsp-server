@@ -229,6 +229,10 @@ co(function*() {
       missionDocs[mindex].pilot = userDocs[2].id; // pilot user
       // for pilot user use all possible statuses
       missionDocs[mindex].status = MissionStatus[_.keys(MissionStatus)[Math.floor(_.keys(MissionStatus).length * Math.random())]];
+      if (missionDocs[mindex].status === MissionStatus.IN_PROGRESS) {
+        // for in progress mission status checklist needs to be completed.
+        missionDocs[mindex].status = MissionStatus.SCHEDULED;
+      }
     }
     missionDocs[mindex].scheduledAt = today.add(1, 'h').toDate(); // +1 hour
     missionDocs[mindex].startedAt = today.add(2, 'h').toDate(); // +2 hours
