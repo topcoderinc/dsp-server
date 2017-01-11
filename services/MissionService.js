@@ -550,7 +550,8 @@ function* fetchPilotMissions(pilotId, entity) {
 
   const items = [];
   for (let i = 0; i < docs.length; i += 1) {
-    const sanz = _.pick(docs[i].toObject(), 'id', 'missionName', 'status', 'pilotChecklist', 'drone.id', 'drone.name', 'drone.accessURL');
+    const sanz = _.pick(docs[i].toObject(), 'id', 'missionName', 'status', 'pilotChecklist',
+      'drone.id', 'drone.name', 'drone.accessURL');
     let droneOnline = false;
     // if drone is assigned
     if (sanz.drone && sanz.drone.accessURL) {
