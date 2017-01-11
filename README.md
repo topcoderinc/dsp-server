@@ -134,7 +134,7 @@ you also can export those values before run(data from forum).
 `export SMTP_HOST="smtp.gmail.com"`
 `export SMTP_PORT="465"`
 `export SMTP_USERNAME="youremail"`
-
-force push 1/11/2017
 `export SMTP_PASSWORD="yourpassword"`
 `export EMAIL_FROM="your@email.com"`
+
+force push 1/11/2017
