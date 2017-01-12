@@ -265,7 +265,7 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
   }
 
   drone.currentLocation = [entity.lng, entity.lat];
-  drone.status = entity.status;
+  drone.status = entity.status || drone.status;
   drone.altitude = entity.altitude;
   drone.heading = entity.heading;
   drone.speed = entity.speed;

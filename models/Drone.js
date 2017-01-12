@@ -21,7 +21,7 @@ const Mixed = mongoose.Schema.Types.Mixed;
 const DroneSchema = new mongoose.Schema({
   name: {type: String, required: true},
   description: { type: String, required: false },
-  status: {type: String, enum: _.values(DroneStatus), required: true},
+  status: {type: String, enum: _.values(DroneStatus), required: false},
   // realtime coordinate of the drone
   currentLocation: {type: [Number], index: {type: '2dsphere', sparse: true}},
   deviceId: { type: String, required: false },
