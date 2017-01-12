@@ -307,25 +307,31 @@ function* getAllByDrone(droneId, entity) {
 // the joi schema for getPilotChecklist
 getPilotChecklist.schema = {
   id: joi.string().required(),
-  pilotId: joi.string().required(),
+  auth: joi.object().required(),
 };
 
 /**
  * Get a pilot checklist for a certain mission
 *
  * @param   {String}   id               mission id
- * @param   {String}   pilotId          pilot id
+ * @param   {Object}   auth             auth object
  * @return  {Object}   mission name, mission status, question list and a pilot checklist if available
  */
-function* getPilotChecklist(id, pilotId) {
+function* getPilotChecklist(id, auth) {
   const mission = yield Mission.findOne({_id: id});
 
   if (!mission) {
     throw new errors.NotFoundError(`mission not found with specified id ${id}`);
   }
 
-  if (mission.pilot.toString() !== pilotId) {
-    throw new errors.NotPermittedError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+  if (auth.payload.role === enums.Role.PILOT) {
+    if (mission.pilot.toString() !== auth.sub) {
+      throw new errors.NotFoundError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+    }
+  } else if (auth.payload.role === enums.Role.PROVIDER) {
+    if (mission.provider.toString() !== auth.payload.providerId) {
+      throw new errors.NotFoundError(`current logged in user's provider is not assigned to the mission with specified id ${id}`);
+    }
   }
 
   const response = {
@@ -352,7 +358,7 @@ const answersSchema = {
 // the joi schema for updatePilotChecklist
 updatePilotChecklist.schema = {
   id: joi.string().required(),
-  pilotId: joi.string().required(),
+  auth: joi.object().required(),
   entity: joi.object().keys({
     answers: joi.array().items(joi.object(answersSchema)).required(),
     load: joi.bool(),
@@ -363,28 +369,34 @@ updatePilotChecklist.schema = {
  * Update a pilot checklist for a certain mission
  *
  * @param   {String}   id               mission id
- * @param   {String}   pilotId          pilot id
+ * @param   {Object}   auth             auth object
  * @param   {Object}   entity
  * @param   {Array}    entity.answers   array of answers
  * @param   {Boolean}  entity.load      flag to load mission
  * @return  {Object}   pilot checklist and mission status
  */
-function* updatePilotChecklist(id, pilotId, entity) {
+function* updatePilotChecklist(id, auth, entity) {
   const mission = yield Mission.findOne({_id: id});
 
   if (!mission) {
     throw new errors.NotFoundError(`mission not found with specified id ${id}`);
   }
 
-  if (mission.pilot.toString() !== pilotId) {
-    throw new errors.NotFoundError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+  if (auth.payload.role === enums.Role.PILOT) {
+    if (mission.pilot.toString() !== auth.sub) {
+      throw new errors.NotFoundError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
+    }
+  } else if (auth.payload.role === enums.Role.PROVIDER) {
+    if (mission.provider.toString() !== auth.payload.providerId) {
+      throw new errors.NotFoundError(`current logged in user's provider is not assigned to the mission with specified id ${id}`);
+    }
   }
 
   if (!mission.pilotChecklist) {
     mission.pilotChecklist = {};
   }
 
-  mission.pilotChecklist.user = pilotId;
+  mission.pilotChecklist.user = auth.sub;
   mission.pilotChecklist.answers = entity.answers;
   if (entity.load) {
     mission.status = 'in-progress';
@@ -401,7 +413,7 @@ function* updatePilotChecklist(id, pilotId, entity) {
 
 // the joi schema for fetchPilotMissions
 fetchPilotMissions.schema = {
-  pilotId: joi.string(),
+  auth: joi.object().required(),
   entity: joi.object().keys({
     offset: joi.number().integer(),
     limit: joi.number().integer(),
@@ -412,13 +424,19 @@ fetchPilotMissions.schema = {
 /**
  * Fetch pilot missions
  *
- * @param   {String}   pilotId    pilot id
+ * @param   {Object}   auth       auth object
  * @param   {Object}   entity     parameters of request: limit, offset, sortBy
  * @return  {Object}   missions
  */
-function* fetchPilotMissions(pilotId, entity) {
-  const query = {pilot: pilotId};
+function* fetchPilotMissions(auth, entity) {
+  const query = {};
   const sortBy = {};
+
+  if (auth.payload.role === enums.Role.PILOT) {
+    query.pilot = auth.sub;
+  } else if (auth.payload.role === enums.Role.PROVIDER) {
+    query.provider = auth.payload.providerId;
+  }
 
   if (entity.sortBy) {
     const direction = entity.sortBy[0] === '-' ? -1 : 1;

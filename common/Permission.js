@@ -39,25 +39,32 @@ function providerRoleCheck(req, res, next) {
     next();
   });
 }
+
 /**
  * check the user permission
- * if user role not pilot, then cannot perform pilot actions
+ * if user role not pilot or provider, then cannot ask provider resource
  * @param req
  * @param res
  * @param next
  */
-function pilotRoleCheck(req, res, next) {
+function pilotProviderRoleCheck(req, res, next) {
   User.findOne({_id: req.auth.sub}, (err, user) => {
     if (!user) {
-      throw new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401);
+      next(new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401));
+      return;
     }
 
-    if (user.role !== Role.PILOT) {
-      throw new errors.NotPermittedError('Non-pilot is not allowed to access', 403);
+    if ((user.role !== Role.PROVIDER || !user.provider) && (user.role !== Role.PILOT)) {
+      next(new errors.NotPermittedError('User who is not either provider or pilot is not allowed to access', 403));
+      return;
     }
+
     req.auth.payload = {
-      role: Role.PILOT,
+      role: user.role
     };
+    if (user.role === Role.PROVIDER) {
+      req.auth.payload.providerId = user.provider.toString();
+    }
     next();
   });
 }
@@ -67,7 +74,7 @@ module.exports = {
   providerRole() {
     return providerRoleCheck;
   },
-  pilotRole() {
-    return pilotRoleCheck;
+  pilotProviderRole() {
+    return pilotProviderRoleCheck;
   },
 };

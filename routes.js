@@ -12,7 +12,7 @@
 
 const auth = require('./common/Auth.js');
 const providerRole = require('./common/Permission').providerRole;
-const pilotRole = require('./common/Permission').pilotRole;
+const pilotProviderRole = require('./common/Permission').pilotProviderRole;
 
 module.exports = {
   '/login': {
@@ -400,19 +400,19 @@ module.exports = {
   '/pilot/checklist/:id': {
     get: {
       controller: 'MissionController',
-      middleware: [auth(), pilotRole()],
+      middleware: [auth(), pilotProviderRole()],
       method: 'getPilotChecklist',
     },
     put: {
       controller: 'MissionController',
-      middleware: [auth(), pilotRole()],
+      middleware: [auth(), pilotProviderRole()],
       method: 'updatePilotChecklist',
     },
   },
   '/pilot/missions': {
     get: {
       controller: 'MissionController',
-      middleware: [auth(), pilotRole()],
+      middleware: [auth(), pilotProviderRole()],
       method: 'fetchPilotMissions',
     },
   },
