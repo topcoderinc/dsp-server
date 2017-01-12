@@ -231,6 +231,10 @@ updateLocation.schema = {
   entity: joi.object().keys({
     lat: joi.number().required(),
     lng: joi.number().required(),
+    status: joi.string(),
+    altitude: joi.number(),
+    heading: joi.number(),
+    speed: joi.number(),
   }).required(),
   returnNFZ: joi.boolean(),
   nfzFields: joi.array().items(joi.string()),
@@ -238,10 +242,7 @@ updateLocation.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(1),
-  status: joi.string(),
-  altitude: joi.number(),
-  heading: joi.number(),
-  speed: joi.number(),
+
 };
 
 /**
