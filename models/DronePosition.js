@@ -17,6 +17,9 @@ const DronePositionSchema = new mongoose.Schema({
   droneId: { type: mongoose.Schema.ObjectId, required: true, refs: 'Drone' },
   lat: { type: Number, required: true },
   lng: { type: Number, required: true },
+  altitude: Number,
+  heading: Number,
+  speed: Number,
 });
 
 DronePositionSchema.plugin(timestamps);
