@@ -229,8 +229,13 @@ function *getSingle(id) {
 updateLocation.schema = {
   id: joi.string().required(),
   entity: joi.object().keys({
-    lat: joi.number().required(),
-    lng: joi.number().required(),
+    lat: joi.number(), // Made these not required, we need to turn this into a general drone update endpoint / service (so we can update just status, speed, ...etc)
+    lng: joi.number(),
+    status: joi.string(),
+    altitude: joi.number(),
+    heading: joi.number(),
+    speed: joi.number(),
+    lastSeen: joi.string(),
   }).required(),
   returnNFZ: joi.boolean(),
   nfzFields: joi.array().items(joi.string()),
@@ -238,6 +243,7 @@ updateLocation.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(1),
+
 };
 
 /**
@@ -259,7 +265,14 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
+  entity.lng = entity.lng || drone.currentLocation[0];
+  entity.lat = entity.lat || drone.currentLocation[1];
   drone.currentLocation = [entity.lng, entity.lat];
+  drone.status = entity.status || drone.status;
+  drone.altitude = entity.altitude;
+  drone.heading = entity.heading;
+  drone.speed = entity.speed;
+  drone.lastSeen = new Date();
   yield drone.save();
 
   entity.droneId = id;

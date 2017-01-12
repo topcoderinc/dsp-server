@@ -147,7 +147,6 @@ co(function*() {
   for (let i = 0; i < drones.length; i++) {
     drones[i].provider = providerDocs[i % providerDocs.length].id;
     drones[i].pilots = [providerUserDocs[i % providerUserDocs.length]];
-    drones[i].serialNumber = 'serialNumber' + i;
     droneDocs.push(yield Drone.create(drones[i]));
   }
 
