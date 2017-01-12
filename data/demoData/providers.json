@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Aerial Fotos",
+    "location": [
+      {
+        "coordinates": [
+          73,
+          56
+        ],
+        "line1": "Address 1",
+        "city": "City 1",
+        "postalCode": "10000",
+        "state": "state",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          -3,
+          69
+        ],
+        "line1": "Address 1",
+        "city": "City 2",
+        "postalCode": "20000",
+        "state": "state",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 100,
+    "maxPrice": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "keywords": [
+      "Mapping",
+      "Promoted",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  },
+  {
+    "name": "Digital Fliers",
+    "location": [
+      {
+        "coordinates": [
+          125,
+          57
+        ],
+        "line1": "Address 1",
+        "city": "City 3",
+        "postalCode": "10000",
+        "state": "state",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          38,
+          90
+        ],
+        "line1": "Address 1",
+        "city": "City 4",
+        "postalCode": "20000",
+        "state": "state",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 800,
+    "maxPrice": 1500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 100,
+      "sum": 380,
+      "avg": 3.8
+    },
+    "keywords": [
+      "Photo",
+      "Video",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  },
+  {
+    "name": "Service Now, Inc.",
+    "location": [
+      {
+        "coordinates": [
+          125,
+          57
+        ],
+        "line1": "Address 1",
+        "city": "City 3",
+        "postalCode": "10000",
+        "state": "state",
+        "primary": true
+      },
+      {
+        "coordinates": [
+          38,
+          90
+        ],
+        "line1": "Address 1",
+        "city": "City 4",
+        "postalCode": "20000",
+        "state": "state",
+        "primary": false
+      }
+    ],
+    "status": "active",
+    "minPrice": 800,
+    "maxPrice": 1500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 100,
+      "sum": 380,
+      "avg": 3.8
+    },
+    "keywords": [
+      "Photo",
+      "Video",
+      "Robust"
+    ],
+    "simpleKeywords": [
+      "s-key1"
+    ]
+  }
+]

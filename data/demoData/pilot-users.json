@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Aaron",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "aaron@pilot.com",
+    "password": "abc123",
+    "role": "pilot",
+    "phone": "123456789"
+  },
+  {
+    "name": "Kyle",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "kyle@pilot.com",
+    "password": "abc123",
+    "role": "pilot",
+    "phone": "123456789"
+  },
+  {
+    "name": "matt_pilot",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "matt@pilot.com",
+    "password": "abc123",
+    "role": "pilot",
+    "phone": "123456789"
+  }
+]
