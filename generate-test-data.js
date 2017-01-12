@@ -176,7 +176,6 @@ co(function*() {
 
   logger.info(`creating ${requests.length} requests`);
   const requestDocs = yield PackageRequest.create(requests);
-
   for (let i = 0; i < requestDocs.length; i++) {
     const today = moment();
     today.hour('10');

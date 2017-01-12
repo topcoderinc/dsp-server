@@ -230,32 +230,32 @@ paths:
         -
           name: limit
           in: query
-          description: the search limit
+          description: the search limit, if limit is -1, then all docs will be returned, i.e. no server-side pagination
           required: true
           type: integer
         -
           name: type
           in: query
           description: the type of packages to show `popular`, `promoted`
-          required: true
+          required: false
           type: string
         -
           name: longitude
           in: query
-          description: the longitude of the user
-          required: true
+          description: the longitude of the user, required if latitude or maxDistance is provided
+          required: false
           type: number
         -
           name: latitude
           in: query
-          description: the latitude of the user
-          required: true
+          description: the latitude of the user, required if longitude or maxDistance is provided
+          required: false
           type: number
         -
           name: maxDistance
           in: query
-          description: the max distance to search (in meters) from longitude, latitude
-          required: true
+          description: the max distance to search (in meters) from longitude, latitude. Required if longitude or latitude is provided.
+          required: false
           type: number
 
       responses:
@@ -326,7 +326,7 @@ paths:
           description: the max distance to search (in meters) from longitude, latitude
           required: true
           type: number
-        - 
+        -
           name: categoryId
           in: query
           description: the category id to filter

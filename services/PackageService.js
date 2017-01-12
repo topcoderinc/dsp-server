@@ -26,14 +26,21 @@ module.exports = {
 
 // the joi schema for search
 search.schema = {
-  entity: joi.object().keys({
-    offset: joi.number().integer(),
-    limit: joi.number().integer().required(),
-    longitude: joi.number().required(),
-    latitude: joi.number().required(),
-    maxDistance: joi.number().required(),
-    type: joi.string().valid('popular', 'promoted').required(),
-  }).required(),
+  entity: joi.alternatives().try(
+    joi.object().keys({
+      offset: joi.number().integer(),
+      limit: joi.number().integer().required(),
+      longitude: joi.number().required(),
+      latitude: joi.number().required(),
+      maxDistance: joi.number().required(),
+      type: joi.string().valid('popular', 'promoted'),
+    }),
+    joi.object().keys({
+      offset: joi.number().integer(),
+      limit: joi.number().integer().required(),
+      type: joi.string().valid('popular', 'promoted'),
+    })
+  ),
 };
 
 /**
@@ -56,23 +63,32 @@ function * create(provider, service, packageEntity) {
  * @param {Object}    entity          the parsed request body
  */
 function* search(entity) {
-  const criteria = {
-    'location.coordinates': {
+  const criteria = {};
+  if (entity.maxDistance) {
+    criteria['location.coordinates'] = {
       $near: {
         $geometry: {type: 'Point', coordinates: [entity.longitude, entity.latitude]},
         $maxDistance: entity.maxDistance,
       },
-    },
-  };
+    };
+  }
 
   if (entity.type === 'popular') {
     criteria.bestseller = true;
-  } else {
+  } else if (entity.type === 'promoted') {
     criteria.promoted = true;
   }
 
-  const total = yield Package.find(criteria).count();
-  const docs = yield Package.find(criteria).skip(entity.offset || 0).limit(entity.limit);
+  let total;
+  let docs;
+
+  if (entity.limit < 0) {
+    docs = yield Package.find(criteria);
+    total = docs.length;
+  } else {
+    total = yield Package.find(criteria).count();
+    docs = yield Package.find(criteria).skip(entity.offset || 0).limit(entity.limit);
+  }
   return {
     total,
     items: helper.sanitizeArray(docs),

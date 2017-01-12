@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "CONSUMER",
-		"_postman_id": "be31bd66-e44b-f680-b30a-4ed7c897e0da",
+		"_postman_id": "c4498b52-3232-98b7-1e77-06cb6eded76d",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -317,6 +317,26 @@
 					"name": "search package - small distance",
 					"request": {
 						"url": "{{URL}}/packages?type=popular&limit=99999&longitude=38&latitude=90&maxDistance=999",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"2427546644@qq.com\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "search all packages",
+					"request": {
+						"url": "{{URL}}/packages?limit=-1",
 						"method": "GET",
 						"header": [
 							{
