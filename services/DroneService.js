@@ -235,6 +235,7 @@ updateLocation.schema = {
     altitude: joi.number(),
     heading: joi.number(),
     speed: joi.number(),
+    lastSeen: joi.string(),
   }).required(),
   returnNFZ: joi.boolean(),
   nfzFields: joi.array().items(joi.string()),
@@ -271,6 +272,7 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
   drone.altitude = entity.altitude;
   drone.heading = entity.heading;
   drone.speed = entity.speed;
+  drone.lastSeen = new Date();
   yield drone.save();
 
   entity.droneId = id;
