@@ -28,6 +28,8 @@ const DroneSchema = new mongoose.Schema({
   provider: {type: ObjectId, required: false, ref: 'Provider'},
   pilots: {type: [{type: ObjectId, ref: 'User'}]},
   serialNumber: {type: String, required: true},
+  make: String,
+  model: String,
   accessories: {type: Mixed},
   system: {type: String},
   maxFlightTime: {type: Number},
@@ -57,6 +59,11 @@ const DroneSchema = new mongoose.Schema({
   hasGPS: Boolean,
   hasObstacleSensors: Boolean,
   hasUltraSonicAltimeter: Boolean,
+
+  altitute: Number,
+  speed: Number,
+  heading: Number,
+  lastSeen: Date,
 });
 
 DroneSchema.plugin(timestamps);

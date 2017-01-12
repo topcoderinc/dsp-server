@@ -1,7 +1,10 @@
 [
   {
     "name": "BoldBird",
-    "status": "idle-busy",
+    "serialNumber": "BoldBird1",
+    "make": "DJI",
+    "model": "F450",
+    "status": "idle-ready",
     "accessories": {
       "accessorie": {
         "name": "drone0 accessories"
@@ -36,6 +39,10 @@
     "hasGPS": true,
     "hasObstacleSensors": true,
     "hasUltraSonicAltimeter": false,
-    "description": "description and so on"
+    "description": "description and so on",
+    "altitute": 100,
+    "speed": 150,
+    "heading": 213,
+    "lastSeen": "2017-01-12T20:46:05.686Z"
   }
 ]

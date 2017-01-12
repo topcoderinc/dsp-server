@@ -12,7 +12,7 @@
 
 module.exports = {
   db: {
-    url: 'mongodb://localhost:27017/drones_test',
+    url: 'mongodb://heroku_fx9hv53r:ar99t25g01qogb3m8qshhml82r@ds143588.mlab.com:43588/heroku_fx9hv53r',
     poolSize: 5,
   },
 };
