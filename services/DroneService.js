@@ -264,7 +264,9 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
-  drone.currentLocation = [entity.lng || drone.currentLocation[0], entity.lat || drone.currentLocation[1]];
+  entity.lng = entity.lng || drone.currentLocation[0];
+  entity.lat = entity.lat || drone.currentLocation[1];
+  drone.currentLocation = [entity.lng, entity.lat];
   drone.status = entity.status || drone.status;
   drone.altitude = entity.altitude;
   drone.heading = entity.heading;
