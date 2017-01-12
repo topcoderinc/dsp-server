@@ -238,6 +238,10 @@ updateLocation.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(1),
+  status: joi.string(),
+  altitude: joi.number(),
+  heading: joi.number(),
+  speed: joi.number(),
 };
 
 /**
