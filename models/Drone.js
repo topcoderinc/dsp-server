@@ -59,6 +59,8 @@ const DroneSchema = new mongoose.Schema({
   hasGPS: Boolean,
   hasObstacleSensors: Boolean,
   hasUltraSonicAltimeter: Boolean,
+  // rest api access url of the drone
+  accessURL: {type: String},
 
   altitute: Number,
   speed: Number,

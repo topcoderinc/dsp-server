@@ -48,6 +48,7 @@ const providerUsers = require('./data/provider-users.json');
 const positions = require('./data/dronePositions.json');
 const noFlyZones = require('./data/no-fly-zones.json');
 const questions = require('./data/questions.json');
+const waypoints = require('./data/waypoints.json');
 
 const MissionStatus = require('./enum').MissionStatus;
 const RequestStatus = require('./enum').RequestStatus;
@@ -139,6 +140,13 @@ co(function*() {
     droneDocs.push(yield Drone.create(drones[i]));
   }
 
+  // update drones to add accessURL's
+  for (let i = 0; i < droneDocs.length; i += 1) {
+    const drone = droneDocs[i];
+    drone.accessURL = `http://localhost:4040/${drone.id}`;
+    yield drone.save();
+  }
+
   logger.info(`creating ${packages.length} packages`);
   const packageDocs = yield Package.create(packages);
 
@@ -162,6 +170,8 @@ co(function*() {
       videoUrl: 'http://google.com',
       imageUrl: `/assets/mission-gallery-image-0${i % 4 + 1}.jpg`,
     }];
+    m.plannedHomePosition = waypoints.plannedHomePosition;
+    m.missionItems = waypoints.missionItems;
   });
   logger.info(`creating ${missions.length} missions`);
   const missionDocs = yield Mission.create(
@@ -203,6 +213,10 @@ co(function*() {
       missionDocs[mindex].pilot = userDocs[2].id; // pilot user
       // for pilot user use all possible statuses
       missionDocs[mindex].status = MissionStatus[_.keys(MissionStatus)[Math.floor(_.keys(MissionStatus).length * Math.random())]];
+      if (missionDocs[mindex].status === MissionStatus.IN_PROGRESS) {
+        // for in progress mission status checklist needs to be completed.
+        missionDocs[mindex].status = MissionStatus.SCHEDULED;
+      }
     }
     missionDocs[mindex].scheduledAt = today.add(1, 'h').toDate(); // +1 hour
     missionDocs[mindex].startedAt = today.add(2, 'h').toDate(); // +2 hours
