@@ -518,7 +518,7 @@ function* checkDroneOnline(accessURL) {
     yield rp.get(accessURL);
     return true;
   } catch (error) {
-    logger.error(`drone ${accessURL} is not online, reason`, JSON.stringidy(error));
+    logger.error(`drone ${accessURL} is not online, reason`, JSON.stringify(error));
     return false;
   }
 }
