@@ -281,6 +281,12 @@ module.exports = {
       method: 'currentLocations',
     },
   },
+  '/drones/checklocation': {
+    get: {
+      controller: 'DroneController',
+      method: 'checkLocation',
+    },
+  },
   '/drones': {
     get: {
       controller: 'DroneController',

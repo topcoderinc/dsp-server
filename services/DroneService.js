@@ -35,6 +35,7 @@ module.exports = {
   getSingle,
   updateLocation,
   updateLocationBySerialNumber,
+  checkLocation,
 };
 
 
@@ -371,6 +372,88 @@ function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDr
       query: {
         _id: {$ne: drone._id},
       },
+    };
+    if (nearDronesLimit) {
+      geoNearOption.limit = nearDronesLimit;
+    }
+    const aggregateOption = [
+      {
+        $geoNear: geoNearOption,
+      },
+    ];
+    const projection = helper.convertArrayToProjectionObject(nearDroneFields);
+    if (projection) {
+      aggregateOption.push({
+        $project: projection,
+      });
+    }
+    const nearestDrones = yield Drone.aggregate(aggregateOption);
+    ret.nearestDrones = _.map(nearestDrones, (d) => {
+      const transformFunc = Drone.schema.options.toObject.transform;
+      return transformFunc(d, d);
+    });
+  }
+  return ret;
+}
+
+checkLocation.schema = {
+  lng: joi.number().required(),
+  lat: joi.number().required(),
+  returnNFZ: joi.boolean(),
+  nfzFields: joi.array().items(joi.string()),
+  nfzLimit: joi.limit(),
+  nearDronesMaxDist: joi.number().min(0),
+  nearDroneFields: joi.array().items(joi.string()),
+  nearDronesLimit: joi.limit().default(1),
+};
+
+/**
+ * Check location
+ * @param entity  should include lng and lat
+ * @param returnNFZ
+ * @param nfzFields
+ * @param nfzLimit
+ * @param nearDronesMaxDist
+ * @param nearDroneFields
+ * @param nearDronesLimit
+ * @returns {*}
+ */
+function* checkLocation(lng, lat, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+  const currentLocation = [lng, lat];
+  const ret = {};
+  // Check whether we need to return NFZ
+  if (returnNFZ) {
+    // We need to find active and match the time of NFZ
+    const criteria = {
+      isActive: true,
+      matchTime: true,
+      geometry: {
+        type: 'Point',
+        coordinates: currentLocation,
+      },
+      projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
+    };
+    // Add all fields except the polygon of NFZ.
+    if (nfzFields && nfzFields.length > 0) {
+      criteria.projFields = nfzFields;
+    }
+    // Add limit
+    if (nfzLimit) {
+      criteria.limit = nfzLimit;
+    }
+    const searchedNFZs = yield NoFlyZoneService.search(criteria);
+    ret.noFlyZones = searchedNFZs.items;
+  }
+  // Search the near drones within the nearDronesMaxDist
+  if (nearDronesMaxDist) {
+    const geoNearOption = {
+      near: {
+        type: 'Point',
+        coordinates: currentLocation,
+      },
+      distanceField: 'distance',
+      maxDistance: nearDronesMaxDist,
+      spherical: true,
     };
     if (nearDronesLimit) {
       geoNearOption.limit = nearDronesLimit;
