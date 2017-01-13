@@ -266,7 +266,7 @@ function* updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
   return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
 }
 
-updateLocation.schema = {
+updateLocationBySerialNumber.schema = {
   serialNumber: joi.string().required(),
   entity: joi.object().keys({
     lat: joi.number(), // Made these not required, we need to turn this into a general drone update endpoint / service (so we can update just status, speed, ...etc)
