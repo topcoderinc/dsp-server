@@ -26,7 +26,7 @@ const ProviderSchema = new mongoose.Schema({
   },
 
   status: {type: String, enum: _.values(enums.ProviderStatus), required: true},
-  category: [{type: Schema.Types.ObjectId, ref: 'Category'}],
+  // category: [{type: Schema.Types.ObjectId, ref: 'Category'}],
   // min/max prices from associated packages
   minPrice: Number,
   maxPrice: Number,
@@ -49,11 +49,11 @@ const ProviderSchema = new mongoose.Schema({
 
   // list of keywords to match
   // on every package change, the keywords should be rebuilt
-  // it should contain: name, description (from packages also), price, location, category
+  // it should contain: name, description (from packages also), price, location
   // full-text search doesn't work with $near
   keywords: {type: [String], required: true},
 
-  // the subset of keyword without: price, location, category
+  // the subset of keyword without: price, location
   simpleKeywords: {type: [String], required: true},
 
 });
@@ -72,7 +72,7 @@ if (!ProviderSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 ProviderSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'category', 'keywords', 'simpleKeywords', 'user');
+  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'keywords', 'simpleKeywords', 'user');
   sanitized.location = _.map(sanitized.location, l => _.omit(l, '_id'));
   sanitized.id = doc._id;
   return sanitized;

@@ -114,6 +114,13 @@ module.exports = {
       method: 'get',
     },
   },
+  '/requests/:id': {
+    get: {
+      controller: 'PackageRequestController',
+      middleware: [auth()],
+      method: 'getSingle',
+    },
+  },
   '/dronePosition/:id': {
     get: {
       controller: 'DronePositionController',
@@ -292,6 +299,13 @@ module.exports = {
     put: {
       controller: 'DroneController',
       method: 'updateLocation',
+    },
+  },
+
+  '/drones/position/:sn': {
+    put: {
+      controller: 'DroneController',
+      method: 'updateLocationBySerialNumber',
     },
   },
 

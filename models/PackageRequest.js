@@ -17,6 +17,13 @@ const Address = require('./Address').AddressSchema;
 
 const Schema = mongoose.Schema;
 
+// Region to Fly Zone (RTFZ)
+const ZoneSchema = new Schema({
+  location: {type: Schema.Types.Mixed, required: true, index: '2dsphere'},
+  description: String,
+  // styles for google map
+  style: {type: Schema.Types.Mixed, default: {}},
+});
 
 const PackageRequestSchema = new mongoose.Schema({
   package: {type: Schema.Types.ObjectId, required: true, ref: 'Package'},
@@ -26,21 +33,26 @@ const PackageRequestSchema = new mongoose.Schema({
 
 
   status: {type: String, enum: _.values(enums.RequestStatus), required: true},
+  title: {type: String, required: true},
   contactInfo: {
     type: {
-      recipientName: {type: String, required: true},
-      phoneNumber: {type: String, required: true},
+      recipientName: {type: String, required: false},
+      phoneNumber: {type: String, required: false},
     },
-    required: true,
+    required: false,
   },
-
-  startingPoint: {type: Address, required: true},
-  destinationPoint: {type: Address, required: true},
+  description: {type: String },
+  startingPoint: {type: Address, required: false},
+  destinationPoint: {type: Address, required: false},
   launchDate: {type: Date},
   additionalInfo: String,
   whatToBeDelivered: String,
   weight: Number,
   payout: Number,
+  zones: {
+    type: [ZoneSchema],
+    default: [],
+  },
 });
 
 PackageRequestSchema.plugin(timestamps);

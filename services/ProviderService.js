@@ -15,6 +15,7 @@ const _ = require('lodash');
 
 const Provider = require('../models').Provider;
 const Package = require('../models').Package;
+const Service = require('../models').Service;
 const Mission = require('../models').Mission;
 const Review = require('../models').Review;
 const Drone = require('../models').Drone;
@@ -80,7 +81,11 @@ function* search(entity) {
   }
 
   if (!_.isNil(entity.categoryId)) {
-    criteria.category = entity.categoryId;
+    const services = yield Service.find({category: entity.categoryId});
+    const providers = _.uniq(_.map(services, 'provider'));
+    criteria._id = {
+      $in: providers,
+    };
   }
 
   if (!_.isNil(entity.keyword)) {

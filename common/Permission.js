@@ -25,15 +25,18 @@ function providerRoleCheck(req, res, next) {
   User.findOne({_id: req.auth.sub}, (err, user) => {
     if (!user) {
       next(new errors.AuthenticationRequiredError('Anonymous is not allowed to access', 401));
-    } else if (user.role !== Role.PROVIDER || !user.provider) {
-      next(new errors.NotPermittedError('Non-Provider is not allowed to access', 403));
-    } else {
-      req.auth.payload = {
-        role: Role.PROVIDER,
-        providerId: user.provider.toString(),
-      };
-      next();
+      return;
     }
+
+    if (user.role !== Role.PROVIDER || !user.provider) {
+      next(new errors.NotPermittedError('Non-provider is not allowed to access', 403));
+      return;
+    }
+    req.auth.payload = {
+      role: Role.PROVIDER,
+      providerId: user.provider.toString(),
+    };
+    next();
   });
 }
 /**

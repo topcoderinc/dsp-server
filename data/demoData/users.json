@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Corporate World",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "chance@client.com",
+    "password": "abc123",
+    "avatarUrl": "img/thumbnail.png",
+    "phone": "+1 123-1234-123",
+    "role": "consumer",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    }
+  },
+  {
+    "name": "Real Company",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "rob@client.com",
+    "password": "abc123",
+    "avatarUrl": "img/thumbnail.png",
+    "phone": "+1 123-1234-123",
+    "role": "consumer",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    }
+  },
+  {
+    "name": "E Solutions",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "elle@client.com",
+    "password": "abc123",
+    "avatarUrl": "img/thumbnail.png",
+    "phone": "+1 123-1234-123",
+    "role": "consumer",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    }
+  },
+  {
+    "name": "matt_client",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "matt@client.com",
+    "password": "abc123",
+    "avatarUrl": "img/thumbnail.png",
+    "phone": "+1 123-1234-123",
+    "role": "consumer",
+    "address": {
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "postalCode": "10000",
+      "state": "state",
+      "primary": true
+    }
+  }
+]

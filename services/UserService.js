@@ -184,7 +184,7 @@ function* generateToken(userObj) {
  */
 function* login(entity) {
   // validate that email and password is valid, generate token
-  const user = yield User.findOne({email: entity.email});
+  const user = yield User.findOne({email: entity.email}).populate('provider').exec();
   if (!user) {
     throw new errors.NotFoundError('user not found with the specified email');
   }

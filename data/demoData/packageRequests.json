@@ -1,0 +1,58 @@
+[
+  {
+      "whatToBeDelivered": "Take a variety of pictures",
+      "title": "Take pictures in the forrest preserve",
+      "user": "matt_client",
+      "package": "2017 New Year Special",
+      "provider": "Aerial Fotos",
+      "status": "pending",
+      "zones": [
+          {
+              "description": "Take a picture of my car.",
+              "location": {
+                  "coordinates": [
+                      -88.04160922765732,
+                      42.14411151905347
+                  ],
+                  "type": "Point"
+              },
+              "style": {
+                  "fillColor": "green"
+              }
+          },
+          {
+              "description": "Take some pictures of ducks here",
+              "location": {
+                  "coordinates": [
+                      [
+                          [
+                              -88.04443091154099,
+                              42.144600749481874
+                          ],
+                          [
+                              -88.04333657026291,
+                              42.145455899281366
+                          ],
+                          [
+                              -88.04256409406662,
+                              42.14496667546108
+                          ],
+                          [
+                              -88.04369062185287,
+                              42.14390866630372
+                          ],
+                          [
+                              -88.04443091154099,
+                              42.144600749481874
+                          ]
+                      ]
+                  ],
+                  "type": "Polygon"
+              },
+              "style": {
+                  "fillColor": "green"
+              }
+          }
+      ]
+  }
+]

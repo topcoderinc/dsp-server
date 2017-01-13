@@ -1,0 +1,48 @@
+[
+  {
+    "name": "BoldBird",
+    "serialNumber": "BoldBird1",
+    "make": "DJI",
+    "model": "F450",
+    "status": "idle-ready",
+    "accessories": {
+      "accessorie": {
+        "name": "drone0 accessories"
+      }
+    },
+    "system": "drone system 0",
+    "maxFlightTime": 446.601675532741,
+    "maxBatteryTime": 910.0380475088598,
+    "currentLocation": [
+      0.046674563428854565,
+      6.232063218621471
+    ],
+    "imageUrl": "/assets/drone_image_01.jpg",
+    "thumbnailUrl": "/assets/drone_thumb_01.jpg",
+    "type": "type2",
+    "specificationContent": "xx",
+    "specificationImageUrl": "/assets/drone_specification_01.jpg",
+    "specificationPDFUrl": "/assets/drone_specification_01.pdf",
+    "minSpeed": 114.53369095893886,
+    "maxSpeed": 936.3017933727192,
+    "maxCargoWeight": 1007.0783993523173,
+    "maxAltitude": 361.07582327403867,
+    "cameraResolution": 1002.0367312610831,
+    "videoResolution": 732.1252582827228,
+    "hasWiFi": false,
+    "hasBluetooth": true,
+    "engineType": "engine",
+    "numberOfRotors": 1054,
+    "hasAccelerometer": false,
+    "hasGyroscope": true,
+    "hasRadar": false,
+    "hasGPS": true,
+    "hasObstacleSensors": true,
+    "hasUltraSonicAltimeter": false,
+    "description": "description and so on",
+    "altitute": 100,
+    "speed": 150,
+    "heading": 213,
+    "lastSeen": "2017-01-12T20:46:05.686Z"
+  }
+]

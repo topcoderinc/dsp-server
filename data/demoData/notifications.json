@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mission-started",
+    "read": false
+  },
+  {
+    "type": "mission-started",
+    "read": false
+  },
+  {
+    "type": "mission-completed",
+    "read": false
+  },
+  {
+    "type": "mission-completed",
+    "read": false
+  }
+]
