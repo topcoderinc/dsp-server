@@ -14,8 +14,6 @@ const joi = require('joi');
 
 const models = require('../models');
 
-const ObjectId = require('../datasource').getMongoose().Types.ObjectId;
-
 const Drone = models.Drone;
 const DronePosition = models.DronePosition;
 const helper = require('../common/helper');
@@ -36,6 +34,7 @@ module.exports = {
   deleteSingle,
   getSingle,
   updateLocation,
+  updateLocationBySerialNumber,
 };
 
 
@@ -225,7 +224,6 @@ function *getSingle(id) {
   return drone.toObject();
 }
 
-
 updateLocation.schema = {
   id: joi.string().required(),
   entity: joi.object().keys({
@@ -259,12 +257,70 @@ updateLocation.schema = {
  * @param nearDronesLimit {Number} limit of Drone to be returned
  * @returns {*}
  */
-function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+function* updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+}
+
+updateLocation.schema = {
+  serialNumber: joi.string().required(),
+  entity: joi.object().keys({
+    lat: joi.number(), // Made these not required, we need to turn this into a general drone update endpoint / service (so we can update just status, speed, ...etc)
+    lng: joi.number(),
+    status: joi.string(),
+    altitude: joi.number(),
+    heading: joi.number(),
+    speed: joi.number(),
+    lastSeen: joi.string(),
+  }).required(),
+  returnNFZ: joi.boolean(),
+  nfzFields: joi.array().items(joi.string()),
+  nfzLimit: joi.limit(),
+  nearDronesMaxDist: joi.number().min(0),
+  nearDroneFields: joi.array().items(joi.string()),
+  nearDronesLimit: joi.limit().default(1),
+
+};
+
+/**
+ * update a drone location by serial number
+ *
+ * @param serialNumber
+ * @param entity
+ * @param returnNFZ {Boolean} True to return the NFZ.
+ * @param nfzFields {Array} Fields of NFZ to be projected
+ * @param nfzLimit {Number} limit of NFZ to be returned
+ * @param nearDronesMaxDist {Number} Max dist to search nearest drones
+ * @param nearDroneFields {Array} Fields of Drone to be projected
+ * @param nearDronesLimit {Number} limit of Drone to be returned
+ * @returns {*}
+ */
+function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+  const drone = yield Drone.findOne({ serialNumber });
+  if (!drone) {
+    throw new errors.NotFoundError(`Current logged in provider does not have this drone , serialNumber = ${serialNumber}`);
+  }
+
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+}
+
+/**
+ * Do actual location update for a specific drone
+ * @param entity
+ * @param drone The specific drone
+ * @param returnNFZ
+ * @param nfzFields
+ * @param nfzLimit
+ * @param nearDronesMaxDist
+ * @param nearDronesLimit
+ * @param nearDroneFields
+ * @returns {*}
+ */
+function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields) {
   entity.lng = entity.lng || drone.currentLocation[0];
   entity.lat = entity.lat || drone.currentLocation[1];
   drone.currentLocation = [entity.lng, entity.lat];
@@ -275,7 +331,7 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
   drone.lastSeen = new Date();
   yield drone.save();
 
-  entity.droneId = id;
+  entity.droneId = drone._id;
   yield DronePosition.create(entity);
 
   const ret = drone.toObject();
@@ -313,7 +369,7 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
       maxDistance: nearDronesMaxDist,
       spherical: true,
       query: {
-        _id: { $ne: ObjectId(id) },
+        _id: {$ne: drone._id},
       },
     };
     if (nearDronesLimit) {

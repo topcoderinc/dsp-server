@@ -302,6 +302,13 @@ module.exports = {
     },
   },
 
+  '/drones/position/:sn': {
+    put: {
+      controller: 'DroneController',
+      method: 'updateLocationBySerialNumber',
+    },
+  },
+
   '/provider/drones': {
     get: {
       controller: 'DroneController',
