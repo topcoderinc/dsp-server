@@ -26,6 +26,7 @@ module.exports = {
   updateLocation,
   updateLocationBySerialNumber,
   createEmpty,
+  checkLocation,
 };
 
 
@@ -127,6 +128,26 @@ function* updateLocationBySerialNumber(req, res) {
     nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
   res.json(drone);
   res.io.emit('dronepositionupdate', drone);
+}
+
+/**
+ * check location
+ * @param req
+ * @param res
+ */
+function* checkLocation(req, res) {
+  const lng = req.query.lng;
+  const lat = req.query.lat;
+  const nfzFields = helper.convertQueryFieldStringToArray(req.query.nfzFields);
+  const nearDroneFields = helper.convertQueryFieldStringToArray(req.query.nearDroneFields);
+  const returnNFZ = req.query.returnNFZ;
+  const nfzLimit = req.query.nfzLimit;
+  const nearDronesMaxDist = req.query.nearDronesMaxDist;
+  const nearDronesLimit = req.query.nearDronesLimit;
+  const ret = yield DroneService.checkLocation(lng, lat, returnNFZ, nfzFields,
+    nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
+  res.json(ret);
+  res.io.emit('checklocation', ret);
 }
 
 /**
