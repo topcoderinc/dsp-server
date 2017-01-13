@@ -144,7 +144,8 @@ function* checkLocation(req, res) {
   const nfzLimit = req.query.nfzLimit;
   const nearDronesMaxDist = req.query.nearDronesMaxDist;
   const nearDronesLimit = req.query.nearDronesLimit;
-  const ret = yield DroneService.checkLocation(lng, lat, returnNFZ, nfzFields,
+  const entity = { lat, lng };
+  const ret = yield DroneService.checkLocation(entity, returnNFZ, nfzFields,
     nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
   res.json(ret);
   res.io.emit('checklocation', ret);
