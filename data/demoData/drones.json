@@ -43,6 +43,9 @@
     "altitute": 100,
     "speed": 150,
     "heading": 213,
-    "lastSeen": "2017-01-12T20:46:05.686Z"
+    "lastSeen": "2017-01-12T20:46:05.686Z",
+    "accessURL": "https://f06b91207ad38b2481e8c80260f53d40b08630be12c42d999e44a1671c20d9.devices.resinstaging.io",
+    "provider": "Aerial Fotos",
+    "pilots": ["matt_pilot", "Kyle"]
   }
 ]
