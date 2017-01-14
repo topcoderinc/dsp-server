@@ -72,6 +72,10 @@ const PilotChecklistAnswers = {
   NOTE: 'note',
 };
 
+const AWSAuthTypes = {
+  MISSION: 'MISSION',
+};
+
 module.exports = {
   SocialType,
   DroneStatus,
@@ -84,4 +88,5 @@ module.exports = {
   NotificationType,
   RequestStatus,
   PilotChecklistAnswers,
+  AWSAuthTypes,
 };

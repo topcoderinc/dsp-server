@@ -153,7 +153,9 @@ co(function*() {
   _.each(missions, (m, i) => {
     m.package = packageDocs[i % packageDocs.length].id;
     m.provider = packageDocs[i % packageDocs.length].provider;
-    m.pilot = userDocs[0].id; // setting all to first user for testing convenience
+    if (!m.pilot) {
+      m.pilot = userDocs[0].id; // setting all to first user for testing convinience
+    }
     m.drone = droneDocs[i % droneDocs.length].id;
     m.status = _.values(MissionStatus)[Math.floor(Math.random() * _.values(MissionStatus).length)];
     m.telemetry = {

@@ -443,4 +443,11 @@ module.exports = {
       method: 'loadMissionToDrone',
     },
   },
+  '/aws/federation-token': {
+    post: {
+      controller: 'AWSController',
+      middleware: [auth()],
+      method: 'getFederationToken',
+    },
+  },
 };

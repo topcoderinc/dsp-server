@@ -52,8 +52,8 @@ function _sanitizeObject(obj) {
     return JSON.parse(JSON.stringify(obj, (name, value) => {
       // Array of field names that should not be logged
       // add field if necessary (password, tokens etc)
-      const removeFields = [];
-      if (_.contains(removeFields, name)) {
+      const removeFields = ['secretAccessKey', 'sessionToken', 'password'];
+      if (_.includes(removeFields, name)) {
         return '<removed>';
       }
       if (_.isArray(value) && value.length > 30) {
