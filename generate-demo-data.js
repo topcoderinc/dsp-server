@@ -91,6 +91,11 @@ co(function*() {
   logger.info(`creating ${users.length} users`);
   const userDocs = yield User.create(users);
 
+  yield _.map(pilotUsers, (u) => function*() {
+    if (u.password) {
+      u.password = yield helper.hashString(u.password, config.SALT_WORK_FACTOR);
+    }
+  });
   logger.info(`creating ${pilotUsers.length} pilot users`);
   const pilotUserDocs = yield User.create(pilotUsers);
 
@@ -145,8 +150,13 @@ co(function*() {
   logger.info(`creating ${drones.length} drones`);
   const droneDocs = [];
   for (let i = 0; i < drones.length; i++) {
-    drones[i].provider = providerDocs[i % providerDocs.length].id;
-    drones[i].pilots = [providerUserDocs[i % providerUserDocs.length]];
+    drones[i].provider = _.find(providerDocs, provider => { return drones[i].provider == provider.name; });
+    // drones[i].pilots = [providerUserDocs[i % providerUserDocs.length]];
+    let pilotRefs = [];
+    drones[i].pilots.forEach(pilot => {
+      pilotRefs.push(_.find(pilotUserDocs, pilots => { return "matt_pilot" == pilots.name; }));
+    });
+    drones[i].pilots = pilotRefs;
     droneDocs.push(yield Drone.create(drones[i]));
   }
 
