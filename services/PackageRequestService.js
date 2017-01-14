@@ -395,6 +395,9 @@ function* assignDrone(providerId, requestId, entity) {
       pilot: drone.pilots[Math.floor(Math.random() * drone.pilots.length)],
       startingPoint: request.startingPoint,
       destinationPoint: request.destinationPoint,
+      missionName: request.title,
+      zones: request.zones,
+      missionItems: [],
     });
   }
 
