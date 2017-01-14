@@ -11,7 +11,35 @@
 
 global.Promise = require('bluebird');
 const Joi = require('joi');
+const _ = require('lodash');
 const logger = require('./common/logger');
+const AWS = require('aws-sdk-promise');
+const config = require('config');
+
+// Validate AWS config
+Joi.validate(_.pick(config, 'AWS_ACCESS_KEY', 'AWS_SECRET_KEY', 'AWS_REGION', 'S3_BUCKET'),
+  {
+    AWS_ACCESS_KEY: Joi.string().required(),
+    AWS_SECRET_KEY: Joi.string().required(),
+    AWS_REGION: Joi.string().required(),
+    S3_BUCKET: Joi.string().required(),
+  }, (err) => {
+    if (err) {
+      logger.logFullError(err, 'AWS CREDENTIALS VALIDATION');
+      // allow to use app if s3 is not configured in DEV mode
+      if (process.env.NODE_ENV === 'production') {
+        process.exit(0);
+      }
+      return;
+    }
+    AWS.config.update({
+      s3: '2006-03-01',
+      sts: '2011-06-15',
+      accessKeyId: config.AWS_ACCESS_KEY,
+      secretAccessKey: config.AWS_SECRET_KEY,
+      region: config.AWS_REGION,
+    });
+  });
 
 // add joi types
 Joi.objectId = () => Joi.string().regex(/^[a-f0-9]{24}$/);
@@ -40,3 +68,4 @@ logger.buildService(require('./services/NotificationService'));
 logger.buildService(require('./services/ServiceServices'));
 logger.buildService(require('./services/DronePositionService'));
 logger.buildService(require('./services/NoFlyZoneService'));
+logger.buildService(require('./services/AWSService'));

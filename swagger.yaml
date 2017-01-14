@@ -230,32 +230,32 @@ paths:
         -
           name: limit
           in: query
-          description: the search limit
+          description: the search limit, if limit is -1, then all docs will be returned, i.e. no server-side pagination
           required: true
           type: integer
         -
           name: type
           in: query
           description: the type of packages to show `popular`, `promoted`
-          required: true
+          required: false
           type: string
         -
           name: longitude
           in: query
-          description: the longitude of the user
-          required: true
+          description: the longitude of the user, required if latitude or maxDistance is provided
+          required: false
           type: number
         -
           name: latitude
           in: query
-          description: the latitude of the user
-          required: true
+          description: the latitude of the user, required if longitude or maxDistance is provided
+          required: false
           type: number
         -
           name: maxDistance
           in: query
-          description: the max distance to search (in meters) from longitude, latitude
-          required: true
+          description: the max distance to search (in meters) from longitude, latitude. Required if longitude or latitude is provided.
+          required: false
           type: number
 
       responses:
@@ -326,7 +326,7 @@ paths:
           description: the max distance to search (in meters) from longitude, latitude
           required: true
           type: number
-        - 
+        -
           name: categoryId
           in: query
           description: the category id to filter
@@ -2746,6 +2746,44 @@ paths:
                       type: string
                     status:
                       type: string
+                    droneOnline:
+                      type: boolean
+                      description: true is drone is online, otherwise false
+                    pilotChecklist:
+                      type: object
+                      properties:
+                        user:
+                          type: string
+                          description: the pilot who filled the checklist
+                        createdAt:
+                          type: string
+                          description: the ISO 8601 date string when this checklist is created
+                        updatedAt:
+                          type: string
+                          description: the ISO 8601 date string when this checklist was last updated
+                        answers:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              answer:
+                                type: string
+                                description: the answer given for this question
+                              question:
+                                type: string
+                                description: the id of the referenced question
+                    drone:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          type: string
+                          description: the assigned drone id
+                        name:
+                          type: string
+                          description: the assigned drone name
         400:
           description: Invalid parameters
           schema:
@@ -2882,8 +2920,216 @@ paths:
           description: Internal server error
           schema:
             $ref: "#/definitions/ErrorMsg"
+  /missions/{id}/drone-status:
+    get:
+      description: Get the drone status for the specified mission
+      tags:
+        - mission
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          description: the mission id
+          required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: object
+            properties:
+              currentPosition:
+                type: object
+                required:
+                  - alt
+                  - hdg
+                  - lat
+                  - lon
+                  - time_boot_ms
+                  - relative_alt
+                  - vx
+                  - vy
+                  - vz
+                properties:
+                  alt:
+                    type: number
+                    description: the drone current altitude
+                  hdg:
+                    type: number
+                  lat:
+                    type: number
+                    description: the drone current latitude coordinate
+                  lon:
+                    type: number
+                    description: the drone current longitude coordinate
+                  time_boot_ms:
+                    type: number
+                    description: the drone time boot in milliseconds
+                  relative_alt:
+                    type: number
+                    description: the drone relative altitude
+                  vx:
+                    type: number
+                  vy:
+                    type: number
+                  vz:
+                    type: number
+              waypoints:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - param1
+                    - param2
+                    - param3
+                    - param4
+                    - seq
+                    - target_component
+                    - target_system
+                    - x
+                    - y
+                    - z
+                    - frame
+                    - current
+                    - command
+                    - autocontinue
+                  properties:
+                    param1:
+                      type: number
+                    param2:
+                      type: number
+                    param3:
+                      type: number
+                    param4:
+                      type: number
+                    seq:
+                      type: number
+                    target_component:
+                      type: number
+                    target_system:
+                      type: number
+                    x:
+                      type: number
+                    y:
+                      type: number
+                    z:
+                      type: number
+                    frame:
+                      type: number
+                    current:
+                      type: number
+                    command:
+                      type: number
+                    autocontinue:
+                      type: number
+            required:
+              - currentPosition
+              - waypoints
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-pilot is not allowed to access or the current logged in user is not pilot for this mission
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Mission not found with specified id
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+  /missions/{id}/load:
+    post:
+      description: Load the mission to the drone
+      tags:
+        - mission
+        - drone
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          type: string
+          description: the mission id
+          required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        401:
+          description: Anonymous is not allowed to access
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        403:
+          description: Non-pilot is not allowed to access or the current logged in user is not pilot for this mission
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        404:
+          description: Not found. Mission not found with specified id
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        500:
+          description: Internal server error
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 
-
+            
+  /aws/federation-token:
+    post:
+      description: Generate federation token from AWS
+      produces:
+        - application/json
+      tags:
+       - aws
+      parameters:
+        - in: body
+          name: body
+          description: the requests params, different types can contain different values
+          required: true
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              region:
+                type: string
+              credentials:
+                type: object
+                properties:
+                  accessKeyId:
+                    type: string
+                  secretAccessKey:
+                    type: string
+                  sessionToken:
+                    type: string
+              data:
+                type: object
+        "400":
+          description: invalid input parameters
+          schema:
+            $ref: "#/definitions/ErrorMsg"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorMsg"
 definitions:
   MissionReq:
     type: object

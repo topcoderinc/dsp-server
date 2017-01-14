@@ -13,7 +13,7 @@
 const joi = require('joi');
 const _ = require('lodash');
 const errors = require('common-errors');
-
+const MissionService = require('./MissionService');
 const NoFlyZone = require('../models').NoFlyZone;
 
 // Exports
@@ -43,7 +43,6 @@ function _assertExists(id, entity) {
  */
 function* _validateMission(values) {
   if (values.mission) {
-    const MissionService = new require('./MissionService');
     yield MissionService.getSingle(values.mission);
   }
   if (values.isPermanent) {

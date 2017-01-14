@@ -21,13 +21,15 @@ const Mixed = mongoose.Schema.Types.Mixed;
 const DroneSchema = new mongoose.Schema({
   name: {type: String, required: true},
   description: { type: String, required: false },
-  status: {type: String, enum: _.values(DroneStatus), required: true},
+  status: {type: String, enum: _.values(DroneStatus), required: false},
   // realtime coordinate of the drone
   currentLocation: {type: [Number], index: {type: '2dsphere', sparse: true}},
   deviceId: { type: String, required: false },
   provider: {type: ObjectId, required: false, ref: 'Provider'},
   pilots: {type: [{type: ObjectId, ref: 'User'}]},
   serialNumber: {type: String, required: true},
+  make: String,
+  model: String,
   accessories: {type: Mixed},
   system: {type: String},
   maxFlightTime: {type: Number},
@@ -57,6 +59,13 @@ const DroneSchema = new mongoose.Schema({
   hasGPS: Boolean,
   hasObstacleSensors: Boolean,
   hasUltraSonicAltimeter: Boolean,
+  // rest api access url of the drone
+  accessURL: {type: String},
+
+  altitute: Number,
+  speed: Number,
+  heading: Number,
+  lastSeen: Date,
 });
 
 DroneSchema.plugin(timestamps);

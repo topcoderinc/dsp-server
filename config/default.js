@@ -21,7 +21,7 @@ module.exports = {
   API_VERSION: 1,
   RESET_CODE_EXPIRES: 60 * 60,
   db: {
-    url: process.env.MONGOLAB_URI || 'mongodb://localhost:27017/drones',
+    url: process.env.MONGOLAB_URI || 'mongodb://localhost:27017/dsp',
     poolSize: 5,
   },
   mail: {

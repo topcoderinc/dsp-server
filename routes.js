@@ -281,6 +281,12 @@ module.exports = {
       method: 'currentLocations',
     },
   },
+  '/drones/checklocation': {
+    get: {
+      controller: 'DroneController',
+      method: 'checkLocation',
+    },
+  },
   '/drones': {
     get: {
       controller: 'DroneController',
@@ -299,6 +305,13 @@ module.exports = {
     put: {
       controller: 'DroneController',
       method: 'updateLocation',
+    },
+  },
+
+  '/drones/position/:sn': {
+    put: {
+      controller: 'DroneController',
+      method: 'updateLocationBySerialNumber',
     },
   },
 
@@ -414,6 +427,27 @@ module.exports = {
       controller: 'MissionController',
       middleware: [auth(), pilotProviderRole()],
       method: 'fetchPilotMissions',
+    },
+  },
+  '/missions/:id/drone-status': {
+    get: {
+      controller: 'MissionController',
+      middleware: [auth(), pilotRole()],
+      method: 'checkDroneStatus',
+    },
+  },
+  '/missions/:id/load': {
+    post: {
+      controller: 'MissionController',
+      middleware: [auth(), pilotRole()],
+      method: 'loadMissionToDrone',
+    },
+  },
+  '/aws/federation-token': {
+    post: {
+      controller: 'AWSController',
+      middleware: [auth()],
+      method: 'getFederationToken',
     },
   },
 };

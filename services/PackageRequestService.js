@@ -240,7 +240,7 @@ function* search(providerId, entity) {
     if (d.destinationPoint) {
       sanitized.destinationPoint = d.destinationPoint.toObject();
     }
-    if (d.startingPoint && d.destinationPoint) {
+    if (_.has(d,'startingPoint.coordinates') && _.has(d,'destinationPoint.coordinates')) {
       sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates,
         sanitized.destinationPoint.coordinates);
     }
@@ -288,7 +288,7 @@ function* accept(providerId, requestId) {
 
 
   if (request.status === RequestStatus.PENDING) {
-    request.status = RequestStatus.SCHEDULED;
+    request.status = RequestStatus.IN_PROGRESS;
     yield request.save();
   } else {
     throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to accept`, 400);
@@ -337,7 +337,7 @@ function* cancel(providerId, requestId) {
  */
 function* complete(providerId, requestId) {
   const request = yield _getSingleByProvider(providerId, requestId);
-  if (request.status === RequestStatus.IN_PROGRESS) {
+  if (request.status === RequestStatus.IN_PROGRESS || request.status === RequestStatus.SCHEDULED) {
     request.status = RequestStatus.COMPLETED;
     yield request.save();
   } else {
@@ -395,6 +395,9 @@ function* assignDrone(providerId, requestId, entity) {
       pilot: drone.pilots[Math.floor(Math.random() * drone.pilots.length)],
       startingPoint: request.startingPoint,
       destinationPoint: request.destinationPoint,
+      missionName: request.title,
+      zones: request.zones,
+      missionItems: [],
     });
   }
 
