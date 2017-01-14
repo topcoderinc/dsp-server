@@ -1,0 +1,191 @@
+{
+    "plannedHomePosition": {
+        "type": "missionItem",
+        "param4": 0,
+        "param3": 0,
+        "param2": 0,
+        "param1": 0,
+        "id": 0,
+        "frame": 0,
+        "coordinate": [
+            28.434883464940082,
+            77.06222534179688,
+            0
+        ],
+        "command": 16,
+        "autoContinue": true,
+        "uid": "missionitem2"
+    },
+    "missionItems": [
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 1,
+            "frame": 0,
+            "coordinate": [
+                28.434883464940082,
+                77.06222534179688,
+                0
+            ],
+            "command": 22,
+            "autoContinue": true,
+            "uid": "missionitem1"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 2,
+            "frame": 0,
+            "coordinate": [
+                28.43427965542356,
+                77.06462860107422,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem3"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 3,
+            "frame": 0,
+            "coordinate": [
+                28.436543923344214,
+                77.10411071777344,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem4"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 4,
+            "frame": 0,
+            "coordinate": [
+                28.421296917510052,
+                77.12762832641602,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem5"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 5,
+            "frame": 0,
+            "coordinate": [
+                28.408463577104897,
+                77.05965042114258,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem6"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 6,
+            "frame": 0,
+            "coordinate": [
+                28.41238923455776,
+                77.02102661132812,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem7"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 7,
+            "frame": 0,
+            "coordinate": [
+                28.43020385106725,
+                77.01347351074219,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem8"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 8,
+            "frame": 0,
+            "coordinate": [
+                28.439260980887962,
+                77.02394485473633,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem9"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 9,
+            "frame": 0,
+            "coordinate": [
+                28.44544957368551,
+                77.04797744750977,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem10"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 10,
+            "frame": 0,
+            "coordinate": [
+                28.445298636705566,
+                77.11166381835938,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem11"
+        }
+    ]
+}

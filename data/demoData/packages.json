@@ -1,0 +1,81 @@
+[
+  {
+    "name": "2017 New Year Special",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [{
+      "coordinates": [
+        73,
+        56
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "state": "VA",
+      "postalCode": "10000",
+      "primary": true
+    }, {
+      "coordinates": [-3,
+        69
+      ],
+      "line1": "Address 1",
+      "city": "City 2",
+      "state": "VA",
+      "postalCode": "20000",
+      "primary": false
+    }],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": true,
+    "promoted": false,
+    "provider": "Aerial Fotos",
+    "service": "Photos"
+  },
+  {
+    "name": "Digital Fliers Gold Pack",
+    "description": "description text",
+    "longDescription": "long description text",
+    "shortDescription": "short description text",
+    "location": [{
+      "coordinates": [
+        125,
+        57
+      ],
+      "line1": "Address 1",
+      "city": "City 1",
+      "state": "IL",
+      "postalCode": "10000",
+      "primary": true
+    }, {
+      "coordinates": [
+        38,
+        90
+      ],
+      "line1": "Address 1",
+      "city": "City 2",
+      "state": "VA",
+      "postalCode": "20000",
+      "primary": false
+    }],
+    "price": 500,
+    "imageUrl": "../image/mock.jpg",
+    "thumbnailUrl": "../image/mock.jpg",
+    "rating": {
+      "count": 60,
+      "sum": 280,
+      "avg": 4.66
+    },
+    "catalogName": "catalog name",
+    "bestseller": false,
+    "promoted": true,
+    "provider": "Aerial Fotos",
+    "service": "Photos"
+  }
+]

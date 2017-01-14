@@ -17,7 +17,7 @@ module.exports = {
   SALT_WORK_FACTOR: 2,
   TOKEN_EXPIRES: 10 * 60 * 60,
   db: {
-    url: process.env.MONGOLAB_URI || 'mongodb://localhost:27017/drones',
+    url: process.env.MONGOLAB_URI || 'mongodb://heroku_fx9hv53r:ar99t25g01qogb3m8qshhml82r@ds143588.mlab.com:43588/heroku_fx9hv53r',
     poolSize: 5,
   },
 };

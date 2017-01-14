@@ -26,6 +26,8 @@ module.exports = {
   getPilotChecklist,
   updatePilotChecklist,
   fetchPilotMissions,
+  checkDroneStatus,
+  loadMissionToDrone,
 };
 
 /**
@@ -131,3 +133,24 @@ function* updatePilotChecklist(req, res) {
 function* fetchPilotMissions(req, res) {
   res.json(yield MissionService.fetchPilotMissions(req.auth.sub, req.query));
 }
+
+/**
+ * Check the drone status for the specified mission
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* checkDroneStatus(req, res) {
+  res.json(yield MissionService.checkDroneStatus(req.auth.sub, req.params.id));
+}
+
+/**
+ * Load the mission to the drone, this will send the mission to drone via http post request
+ *
+ * @param req the request
+ * @param res the response
+ */
+function* loadMissionToDrone(req, res) {
+  res.json(yield MissionService.loadMissionToDrone(req.auth.sub, req.params.id));
+}
+

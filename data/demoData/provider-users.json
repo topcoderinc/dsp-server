@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Aerial Fotos",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "aaron@provider.com",
+    "password": "abc123",
+    "role": "provider",
+    "phone": "123456789",
+    "provider": "Aerial Fotos"
+  },
+  {
+    "name": "Digital Fliers",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "rob@provider.com",
+    "password": "abc123",
+    "role": "provider",
+    "phone": "123456789",
+    "provider": "Digital Fliers"
+  },
+  {
+    "name": "Service Now, Inc.",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "stefan@provider.com",
+    "password": "abc123",
+    "role": "provider",
+    "phone": "123456789",
+    "provider": "Service Now, Inc."
+  },
+  {
+    "name": "matt_provider",
+    "firstName": "first",
+    "lastName": "last",
+    "email": "matt@provider.com",
+    "password": "abc123",
+    "role": "provider",
+    "phone": "123456789",
+    "provider": "Aerial Fotos"
+  }
+]

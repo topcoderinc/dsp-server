@@ -14,8 +14,6 @@ const joi = require('joi');
 
 const models = require('../models');
 
-const ObjectId = require('../datasource').getMongoose().Types.ObjectId;
-
 const Drone = models.Drone;
 const DronePosition = models.DronePosition;
 const helper = require('../common/helper');
@@ -36,6 +34,8 @@ module.exports = {
   deleteSingle,
   getSingle,
   updateLocation,
+  updateLocationBySerialNumber,
+  checkLocation,
 };
 
 
@@ -225,12 +225,16 @@ function *getSingle(id) {
   return drone.toObject();
 }
 
-
 updateLocation.schema = {
   id: joi.string().required(),
   entity: joi.object().keys({
-    lat: joi.number().required(),
-    lng: joi.number().required(),
+    lat: joi.number(), // Made these not required, we need to turn this into a general drone update endpoint / service (so we can update just status, speed, ...etc)
+    lng: joi.number(),
+    status: joi.string(),
+    altitude: joi.number(),
+    heading: joi.number(),
+    speed: joi.number(),
+    lastSeen: joi.string(),
   }).required(),
   returnNFZ: joi.boolean(),
   nfzFields: joi.array().items(joi.string()),
@@ -238,6 +242,7 @@ updateLocation.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(1),
+
 };
 
 /**
@@ -253,16 +258,81 @@ updateLocation.schema = {
  * @param nearDronesLimit {Number} limit of Drone to be returned
  * @returns {*}
  */
-function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+function* updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+}
+
+updateLocationBySerialNumber.schema = {
+  serialNumber: joi.string().required(),
+  entity: joi.object().keys({
+    lat: joi.number(), // Made these not required, we need to turn this into a general drone update endpoint / service (so we can update just status, speed, ...etc)
+    lng: joi.number(),
+    status: joi.string(),
+    altitude: joi.number(),
+    heading: joi.number(),
+    speed: joi.number(),
+    lastSeen: joi.string(),
+  }).required(),
+  returnNFZ: joi.boolean(),
+  nfzFields: joi.array().items(joi.string()),
+  nfzLimit: joi.limit(),
+  nearDronesMaxDist: joi.number().min(0),
+  nearDroneFields: joi.array().items(joi.string()),
+  nearDronesLimit: joi.limit().default(1),
+
+};
+
+/**
+ * update a drone location by serial number
+ *
+ * @param serialNumber
+ * @param entity
+ * @param returnNFZ {Boolean} True to return the NFZ.
+ * @param nfzFields {Array} Fields of NFZ to be projected
+ * @param nfzLimit {Number} limit of NFZ to be returned
+ * @param nearDronesMaxDist {Number} Max dist to search nearest drones
+ * @param nearDroneFields {Array} Fields of Drone to be projected
+ * @param nearDronesLimit {Number} limit of Drone to be returned
+ * @returns {*}
+ */
+function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+  const drone = yield Drone.findOne({ serialNumber });
+  if (!drone) {
+    throw new errors.NotFoundError(`Current logged in provider does not have this drone , serialNumber = ${serialNumber}`);
+  }
+
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+}
+
+/**
+ * Do actual location update for a specific drone
+ * @param entity
+ * @param drone The specific drone
+ * @param returnNFZ
+ * @param nfzFields
+ * @param nfzLimit
+ * @param nearDronesMaxDist
+ * @param nearDronesLimit
+ * @param nearDroneFields
+ * @returns {*}
+ */
+function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields) {
+  entity.lng = entity.lng || drone.currentLocation[0];
+  entity.lat = entity.lat || drone.currentLocation[1];
   drone.currentLocation = [entity.lng, entity.lat];
+  drone.status = entity.status || drone.status;
+  drone.altitude = entity.altitude;
+  drone.heading = entity.heading;
+  drone.speed = entity.speed;
+  drone.lastSeen = new Date();
   yield drone.save();
 
-  entity.droneId = id;
+  entity.droneId = drone._id;
   yield DronePosition.create(entity);
 
   const ret = drone.toObject();
@@ -300,8 +370,90 @@ function *updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesM
       maxDistance: nearDronesMaxDist,
       spherical: true,
       query: {
-        _id: { $ne: ObjectId(id) },
+        _id: {$ne: drone._id},
       },
+    };
+    if (nearDronesLimit) {
+      geoNearOption.limit = nearDronesLimit;
+    }
+    const aggregateOption = [
+      {
+        $geoNear: geoNearOption,
+      },
+    ];
+    const projection = helper.convertArrayToProjectionObject(nearDroneFields);
+    if (projection) {
+      aggregateOption.push({
+        $project: projection,
+      });
+    }
+    const nearestDrones = yield Drone.aggregate(aggregateOption);
+    ret.nearestDrones = _.map(nearestDrones, (d) => {
+      const transformFunc = Drone.schema.options.toObject.transform;
+      return transformFunc(d, d);
+    });
+  }
+  return ret;
+}
+
+checkLocation.schema = {
+  lng: joi.number().required(),
+  lat: joi.number().required(),
+  returnNFZ: joi.boolean(),
+  nfzFields: joi.array().items(joi.string()),
+  nfzLimit: joi.limit(),
+  nearDronesMaxDist: joi.number().min(0),
+  nearDroneFields: joi.array().items(joi.string()),
+  nearDronesLimit: joi.limit().default(1),
+};
+
+/**
+ * Check location
+ * @param entity  should include lng and lat
+ * @param returnNFZ
+ * @param nfzFields
+ * @param nfzLimit
+ * @param nearDronesMaxDist
+ * @param nearDroneFields
+ * @param nearDronesLimit
+ * @returns {*}
+ */
+function* checkLocation(lng, lat, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+  const currentLocation = [lng, lat];
+  const ret = {};
+  // Check whether we need to return NFZ
+  if (returnNFZ) {
+    // We need to find active and match the time of NFZ
+    const criteria = {
+      isActive: true,
+      matchTime: true,
+      geometry: {
+        type: 'Point',
+        coordinates: currentLocation,
+      },
+      projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
+    };
+    // Add all fields except the polygon of NFZ.
+    if (nfzFields && nfzFields.length > 0) {
+      criteria.projFields = nfzFields;
+    }
+    // Add limit
+    if (nfzLimit) {
+      criteria.limit = nfzLimit;
+    }
+    const searchedNFZs = yield NoFlyZoneService.search(criteria);
+    ret.noFlyZones = searchedNFZs.items;
+  }
+  // Search the near drones within the nearDronesMaxDist
+  if (nearDronesMaxDist) {
+    const geoNearOption = {
+      near: {
+        type: 'Point',
+        coordinates: currentLocation,
+      },
+      distanceField: 'distance',
+      maxDistance: nearDronesMaxDist,
+      spherical: true,
     };
     if (nearDronesLimit) {
       geoNearOption.limit = nearDronesLimit;

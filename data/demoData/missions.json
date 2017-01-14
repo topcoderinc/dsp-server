@@ -1,0 +1,186 @@
+{
+    "missionName": "Fly around Matt's Block",
+    "plannedHomePosition": {
+        "type": "missionItem",
+        "param4": 0,
+        "param3": 0,
+        "param2": 0,
+        "param1": 0,
+        "id": 0,
+        "frame": 0,
+        "coordinate": [
+            42.142850639465884,
+            -88.01960706710815,
+            0
+        ],
+        "command": 16,
+        "autoContinue": true,
+        "uid": "missionitem2"
+    },
+    "missionItems": [
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 1,
+            "frame": 0,
+            "coordinate": [
+                42.142850639465884,
+                -88.01960706710815,
+                0
+            ],
+            "command": 22,
+            "autoContinue": true,
+            "uid": "missionitem1"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 2,
+            "frame": 0,
+            "coordinate": [
+                42.14264380508573,
+                -88.01923155784607,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem3"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 3,
+            "frame": 0,
+            "coordinate": [
+                42.14245685804538,
+                -88.02203178405762,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem4"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 4,
+            "frame": 0,
+            "coordinate": [
+                42.142007387370384,
+                -88.02295982837677,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem5"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 5,
+            "frame": 0,
+            "coordinate": [
+                42.142496634057636,
+                -88.02340507507324,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem6"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 6,
+            "frame": 0,
+            "coordinate": [
+                42.143395565270865,
+                -88.02339434623718,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem7"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 7,
+            "frame": 0,
+            "coordinate": [
+                42.14365808259787,
+                -88.01940858364105,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem8"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 8,
+            "frame": 0,
+            "coordinate": [
+                42.14285859462086,
+                -88.01925301551819,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem9"
+        },
+        {
+            "type": "missionItem",
+            "param4": 0,
+            "param3": 0,
+            "param2": 0,
+            "param1": 0,
+            "id": 9,
+            "frame": 0,
+            "coordinate": [
+                42.14284666188807,
+                -88.01959097385406,
+                0
+            ],
+            "command": 16,
+            "autoContinue": true,
+            "uid": "missionitem10"
+        }
+    ],
+    "status": "waiting",
+    "zones": [],
+    "result": {
+        "minSpeed": 0,
+        "maxSpeed": 0,
+        "time": 0,
+        "distance": 0
+    },
+    "specialRequirements": [],
+    "rating": 0,
+    "gallery": []
+}

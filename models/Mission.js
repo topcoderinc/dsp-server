@@ -153,7 +153,7 @@ if (!MissionSchema.options.toObject) {
  * @param  {Object}   options     the transform options
  */
 MissionSchema.options.toObject.transform = function (doc, ret, options) { // eslint-disable-line no-unused-vars
-  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot', 'pilotChecklist', 'drone');
+  const sanitized = _.omit(ret, '__v', '_id', 'createdAt', 'updatedAt', 'packageRequest', 'pilot');
   sanitized.startingPoint = _.omit(sanitized.startingPoint, '_id');
   sanitized.destinationPoint = _.omit(sanitized.destinationPoint, '_id');
   sanitized.id = doc._id;
