@@ -46,7 +46,7 @@ function* getFederationToken(userId, params) {
     case AWSAuthTypes.MISSION: {
       const {missionId} = params;
       joi.assert({missionId}, {missionId: joi.objectId().required()});
-      const mission = yield Mission.findOne({_id: missionId, pilot: userId});
+      const mission = yield Mission.findOne({_id: missionId});
       if (!mission) {
         throw new errors.NotFoundError('mission not found or no permission');
       }

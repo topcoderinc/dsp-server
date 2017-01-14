@@ -240,7 +240,7 @@ function* search(providerId, entity) {
     if (d.destinationPoint) {
       sanitized.destinationPoint = d.destinationPoint.toObject();
     }
-    if (d.startingPoint && d.destinationPoint) {
+    if (_.has(d,'startingPoint.coordinates') && _.has(d,'destinationPoint.coordinates')) {
       sanitized.distance = helper.getFlatternDistance(sanitized.startingPoint.coordinates,
         sanitized.destinationPoint.coordinates);
     }
