@@ -16,7 +16,7 @@ const config = require('config');
 const errors = require('common-errors');
 const AWS = require('aws-sdk-promise');
 const {AWSAuthTypes} = require('../enum');
-const Mission = require('../models').Mission;
+const PackageRequest = require('../models').PackageRequest;
 
 const sts = new AWS.STS();
 
@@ -31,10 +31,10 @@ module.exports = {
  *
  * Following AWSAuthTypes are supported:
  *
- * - MISSION:
- * Uploading an image to mission.
+ * - REQUEST:
+ * Uploading an image to package request.
  * Additional values:
- * {String} missionId
+ * {String} requestId
  *
  * @param {String} userId the user id who performs this action
  * @param {Object} params the requests params, different types can contain different values
@@ -43,14 +43,14 @@ module.exports = {
  */
 function* getFederationToken(userId, params) {
   switch (params.type) {
-    case AWSAuthTypes.MISSION: {
-      const {missionId} = params;
-      joi.assert({missionId}, {missionId: joi.objectId().required()});
-      const mission = yield Mission.findOne({_id: missionId});
-      if (!mission) {
-        throw new errors.NotFoundError('mission not found or no permission');
+    case AWSAuthTypes.REQUEST: {
+      const {requestId} = params;
+      joi.assert({requestId}, {requestId: joi.objectId().required()});
+      const request = yield PackageRequest.findOne({_id: requestId});
+      if (!request) {
+        throw new errors.NotFoundError('request not found or no permission');
       }
-      const s3KeyPrefix = `missions/${missionId}/`;
+      const s3KeyPrefix = `requests/${requestId}/`;
       const {data: {Credentials}} = yield sts.getFederationToken({
         Name: userId,
         Policy: JSON.stringify({

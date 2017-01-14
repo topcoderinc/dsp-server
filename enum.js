@@ -73,7 +73,7 @@ const PilotChecklistAnswers = {
 };
 
 const AWSAuthTypes = {
-  MISSION: 'MISSION',
+  REQUEST: 'REQUEST',
 };
 
 module.exports = {
