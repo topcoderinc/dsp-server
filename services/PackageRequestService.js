@@ -386,7 +386,6 @@ function* assignDrone(providerId, requestId, entity) {
 
   // if mission not exist , create mission bind it
   let mission = yield Mission.findOne({_id: request.mission});
-  console.log('here is the log:' + request);
   if (!mission) {
     mission = yield Mission.create({
       status: MissionStatus.SCHEDULED,
