@@ -21,7 +21,7 @@ module.exports = {
   API_VERSION: 1,
   RESET_CODE_EXPIRES: 60 * 60,
   db: {
-    url: process.env.MONGOLAB_URI || 'mongodb://heroku_fx9hv53r:ar99t25g01qogb3m8qshhml82r@ds143588.mlab.com:43588/heroku_fx9hv53r',
+    url: process.env.MONGOLAB_URI || 'mongodb://localhost:27017/dsp',
     poolSize: 5,
   },
   mail: {

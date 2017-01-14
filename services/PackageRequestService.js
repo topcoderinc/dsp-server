@@ -288,7 +288,7 @@ function* accept(providerId, requestId) {
 
 
   if (request.status === RequestStatus.PENDING) {
-    request.status = RequestStatus.SCHEDULED;
+    request.status = RequestStatus.IN_PROGRESS;
     yield request.save();
   } else {
     throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to accept`, 400);
@@ -337,7 +337,7 @@ function* cancel(providerId, requestId) {
  */
 function* complete(providerId, requestId) {
   const request = yield _getSingleByProvider(providerId, requestId);
-  if (request.status === RequestStatus.IN_PROGRESS) {
+  if (request.status === RequestStatus.IN_PROGRESS || request.status === RequestStatus.SCHEDULED) {
     request.status = RequestStatus.COMPLETED;
     yield request.save();
   } else {
