@@ -111,7 +111,7 @@ function* getAllByDrone(req, res) {
  * @param res the response
  */
 function* getPilotChecklist(req, res) {
-  res.json(yield MissionService.getPilotChecklist(req.params.id, req.auth.sub));
+  res.json(yield MissionService.getPilotChecklist(req.params.id, req.auth));
 }
 
 /**
@@ -121,7 +121,7 @@ function* getPilotChecklist(req, res) {
  * @param res the response
  */
 function* updatePilotChecklist(req, res) {
-  res.json(yield MissionService.updatePilotChecklist(req.params.id, req.auth.sub, req.body));
+  res.json(yield MissionService.updatePilotChecklist(req.params.id, req.auth, req.body));
 }
 
 /**
@@ -131,7 +131,7 @@ function* updatePilotChecklist(req, res) {
  * @param res the response
  */
 function* fetchPilotMissions(req, res) {
-  res.json(yield MissionService.fetchPilotMissions(req.auth.sub, req.query));
+  res.json(yield MissionService.fetchPilotMissions(req.auth, req.query));
 }
 
 /**
