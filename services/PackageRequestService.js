@@ -288,7 +288,7 @@ function* accept(providerId, requestId) {
 
 
   if (request.status === RequestStatus.PENDING) {
-    request.status = RequestStatus.IN_PROGRESS;
+    request.status = RequestStatus.SCHEDULED;
     yield request.save();
   } else {
     throw new errors.ArgumentError(`The provider status ${request.status} cannot be convert to accept`, 400);
