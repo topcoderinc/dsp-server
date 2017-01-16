@@ -423,8 +423,8 @@ function* updatePilotChecklist(id, auth, entity) {
       endTime,
       isActive: true,
       isPermanent: false,
-      mission: missionId,
       drone: mission.drone.id,
+      mission: missionId,
     };
     /**
      * Validate mission values
