@@ -90,8 +90,9 @@ function* search(criteria) {
           $or: [
             {
               isPermanent: false,
-              startTime: {$gte: new Date()},
-              endTime: {$lte: new Date()},
+              startTime: {$lte: new Date()},
+              endTime: {$gte: new Date()},
+              drone: {$ne: criteria.droneId},
             },
             {
               isPermanent: true,
@@ -118,6 +119,7 @@ function* search(criteria) {
 search.schema = {
   criteria: {
     mission: joi.objectId(),
+    droneId: joi.objectId(),
     isActive: joi.bool(),
     isPermanent: joi.bool(),
     geometry: joi.geoJSON(),
@@ -152,6 +154,7 @@ create.schema = {
     isActive: joi.bool().required(),
     isPermanent: joi.bool().required(),
     mission: joi.objectId(),
+    drone: joi.objectId()
   }).and('startTime', 'endTime'),
 };
 

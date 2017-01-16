@@ -34,6 +34,7 @@ const NoFlyZoneSchema = new mongoose.Schema({
   isActive: {type: Boolean, required: true},
   isPermanent: {type: Boolean, required: true},
   mission: {type: ObjectId, ref: 'Mission'},
+  drone: {type: ObjectId, ref: 'Drone'},
 });
 
 NoFlyZoneSchema.plugin(timestamps);

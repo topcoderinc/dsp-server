@@ -346,6 +346,7 @@ function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDr
         type: 'Point',
         coordinates: drone.currentLocation,
       },
+      droneId: drone.id,
       projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
     };
     // Add all fields except the polygon of NFZ.

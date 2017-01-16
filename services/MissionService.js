@@ -25,6 +25,7 @@ const DroneService = require('./DroneService');
 const httpStatus = require('http-status');
 const rp = require('request-promise');
 const logger = require('../common/logger');
+const NoFlyZone = require('../models').NoFlyZone;
 
 // Exports
 module.exports = {
@@ -44,6 +45,8 @@ module.exports = {
   checkDroneStatus,
   loadMissionToDrone,
 };
+
+const NFZ_DURATION = 24 * 60 * 60; // 24 hours by default
 
 // the joi schema for search
 search.schema = {
@@ -388,14 +391,17 @@ function* updatePilotChecklist(id, auth, entity) {
     throw new errors.NotFoundError(`mission not found with specified id ${id}`);
   }
 
+  let userId = null;
   if (auth.payload.role === enums.Role.PILOT) {
     if (mission.pilot.toString() !== auth.sub) {
       throw new errors.NotFoundError(`current logged in pilot is not assigned to the mission with specified id ${id}`);
     }
+    userId = auth.sub;
   } else if (auth.payload.role === enums.Role.PROVIDER) {
     if (mission.provider.toString() !== auth.payload.providerId) {
-      throw new errors.NotFoundError(`current logged in user's provider is not assigned to the mission with specified id ${id}`);
+      throw new errors.NotFoundError(`current logged in user provider is not assigned to the mission with specified id ${id}`);
     }
+    userId = auth.payload.providerId;
   }
 
   if (!mission.pilotChecklist) {
@@ -405,8 +411,41 @@ function* updatePilotChecklist(id, auth, entity) {
   mission.pilotChecklist.user = auth.sub;
   mission.pilotChecklist.answers = entity.answers;
   if (entity.load) {
+    // Create a temporary No fly zone
+    const nfzDuration = NFZ_DURATION;
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + nfzDuration * 1000);
+    const missionId = mission.id;
+    const nfzCreateValues = {
+      location: mission.zones[0].location,
+      description: `Temporary no fly zone for mission ${missionId}`,
+      startTime,
+      endTime,
+      isActive: true,
+      isPermanent: false,
+      mission: missionId,
+      drone: mission.drone.id,
+    };
+    /**
+     * Validate mission values
+     * @param values
+     * @private
+     */
+    function* _validateMission(values) {
+      if (values.mission) {
+        yield getSingle(values.mission);
+      }
+      if (values.isPermanent) {
+        values.startTime = null;
+        values.endTime = null;
+      } else if (values.startTime.getTime() > values.endTime.getTime()) {
+        throw new errors.ArgumentError('startDate cannot be greater than endDate');
+      }
+    }
+    yield _validateMission(nfzCreateValues);
+    yield NoFlyZone.create(nfzCreateValues);
     // pilot clicked save and load button, so send mission to drone
-    yield sendMissionToDrone(pilotId, mission);
+    yield sendMissionToDrone(userId, mission);
     mission.status = enums.MissionStatus.IN_PROGRESS;
   }
   yield mission.save();
@@ -489,8 +528,8 @@ function* sendMissionToDrone(sub, mission) {
   if (!mission.missionItems) {
     throw new errors.ValidationError('cannot send mission, mission waypoints are not defined', httpStatus.BAD_REQUEST);
   }
-  if (sub !== mission.pilot.toString()) {
-    throw new errors.NotPermittedError('loggedin user is not pilot for this mission');
+  if (sub !== mission.pilot.toString() || sub!==mission.provider.toString()) {
+    throw new errors.NotPermittedError('loggedin user is not pilot or provider for this mission');
   }
 
   // convert the waypoints to format understandable by drone
