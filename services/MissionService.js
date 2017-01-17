@@ -411,39 +411,7 @@ function* updatePilotChecklist(id, auth, entity) {
   mission.pilotChecklist.user = auth.sub;
   mission.pilotChecklist.answers = entity.answers;
   if (entity.load) {
-    // Create a temporary No fly zone
-    const nfzDuration = NFZ_DURATION;
-    const startTime = new Date();
-    const endTime = new Date(startTime.getTime() + nfzDuration * 1000);
-    const missionId = mission.id;
-    const nfzCreateValues = {
-      location: mission.zones[0].location,
-      description: `Temporary no fly zone for mission ${missionId}`,
-      startTime,
-      endTime,
-      isActive: true,
-      isPermanent: false,
-      drone: mission.drone.id,
-      mission: missionId,
-    };
-    /**
-     * Validate mission values
-     * @param values
-     * @private
-     */
-    function* _validateMission(values) {
-      if (values.mission) {
-        yield getSingle(values.mission);
-      }
-      if (values.isPermanent) {
-        values.startTime = null;
-        values.endTime = null;
-      } else if (values.startTime.getTime() > values.endTime.getTime()) {
-        throw new errors.ArgumentError('startDate cannot be greater than endDate');
-      }
-    }
-    yield _validateMission(nfzCreateValues);
-    yield NoFlyZone.create(nfzCreateValues);
+    yield createNFZ(mission);
     // pilot clicked save and load button, so send mission to drone
     yield sendMissionToDrone(userId, mission);
     mission.status = enums.MissionStatus.IN_PROGRESS;
@@ -456,6 +424,47 @@ function* updatePilotChecklist(id, auth, entity) {
   response.pilotChecklist = _.omit(mission.pilotChecklist.toObject(), ['user']);
 
   return response;
+}
+
+function* createNFZ(mission){
+  // Create a temporary No fly zone
+  const nfzDuration = NFZ_DURATION;
+  const startTime = new Date();
+  const endTime = new Date(startTime.getTime() + nfzDuration * 1000);
+  const missionId = mission.id;
+  const nfzCreateValues = {
+    location: mission.zones[0].location,
+    description: `Temporary no fly zone for mission ${missionId}`,
+    startTime,
+    endTime,
+    isActive: true,
+    isPermanent: false,
+    drone: mission.drone.id,
+    style:{fillColor:"red"},
+    mission: missionId,
+  };
+  /**
+   * Validate mission values
+   * @param values
+   * @private
+   */
+  function* _validateMission(values) {
+    if (values.mission) {
+      yield getSingle(values.mission);
+    }
+    if (values.isPermanent) {
+      values.startTime = null;
+      values.endTime = null;
+    } else if (values.startTime.getTime() > values.endTime.getTime()) {
+      throw new errors.ArgumentError('startDate cannot be greater than endDate');
+    }
+  }
+  yield _validateMission(nfzCreateValues);
+  const existing = yield NoFlyZone.findOne({mission: missionId});
+  if (existing){
+    yield existing.remove();
+  }
+  yield NoFlyZone.create(nfzCreateValues);
 }
 
 // the joi schema for fetchPilotMissions
@@ -528,7 +537,7 @@ function* sendMissionToDrone(sub, mission) {
   if (!mission.missionItems) {
     throw new errors.ValidationError('cannot send mission, mission waypoints are not defined', httpStatus.BAD_REQUEST);
   }
-  if (sub !== mission.pilot.toString() || sub!==mission.provider.toString()) {
+  if (sub !== mission.pilot.toString() && sub!==mission.provider.toString()) {
     throw new errors.NotPermittedError('loggedin user is not pilot or provider for this mission');
   }
 
@@ -556,6 +565,7 @@ function* loadMissionToDrone(sub, missionId) {
   yield sendMissionToDrone(sub, mission);
   mission.status = enums.MissionStatus.IN_PROGRESS;
   yield mission.save();
+  yield createNFZ(mission);
 }
 
 

@@ -83,17 +83,20 @@ function* search(criteria) {
     };
   }
   if (criteria.matchTime) {
+    let timeCriteria = {
+      isPermanent: false,
+      startTime: {$lte: new Date()},
+      endTime: {$gte: new Date()},
+    };
+    if (_.has(criteria,'droneId')){
+      timeCriteria.drone = {$ne: criteria.droneId};
+    }
     filter = {
       $and: [
         filter,
         {
           $or: [
-            {
-              isPermanent: false,
-              startTime: {$lte: new Date()},
-              endTime: {$gte: new Date()},
-              drone: {$ne: criteria.droneId},
-            },
+            timeCriteria,
             {
               isPermanent: true,
             },
