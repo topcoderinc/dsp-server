@@ -399,28 +399,6 @@ function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDr
   return ret;
 }
 
-/**
- * update a drone location by serial number
- *
- * @param serialNumber
- * @param entity
- * @param returnNFZ {Boolean} True to return the NFZ.
- * @param nfzFields {Array} Fields of NFZ to be projected
- * @param nfzLimit {Number} limit of NFZ to be returned
- * @param nearDronesMaxDist {Number} Max dist to search nearest drones
- * @param nearDroneFields {Array} Fields of Drone to be projected
- * @param nearDronesLimit {Number} limit of Drone to be returned
- * @returns {*}
- */
-function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
-  const drone = yield Drone.findOne({ serialNumber });
-  if (!drone) {
-    throw new errors.NotFoundError(`Current logged in provider does not have this drone , serialNumber = ${serialNumber}`);
-  }
-
-  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
-}
-
 checkLocation.schema = {
   entity: joi.object().keys({
     lat: joi.number().required(),
@@ -511,6 +489,9 @@ function* doCheckLocation(ret, currentLocation, currentDrone, returnNFZ, nfzFiel
       },
       projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
     };
+    if (currentDrone){
+      criteria.droneId = currentDrone._id;
+    }
     // Add all fields except the polygon of NFZ.
     if (nfzFields && nfzFields.length > 0) {
       criteria.projFields = nfzFields;
