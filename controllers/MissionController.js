@@ -141,7 +141,7 @@ function* fetchPilotMissions(req, res) {
  * @param res the response
  */
 function* checkDroneStatus(req, res) {
-  res.json(yield MissionService.checkDroneStatus(req.auth.sub, req.params.id));
+  res.json(yield MissionService.checkDroneStatus(req.auth, req.params.id));
 }
 
 /**
@@ -151,6 +151,6 @@ function* checkDroneStatus(req, res) {
  * @param res the response
  */
 function* loadMissionToDrone(req, res) {
-  res.json(yield MissionService.loadMissionToDrone(req.auth.sub, req.params.id));
+  res.json(yield MissionService.loadMissionToDrone(req.auth, req.params.id));
 }
 

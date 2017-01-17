@@ -558,11 +558,17 @@ function* sendMissionToDrone(sub, mission) {
  * Load the mission to the drone
  *
  * @param   {String}   missionId        the id of the mission to load to drone
- * @param   {String}   sub              the currently logged in user
+ * @param   {String}   auth             auth object
  */
-function* loadMissionToDrone(sub, missionId) {
+function* loadMissionToDrone(auth, missionId) {
   const mission = yield Mission.findById(missionId).populate({path: 'drone'});
-  yield sendMissionToDrone(sub, mission);
+  let userId = null;
+  if (auth.payload.role === enums.Role.PILOT) {
+    userId = auth.sub;
+  } else if (auth.payload.role === enums.Role.PROVIDER) {
+    userId = auth.payload.providerId;
+  }
+  yield sendMissionToDrone(userId, mission);
   mission.status = enums.MissionStatus.IN_PROGRESS;
   yield mission.save();
   yield createNFZ(mission);
@@ -634,7 +640,7 @@ function* fetchPilotMissions(auth, entity) {
   };
 }
 
-function* checkDroneStatus(sub, missionId) {
+function* checkDroneStatus(auth, missionId) {
   const mission = yield Mission.findById(missionId).populate({path: 'drone'});
   if (!mission) {
     throw new errors.NotFoundError('mission not found with specified id');
@@ -646,7 +652,7 @@ function* checkDroneStatus(sub, missionId) {
     throw new errors.ValidationError('cannot check drone status, drone is not assigned ' +
       'or drone accessURL is not defined', httpStatus.BAD_REQUEST);
   }
-  if (sub !== mission.pilot.toString()) {
+  if (auth.sub !== mission.pilot.toString() && auth.payload.providerId!==mission.provider.toString()) {
     throw new errors.NotPermittedError('loggedin user is not pilot for this mission');
   }
   let currentPosition = yield rp({
