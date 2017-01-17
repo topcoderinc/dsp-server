@@ -365,7 +365,7 @@ assignDrone.schema = {
  */
 
 function* assignDrone(providerId, requestId, entity) {
-  const request = yield PackageRequest.findOne({provider: providerId, _id: requestId}).populate('service');
+  const request = yield PackageRequest.findOne({provider: providerId, _id: requestId}).populate('service').populate('user');
 
   if (!request) {
     throw new errors.NotFoundError('The provider does not have this request');
@@ -395,7 +395,7 @@ function* assignDrone(providerId, requestId, entity) {
       pilot: drone.pilots[Math.floor(Math.random() * drone.pilots.length)],
       startingPoint: request.startingPoint,
       destinationPoint: request.destinationPoint,
-      missionName: request.title,
+      missionName: `request from ${request.user.name}, for ${request.title}`,
       zones: request.zones,
       missionItems: [],
     });
