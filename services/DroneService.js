@@ -311,94 +311,6 @@ function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzField
   return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
 }
 
-/**
- * Do actual location update for a specific drone
- * @param entity
- * @param drone The specific drone
- * @param returnNFZ
- * @param nfzFields
- * @param nfzLimit
- * @param nearDronesMaxDist
- * @param nearDronesLimit
- * @param nearDroneFields
- * @returns {*}
- */
-function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields) {
-  entity.lng = entity.lng || drone.currentLocation[0];
-  entity.lat = entity.lat || drone.currentLocation[1];
-  drone.currentLocation = [entity.lng, entity.lat];
-  drone.status = entity.status || drone.status;
-  drone.altitude = entity.altitude;
-  drone.heading = entity.heading;
-  drone.speed = entity.speed;
-  drone.lastSeen = new Date();
-  yield drone.save();
-
-  entity.droneId = drone._id;
-  yield DronePosition.create(entity);
-
-  const ret = drone.toObject();
-  // Check whether we need to return NFZ
-  if (returnNFZ) {
-    // We need to find active and match the time of NFZ
-    const criteria = {
-      isActive: true,
-      matchTime: true,
-      geometry: {
-        type: 'Point',
-        coordinates: drone.currentLocation,
-      },
-      droneId: drone.id,
-      projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
-    };
-    // Add all fields except the polygon of NFZ.
-    if (nfzFields && nfzFields.length > 0) {
-      criteria.projFields = nfzFields;
-    }
-    // Add limit
-    if (nfzLimit) {
-      criteria.limit = nfzLimit;
-    }
-    const searchedNFZs = yield NoFlyZoneService.search(criteria);
-    ret.noFlyZones = searchedNFZs.items;
-  }
-  // Search the near drones within the nearDronesMaxDist
-  if (nearDronesMaxDist) {
-    const geoNearOption = {
-      near: {
-        type: 'Point',
-        coordinates: drone.currentLocation,
-      },
-      distanceField: 'distance',
-      maxDistance: nearDronesMaxDist,
-      spherical: true,
-      query: {
-        _id: {$ne: drone._id},
-      },
-    };
-    if (nearDronesLimit) {
-      geoNearOption.limit = nearDronesLimit;
-    }
-    const aggregateOption = [
-      {
-        $geoNear: geoNearOption,
-      },
-    ];
-    const projection = helper.convertArrayToProjectionObject(nearDroneFields);
-    if (projection) {
-      aggregateOption.push({
-        $project: projection,
-      });
-    }
-    const nearestDrones = yield Drone.aggregate(aggregateOption);
-    ret.nearestDrones = _.map(nearestDrones, (d) => {
-      const transformFunc = Drone.schema.options.toObject.transform;
-      return transformFunc(d, d);
-    });
-  }
-  return ret;
-}
-
 checkLocation.schema = {
   entity: joi.object().keys({
     lat: joi.number().required(),
@@ -490,7 +402,7 @@ function* doCheckLocation(ret, currentLocation, currentDrone, returnNFZ, nfzFiel
       projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
     };
     if (currentDrone){
-      criteria.droneId = currentDrone._id;
+      criteria.droneId = currentDrone._id.toString();
     }
     // Add all fields except the polygon of NFZ.
     if (nfzFields && nfzFields.length > 0) {
