@@ -432,8 +432,11 @@ function* createNFZ(mission){
   const startTime = new Date();
   const endTime = new Date(startTime.getTime() + nfzDuration * 1000);
   const missionId = mission.id;
+  const zone = _.find(mission.zones, ['location.type', 'Polygon']);
+  if (!zone) 
+    return;
   const nfzCreateValues = {
-    location: mission.zones[0].location,
+    location: zone.location,
     description: `Temporary no fly zone for mission ${missionId}`,
     startTime,
     endTime,
