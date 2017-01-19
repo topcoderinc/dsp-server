@@ -36,8 +36,10 @@ module.exports = {
   updateLocation,
   updateLocationBySerialNumber,
   checkLocation,
+  updateBusyDrones
 };
 
+const MAX_INACTIVITY_TIME_MILIS=5*60*1000;
 
 const droneCreateorUpdateEntityJoi = joi.object().keys({
   id: joi.string(),
@@ -461,4 +463,17 @@ function* doCheckLocation(ret, currentLocation, currentDrone, returnNFZ, nfzFiel
     });
   }
   return ret;
+}
+
+/**
+ * Update status attribute of in motion drones to busy if last seen time is more than MAX_INACTIVITY_TIME_MILIS
+ */
+function* updateBusyDrones() {
+  const lastTime = new Date(new Date().getTime()-MAX_INACTIVITY_TIME_MILIS);
+  console.log(lastTime);
+  yield Drone.where({
+          status:DroneStatus.IN_MOTIONS,
+          lastSeen: {$lt:lastTime}
+        })
+        .update({status:DroneStatus.IDLE_BUSY});
 }

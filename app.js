@@ -66,6 +66,16 @@ _.each(require('./routes'), (verbs, url) => {
   });
 });
 
+// load all tools
+_.each(require('./toolSpecs'), (tool, name) => {
+  const toolMethod = require('./tools/' + tool.module)[tool.method];
+  if (!toolMethod) {
+    throw new Error(tool.method + ' is undefined, for tool ' + tool.module);
+  }
+  winston.info(`register tool ${name}`);
+  toolMethod();
+});
+
 app.use('/', apiRouter);
 app.use(errorMiddleware());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
