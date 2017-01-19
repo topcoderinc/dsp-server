@@ -245,6 +245,7 @@ updateLocation.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(DEFAULT_NUM_OF_NEAREST_DRONES),
+  droneFields: joi.array().items(joi.string()),
 };
 
 /**
@@ -260,13 +261,13 @@ updateLocation.schema = {
  * @param nearDronesLimit {Number} limit of Drone to be returned
  * @returns {*}
  */
-function* updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+function* updateLocation(id, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit, droneFields) {
   const drone = yield Drone.findOne({_id: id});
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , id = ${id}`);
   }
 
-  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields, droneFields);
 }
 
 updateLocationBySerialNumber.schema = {
@@ -286,6 +287,7 @@ updateLocationBySerialNumber.schema = {
   nearDronesMaxDist: joi.number().min(0),
   nearDroneFields: joi.array().items(joi.string()),
   nearDronesLimit: joi.limit().default(DEFAULT_NUM_OF_NEAREST_DRONES),
+  droneFields: joi.array().items(joi.string()),
 
 };
 
@@ -302,13 +304,13 @@ updateLocationBySerialNumber.schema = {
  * @param nearDronesLimit {Number} limit of Drone to be returned
  * @returns {*}
  */
-function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit) {
+function* updateLocationBySerialNumber(serialNumber, entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit, droneFields) {
   const drone = yield Drone.findOne({ serialNumber });
   if (!drone) {
     throw new errors.NotFoundError(`Current logged in provider does not have this drone , serialNumber = ${serialNumber}`);
   }
 
-  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
+  return yield doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields, droneFields);
 }
 
 checkLocation.schema = {
@@ -354,7 +356,7 @@ function* checkLocation(entity, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDis
  * @param nearDroneFields
  * @returns {*}
  */
-function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields) {
+function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields, droneFields) {
   entity.lng = entity.lng || drone.currentLocation[0];
   entity.lat = entity.lat || drone.currentLocation[1];
   const currentLocation = [entity.lng, entity.lat];
@@ -369,7 +371,10 @@ function* doUpdateLocation(entity, drone, returnNFZ, nfzFields, nfzLimit, nearDr
   entity.droneId = drone._id;
   yield DronePosition.create(entity);
 
-  const ret = drone.toObject();
+  let ret = drone.toObject();
+  if (droneFields && droneFields.length>0){
+    ret = _.pick(drone,droneFields)
+  }
 
   return yield doCheckLocation(ret, currentLocation, drone, returnNFZ, nfzFields, nfzLimit, nearDronesMaxDist, nearDronesLimit, nearDroneFields);
 }
@@ -402,7 +407,8 @@ function* doCheckLocation(ret, currentLocation, currentDrone, returnNFZ, nfzFiel
       projFields: ['circle', 'description', 'startTime', 'endTime', 'isPermanent', 'mission'],
     };
     if (currentDrone){
-      criteria.droneId = currentDrone._id.toString();
+      criteria.droneId = currentDrone._id.toString()
+      ;
     }
     // Add all fields except the polygon of NFZ.
     if (nfzFields && nfzFields.length > 0) {

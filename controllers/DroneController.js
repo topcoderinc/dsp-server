@@ -102,12 +102,13 @@ function* currentLocations(req, res) {
 function* updateLocation(req, res) {
   const nfzFields = helper.convertQueryFieldStringToArray(req.query.nfzFields);
   const nearDroneFields = helper.convertQueryFieldStringToArray(req.query.nearDroneFields);
+  const droneFields = helper.convertQueryFieldStringToArray(req.query.droneFields);
   const returnNFZ = req.query.returnNFZ;
   const nfzLimit = req.query.nfzLimit;
   const nearDronesMaxDist = req.query.nearDronesMaxDist;
   const nearDronesLimit = req.query.nearDronesLimit;
   const drone = yield DroneService.updateLocation(req.params.id, req.body, returnNFZ,
-    nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
+    nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit,droneFields);
   res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }
@@ -120,12 +121,13 @@ function* updateLocation(req, res) {
 function* updateLocationBySerialNumber(req, res) {
   const nfzFields = helper.convertQueryFieldStringToArray(req.query.nfzFields);
   const nearDroneFields = helper.convertQueryFieldStringToArray(req.query.nearDroneFields);
+  const droneFields = helper.convertQueryFieldStringToArray(req.query.droneFields);
   const returnNFZ = req.query.returnNFZ;
   const nfzLimit = req.query.nfzLimit;
   const nearDronesMaxDist = req.query.nearDronesMaxDist;
   const nearDronesLimit = req.query.nearDronesLimit;
   const drone = yield DroneService.updateLocationBySerialNumber(req.params.sn, req.body, returnNFZ,
-    nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit);
+    nfzFields, nfzLimit, nearDronesMaxDist, nearDroneFields, nearDronesLimit, droneFields);
   res.json(drone);
   res.io.emit('dronepositionupdate', drone);
 }
